@@ -25,11 +25,11 @@ jobs:
           cache-dependency-path: server/package-lock.json
 
       - name: Instalar dependencias Backend
-        working-directory: ./server
+        working-directory: ./Proyecto-E16/server
         run: npm ci
 
       - name: Ejecutar tests de Backend
-        working-directory: ./server
+        working-directory: ./Proyecto-E16/server
         run: npm test -- --passWithNoTests
 
   # ============================================
