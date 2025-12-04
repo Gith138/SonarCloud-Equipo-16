@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #0b0b12, #0f0f1a, #141422);
+  color: #e5e7eb;
+}

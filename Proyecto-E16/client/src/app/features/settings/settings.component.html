@@ -1,0 +1,306 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Configuración</h1>
+    <p class="subtitle">Personaliza tu experiencia en Tempo</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab" [ngClass]="{ active: activeTab === 'profile' }" (click)="activeTab = 'profile'">Perfil</button>
+    <button class="tab" [ngClass]="{ active: activeTab === 'playback' }" (click)="activeTab = 'playback'">Reproducción</button>
+    <button class="tab" [ngClass]="{ active: activeTab === 'history' }" (click)="onTabChange('history')">Historial</button>
+    <button class="tab" [ngClass]="{ active: activeTab === 'likes' }" (click)="onTabChange('likes')">Likes</button>
+    <button class="tab" [ngClass]="{ active: activeTab === 'privacy' }" (click)="activeTab = 'privacy'">Privacidad</button>
+    <button class="tab" [ngClass]="{ active: activeTab === 'appearance' }" (click)="activeTab = 'appearance'">Apariencia</button>
+    <button class="tab" [ngClass]="{ active: activeTab === 'storage' }" (click)="activeTab = 'storage'">Almacenamiento</button>
+  </div>
+
+  <!-- Perfil -->
+  <ng-container *ngIf="activeTab === 'profile'">
+    <div class="card">
+      <h2>Información del Perfil</h2>
+      <p class="description">Administra tu información personal</p>
+      <!-- Imagen de perfil con botón para cambiar -->
+      <div class="profile-image">
+        <img [src]="profilePictureUrl" alt="Foto de perfil" class="avatar">
+
+        <!-- Botón para cambiar imagen -->
+        <button class="btn btn-secondary" (click)="fileInput.click()">Cambiar imagen</button>
+        
+        <!-- Input oculto -->
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+
+        <!-- Vista previa de la imagen seleccionada
+        <div *ngIf="selectedImage" class="image-preview">
+          <p>Vista previa:</p>
+          <img [src]="selectedImage" alt="Vista previa" class="avatar preview">
+        </div> -->
+
+
+      </div>
+
+      <div class="form-group">
+        <label>Nombre de usuario</label>
+        <input type="text" [(ngModel)]="user.username_">
+
+      </div>
+
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" 
+        [(ngModel)]="user.email_">
+      </div>
+
+      <div class="form-group">
+        <label>Nueva Contraseña</label>
+        <input 
+          type="password" 
+          [(ngModel)]="newPassword" 
+          placeholder="Dejar en blanco para mantener la actual" 
+          autocomplete="new-password">
+      </div>
+
+      <div class="form-group" *ngIf="newPassword.trim().length > 0">
+        <label>Confirmar Contraseña</label>
+        <input 
+          type="password" 
+          [(ngModel)]="confirmNewPassword" 
+          placeholder="Repite la contraseña"
+          autocomplete="new-password">   
+
+      </div>
+
+      <div class="buttons">
+        <button class="btn btn-primary" (click)="handleSaveProfile()">Guardar cambios</button>
+      </div>
+    </div>
+
+
+    <div id="overlay-success" class="overlay-success">
+      <div class="overlay-box">
+        ✔ Perfil actualizado exitosamente
+      </div>
+    </div>
+
+    <div class="card danger">
+      <h2>Zona de Peligro</h2>
+      <p class="description">Acciones irreversibles con tu cuenta</p>
+      <button class="btn btn-danger" (click)="handleDeleteAccount()">
+        Eliminar cuenta
+      </button>
+    </div>
+
+    <div id="overlay-message" class="overlay">
+      <div class="overlay-box">{{ overlayMessage }}</div>
+    </div>
+  </ng-container>
+
+  <!-- Reproducción -->
+  <ng-container *ngIf="activeTab === 'playback'">
+    <div class="card">
+      <h2>Calidad de Audio</h2>
+      <p class="description">Configura la calidad de reproducción</p>
+      <div class="form-group">
+        <label>Calidad de transmisión</label>
+        <select [(ngModel)]="audioQuality">
+          <option value="low">Baja (96 kbps)</option>
+          <option value="normal">Normal (160 kbps)</option>
+          <option value="high">Alta (320 kbps)</option>
+          <option value="very-high">Muy alta (FLAC)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Opciones de Reproducción</h2>
+      <div class="form-group toggle">
+        <label>
+          Reproducción automática
+          <input type="checkbox" [(ngModel)]="autoplay">
+          <span class="custom-check"></span>
+          </label>
+      </div>
+
+      <div class="form-group toggle">
+        <label>
+          Normalización de volumen
+          <input type="checkbox" [(ngModel)]="normalizationVolume">
+          <span class="custom-check"></span>
+        </label>
+      </div>
+
+      <div class="form-group toggle">
+        <label>
+          Reproducción sin pausas
+          <input type="checkbox" [(ngModel)]="gaplessPlayback">
+          <span class="custom-check"></span>
+        </label>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Notificaciones -->
+  <ng-container *ngIf="activeTab === 'history'">
+    <div class="card">
+      <h2>Historial de Reproducción</h2>
+      <p class="description">Canciones que has escuchado recientemente</p>
+
+      <ul class="history-list">
+        <li *ngFor="let entry of history" class="history-item">
+          <div class="song-info">
+            <p class="title">{{ entry.song.title_ }}</p>
+            <p class="artist">{{ entry.song.artist_ }}</p>
+
+            <!-- ⭐ Valoración -->
+            <div class="rating-stars">
+              <span
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                (click)="setRating(entry, star)"
+                [class.filled]="star <= (entry.rating || 3)"
+              >
+                ★
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <button class="btn btn-outline" (click)="clearHistory()">Limpiar historial</button>
+    </div>
+  </ng-container>
+
+  <!-- Likes -->
+  <section *ngIf="activeTab === 'likes'" class="settings-card">
+    <h2>Favoritos</h2>
+    <p class="description">Canciones a las que has dado "Me gusta".</p>
+
+    <!-- Si hay canciones -->
+    <ng-container *ngIf="likedSongs.length > 0; else noLikes">
+      <ul class="history-list">
+        <li *ngFor="let song of likedSongs" class="history-item">
+          <div class="song-info">
+            <p class="title">{{ song.title_ }}</p>
+            <p class="artist">{{ song.artist_ }}</p>
+          </div>
+
+          <div class="song-meta">
+            <img
+              [src]="song.thumbnailURL_"
+              alt="thumbnail"
+              class="thumbnail"
+            />
+
+            <button
+              class="unlike-btn"
+              (click)="unlikeFromSettings(song)"
+            >
+              Eliminar
+            </button>
+          </div>
+        </li>
+      </ul>
+    </ng-container>
+
+    <!-- Si no hay likes -->
+    <ng-template #noLikes>
+      <p class="text-gray-400 mt-4">
+        Todavía no has añadido canciones a tus favoritos.
+      </p>
+    </ng-template>
+  </section>
+
+  <!-- Privacidad -->
+  <ng-container *ngIf="activeTab === 'privacy'">
+    <div class="card">
+      <h2>Configuración de Privacidad</h2>
+      <div class="form-group toggle">
+        <label>Sesión privada
+          <input type="checkbox" [(ngModel)]="privateSession">
+          <span class="custom-check"></span>
+        </label>
+      </div>
+      <div class="form-group toggle">
+        <label>Mostrar escuchado recientemente
+          <input type="checkbox" [(ngModel)]="showRecentlyPlayed">
+          <span class="custom-check"></span>
+        </label>
+      </div>
+      <div class="form-group toggle">
+        <label>Permitir contenido explícito
+          <input type="checkbox" [(ngModel)]="allowExplicitContent">
+          <span class="custom-check"></span>
+        </label>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Apariencia -->
+  <ng-container *ngIf="activeTab === 'appearance'">
+    <div class="card">
+      <h2>Idioma y Región</h2>
+      <div class="form-group">
+        <label>Idioma</label>
+        <select [(ngModel)]="language">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Interfaz</h2>
+      <div class="form-group toggle">
+        <label>Mostrar actividad de amigos
+          <input type="checkbox" [(ngModel)]="showFriendActivity">
+          <span class="custom-check"></span>
+        </label>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Almacenamiento -->
+  <ng-container *ngIf="activeTab === 'storage'">
+    <div class="card">
+      <h2>Descargas</h2>
+      <div class="form-group">
+        <label>Calidad de descarga</label>
+        <select [(ngModel)]="downloadQuality">
+          <option value="normal">Normal (160 kbps)</option>
+          <option value="high">Alta (320 kbps)</option>
+          <option value="very-high">Muy alta (FLAC)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Caché y Datos</h2>
+      <div class="cache-display">
+        <p class="large">{{ cacheSize }}</p>
+        <p class="small">Almacenamiento en caché</p>
+      </div>
+      <button class="btn btn-outline" (click)="handleClearCache()">Limpiar caché</button>
+
+      <div id="overlay-message" class="overlay">
+        <div class="overlay-box">{{ overlayMessage }}</div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <h2>Acerca de Tempo</h2>
+      <p>Versión: 1.0.0</p>
+      <p>Licencia: MIT</p>
+      <p>Desarrollado por Equipo Tempo</p>
+      <button class="btn btn-outline" (click)="handleResetSettings()">Restablecer configuración</button>
+
+      <div id="overlay-message" class="overlay">
+        <div class="overlay-box">{{ overlayMessage }}</div>
+      </div>
+
+    </div>
+  </ng-container>
+</div>

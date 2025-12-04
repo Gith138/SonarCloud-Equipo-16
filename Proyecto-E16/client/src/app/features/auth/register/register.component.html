@@ -1,0 +1,99 @@
+<div class="relative flex justify-center items-center min-h-screen text-white font-[Inter]">
+  <!-- Fondo borroso -->
+  <div
+    class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1468164016595-6108e4c60c8b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170')] bg-cover bg-center blur-sm brightness-50">
+  </div>
+
+  <div class="bg-[#0b0b12]/70 border border-gray-800 rounded-2xl shadow-2xl p-10 w-[420px] text-center text-gray-200 relative z-10">
+    <div class="flex justify-center mb-6">
+      <div class="bg-blue-600 p-3 rounded-full">
+        <i class="fa-solid fa-music text-white text-2xl"></i>
+      </div>
+    </div>
+
+    <h1 class="text-2xl font-semibold mb-2">Únete a <span class="text-blue-400">Tempo</span></h1>
+    <p class="text-sm text-gray-400 mb-6">Crea tu cuenta y comienza a disfrutar de tu música</p>
+
+    <!-- Formulario -->
+    <form (ngSubmit)="onRegister()" class="space-y-4 text-left">
+      <!-- Nombre -->
+      <div>
+        <label class="block text-xs mb-1">Nombre Completo</label>
+        <input
+          type="text"
+          [(ngModel)]="username_"
+          name="username_"
+          placeholder="Tu nombre"
+          class="w-full bg-transparent border border-gray-700 rounded-lg p-2 text-sm focus:border-blue-500 outline-none"
+        />
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-xs mb-1">Correo Electrónico</label>
+        <input
+          type="email"
+          [(ngModel)]="email_"
+          name="email_"
+          placeholder="tu@email.com"
+          class="w-full bg-transparent border border-gray-700 rounded-lg p-2 text-sm focus:border-blue-500 outline-none"
+        />
+      </div>
+
+      <!-- Contraseña -->
+      <div>
+        <label class="block text-xs mb-1">Contraseña</label>
+        <input
+          type="password"
+          [(ngModel)]="password_"
+          name="password_"
+          placeholder="********"
+          class="w-full bg-transparent border border-gray-700 rounded-lg p-2 text-sm focus:border-blue-500 outline-none"
+        />
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div>
+        <label class="block text-xs mb-1">Confirmar Contraseña</label>
+        <input
+          type="password"
+          [(ngModel)]="confirmPassword_"
+          name="confirmPassword_"
+          placeholder="********"
+          class="w-full bg-transparent border border-gray-700 rounded-lg p-2 text-sm focus:border-blue-500 outline-none"
+        />
+      </div>
+
+      <!-- Aceptar términos -->
+      <div class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" />
+        <p>
+          Acepto los
+          <a href="#" class="text-blue-400 hover:underline">términos y condiciones</a>
+          y la
+          <a href="#" class="text-blue-400 hover:underline">política de privacidad</a>
+        </p>
+      </div>
+
+      <!-- Mostrar error -->
+      <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+
+      <!-- Botón Crear Cuenta -->
+      <button
+        type="submit"
+        [disabled]="!formValid()"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-2 transition disabled:opacity-50"
+      >
+        Crear Cuenta
+      </button>
+
+      <!-- Link a login -->
+      <div class="text-center text-gray-400 text-sm">
+        ¿Ya tienes una cuenta?
+        <a routerLink="/login" class="text-blue-400 hover:underline">
+          Inicia sesión aquí
+        </a>
+      </div>
+    </form>
+  </div>
+</div>

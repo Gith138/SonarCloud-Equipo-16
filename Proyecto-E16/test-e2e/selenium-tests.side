@@ -1,0 +1,2143 @@
+{
+  "id": "939d4faf-842e-4741-9619-5570699f4745",
+  "version": "3.0",
+  "name": "New Project",
+  "url": "http://www.google.com",
+  "urls": [
+    "http://www.google.com"
+  ],
+  "plugins": [],
+  "suites": [
+    {
+      "id": "c1368896-e9c0-4436-8232-76bd92f9b86f",
+      "name": "New Suite",
+      "parallel": false,
+      "persistSession": false,
+      "tests": [],
+      "timeout": 30000
+    }
+  ],
+  "tests": [
+    {
+      "id": "4485916a-2af0-460a-b957-f915fe344cd1",
+      "name": "test-login",
+      "commands": [
+        {
+          "id": "708ee37b-a7b2-4cdd-809d-d981092dbb3c",
+          "command": "open",
+          "target": "http://localhost:4200/login",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "53791199-c914-4e84-a4ce-7b058f034679",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "alu0101463858@ull.edu.es",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "d1894221-7c27-46bc-a1ac-c49e86ee1606",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=.ng-valid",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=password_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "a39bc32d-9051-4ead-ab23-bdfaa836a5c9",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=password_",
+          "value": "1234",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "131d31bf-9d51-4782-813c-3052dcb8c609",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "4a5da80c-b652-409a-acbd-c24be1a5b1e3",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Iniciar Sesión '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Iniciar Sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ml-4",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "dcf4b056-dfe0-4527-a01b-f3957c62adbb",
+          "targets": [
+            [
+              "css=.ml-4",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Cerrar sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4ac1c961-1f97-42d7-92e5-a536551f357c",
+      "name": "test-register",
+      "commands": [
+        {
+          "id": "f4d06530-b45e-420a-a35e-1835a868d365",
+          "command": "open",
+          "target": "http://localhost:4200/register",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "name=username_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "d3c9c16f-2eae-4597-b28e-1bce11dd3c1b",
+          "targets": [
+            [
+              "name=username_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='username_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=username_",
+          "value": "prueba20",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "56febaf5-f8c3-4864-9e6c-de94af019f1b",
+          "targets": [
+            [
+              "name=username_",
+              "name"
+            ],
+            [
+              "css=.ng-dirty:nth-child(2)",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='username_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "010ed44e-1ede-4372-bd2e-64002063e433",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(2) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "pruba@gmail.com",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "aa86afcd-4e93-41a7-820a-bb7d699f2cde",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(2) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=password_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e760b6fd-ac44-4532-b468-c8c7b87341e6",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(3) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=password_",
+          "value": "123456789@",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "18004112-0200-43db-ba65-9cf0486700f2",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(3) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=confirmPassword_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "32631dba-ef1e-4085-9074-9c99622ea085",
+          "targets": [
+            [
+              "name=confirmPassword_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='confirmPassword_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=confirmPassword_",
+          "value": "123456789@",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "b4e366b9-4b7e-4e4d-8c13-4f0e11eaac9c",
+          "targets": [
+            [
+              "name=confirmPassword_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='confirmPassword_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=acceptTerms",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "66b02bd2-9d58-4369-bc89-355b7f2700d0",
+          "targets": [
+            [
+              "name=acceptTerms",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='acceptTerms'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e801e04a-c09d-4d5c-a53d-6c335a55e0a2",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Crear Cuenta '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Crear Cuenta')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "1c5957af-9f5a-4172-859c-8f1b1cc42147",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "prueba20@gmail.com",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e9875ddd-7ef2-4751-8f92-ff92d45de7df",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=.ng-valid",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=password_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e1df047f-78b5-498f-beed-ff16bb248702",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=password_",
+          "value": "123456789@",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "cae15254-e731-4aff-8ef2-1f57bbed41b7",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "f7769885-6770-4f7e-8579-a57af2be9891",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Iniciar Sesión '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Iniciar Sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "ddbd79a7-5350-4f2b-b968-ed4b59dc5dc1",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "f5303122-9e84-4ad6-a343-4dabade43dc9",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "doubleClick",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e7c1cb1c-d0f6-4f09-909d-eb3a35d16af7",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "b8b74ac4-c1b5-4fbd-aed0-7a27f825e2d0",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "pruba@gmail.com",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "bff405b1-ff46-4efb-99a8-2ee6098c79c6",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "459c7967-ab53-41d6-812e-141526561f96",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Iniciar Sesión '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Iniciar Sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ml-4",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "83adb58a-2130-4ec6-8dd0-887c9535ca6c",
+          "targets": [
+            [
+              "css=.ml-4",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Cerrar sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "150ed6a1-3066-44cd-af38-1a20a7225673",
+      "name": "test-playlist",
+      "commands": [
+        {
+          "id": "0cfaadc0-471b-4a77-bd66-9dd015297747",
+          "command": "open",
+          "target": "http://localhost:4200/login",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "7307017a-1cfa-4663-a5fa-2acc4f1907e5",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "alu0101463858@ull.edu.es",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "cc03c1be-436c-4a53-b133-dbdef642d487",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=.ng-valid",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=password_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e9216c59-09db-4775-bc0e-97709d68110c",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=password_",
+          "value": "1234",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "656dd5f1-06ba-4dc5-baf3-214874b388c2",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "5d524900-922a-441a-a53d-dd7acbf63942",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Iniciar Sesión '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Iniciar Sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "mouseOver",
+          "target": "linkText=Playlists",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "35d9e61f-32d5-4024-992d-b283bddbb57b",
+          "targets": [
+            [
+              "linkText=Playlists",
+              "linkText"
+            ],
+            [
+              "css=.hover\\3Atext-blue-400:nth-child(2)",
+              "css:finder"
+            ],
+            [
+              "xpath=(//a[contains(text(),'Playlists')])[1]",
+              "xpath:link"
+            ],
+            [
+              "xpath=(//a[contains(@href, '/playlists')])[1]",
+              "xpath:href"
+            ],
+            [
+              "xpath=//a[contains(.,'Playlists')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "linkText=Playlists",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "8e3841ce-b768-4bb3-bfe6-3e59ab0ff236",
+          "targets": [
+            [
+              "linkText=Playlists",
+              "linkText"
+            ],
+            [
+              "css=.hover\\3Atext-blue-400:nth-child(2)",
+              "css:finder"
+            ],
+            [
+              "xpath=(//a[contains(text(),'Playlists')])[1]",
+              "xpath:link"
+            ],
+            [
+              "xpath=(//a[contains(@href, '/playlists')])[1]",
+              "xpath:href"
+            ],
+            [
+              "xpath=//a[contains(.,'Playlists')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.bg-green-600",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "5836b5ac-5637-4089-b43f-0acd255f0eeb",
+          "targets": [
+            [
+              "css=.bg-green-600",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Ver playlist')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e764b15a-bc20-4696-a7a2-9b4322e3ddc8",
+          "targets": [
+            [
+              "css=.bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'➕ Añadir canción')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=song_title",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "1085906d-f032-4698-8fe0-fe9e5b6e7abd",
+          "targets": [
+            [
+              "name=song_title",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='song_title'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=youtube_url",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "f76b4f31-e835-4fcf-b276-74e5424bb53b",
+          "targets": [
+            [
+              "name=youtube_url",
+              "name"
+            ],
+            [
+              "css=div:nth-child(2) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='youtube_url'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=genre",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "88a01144-1975-4c18-ac70-7ac5086ab66b",
+          "targets": [
+            [
+              "name=genre",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='genre'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "bf81f3a2-9f2f-45e5-8d82-781dfe1c2074",
+          "targets": [
+            [
+              "css=.bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'✖ Cancelar')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.bg-green-900",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "75e386e6-d923-4717-b0c2-e620a229ef23",
+          "targets": [
+            [
+              "css=.bg-green-900",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'🔗 Compartir playlist')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "mouseOver",
+          "target": "css=.bg-green-900",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "77ac3eda-a322-4995-b269-73090cf83906",
+          "targets": [
+            [
+              "css=.bg-green-900",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'🔗 Compartir playlist')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=sharedEmail",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "2ec06b05-97f9-49ef-81af-e00a3d4da635",
+          "targets": [
+            [
+              "name=sharedEmail",
+              "name"
+            ],
+            [
+              "css=.bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='sharedEmail'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=sharedEmail",
+          "value": "alu0101463858@ull.edu.es",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "c163a85f-a6c6-4716-8983-842b4d376024",
+          "targets": [
+            [
+              "name=sharedEmail",
+              "name"
+            ],
+            [
+              "css=.bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='sharedEmail'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.bg-green-600",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "47bc44c6-630a-4a20-801a-4bbd39775ebf",
+          "targets": [
+            [
+              "css=.bg-green-600",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'📩 Compartir')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.justify-end > .bg-red-600",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "40268be7-7bc6-44e9-961a-d3b76dd78e12",
+          "targets": [
+            [
+              "css=.justify-end > .bg-red-600",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ml-4",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "aedce9cc-3443-4a1a-9ec2-a1afa255fe36",
+          "targets": [
+            [
+              "css=.ml-4",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Cerrar sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "228fc2aa-c8d7-469d-8b9a-69440ecf8c70",
+      "name": "test-home",
+      "commands": [
+        {
+          "id": "31c5aca8-18ca-47f2-997a-32386d5b24f7",
+          "command": "open",
+          "target": "http://localhost:4200/login",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "0844c92c-60a6-4495-9653-d543945e4ceb",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "alu0101463858@ull.edu.es",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "dfbf623c-30bb-4fc7-a14c-878d3392b12a",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=.ng-valid",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=password_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "2a026425-afee-4951-8df2-e8937be41652",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=password_",
+          "value": "1234",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "eb7b8807-1f9f-480c-82ff-ae66c4345bf9",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "45e155c8-2411-45c6-ac6f-cd5f39f6a11f",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Iniciar Sesión '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Iniciar Sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.bg-gradient-to-b:nth-child(1) > .rounded-xl",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "0903f859-4089-4ae6-9913-659aadae9578",
+          "targets": [
+            [
+              "css=.bg-gradient-to-b:nth-child(1) > .rounded-xl",
+              "css:finder"
+            ],
+            [
+              "xpath=(//img[@alt='playlist cover'])[1]",
+              "xpath:img"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.absolute",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "98d732aa-f005-40b3-913f-a4130aa8e94d",
+          "targets": [
+            [
+              "css=.absolute",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'✖')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.w-80",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "8a890fa0-b518-4e12-a647-fb42ec092373",
+          "targets": [
+            [
+              "css=.w-80",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@type='text'])[2]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ml-4",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "58d65b37-033c-453c-81f1-c662755dc676",
+          "targets": [
+            [
+              "css=.ml-4",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Cerrar sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "9de230c7-f2c8-4f9f-a413-2143e8a12574",
+      "name": "test-settings",
+      "commands": [
+        {
+          "id": "14f7e214-9434-45d2-8762-ebed6bd4b572",
+          "command": "open",
+          "target": "http://localhost:4200/login",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "47095794-3f8d-4c0d-a468-f034891cf08f",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "alu0101463858@ull.edu.es",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "3185a658-bdb2-4650-ae68-591ba2137b3d",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=.ng-valid",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=password_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "9af3943e-b191-4a6e-9ec7-5e5e6f541220",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=password_",
+          "value": "1234",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "bf735ad3-7f4a-4be4-9d3d-63e7ecc22a46",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "0a8b20ef-2600-4dab-803a-4259d3c73ea6",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Iniciar Sesión '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Iniciar Sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "linkText=Ajustes",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "a89a5457-b606-41a9-9a2d-58938fe37d6b",
+          "targets": [
+            [
+              "linkText=Ajustes",
+              "linkText"
+            ],
+            [
+              "css=.hover\\3Atext-blue-400:nth-child(4)",
+              "css:finder"
+            ],
+            [
+              "xpath=(//a[contains(text(),'Ajustes')])[1]",
+              "xpath:link"
+            ],
+            [
+              "xpath=(//a[contains(@href, '/settings')])[1]",
+              "xpath:href"
+            ],
+            [
+              "xpath=//a[contains(.,'Ajustes')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.tab:nth-child(2)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "66c050c5-9535-4442-b188-4258f7ae28ab",
+          "targets": [
+            [
+              "css=.tab:nth-child(2)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Reproducción')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ng-untouched:nth-child(2)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "5a79aef3-9d60-442d-b5ec-5f7c212b732f",
+          "targets": [
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "select",
+          "target": "css=.ng-untouched:nth-child(2)",
+          "value": "label=Normal (160 kbps)",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "6a529d4e-ed3e-4b2c-80bb-c00ba4a4d8af",
+          "targets": [
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.form-group:nth-child(3) .custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "0e2eff93-f864-4744-b74f-bebd05cf2a50",
+          "targets": [
+            [
+              "css=.form-group:nth-child(3) .custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.tab:nth-child(3)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "7d569d52-3cf2-48dc-8cb3-c1460fd57afe",
+          "targets": [
+            [
+              "css=.tab:nth-child(3)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Notificaciones')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.form-group:nth-child(3) .custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "f78a42b9-52f5-492b-a825-92aa5972637c",
+          "targets": [
+            [
+              "css=.form-group:nth-child(3) .custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.form-group:nth-child(3) .custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "5d7274c4-87f9-4065-9c94-134416cfddfe",
+          "targets": [
+            [
+              "css=.form-group:nth-child(3) .custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.tab:nth-child(2)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "29a26f2d-429e-48dd-8680-9764373a6074",
+          "targets": [
+            [
+              "css=.tab:nth-child(2)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Reproducción')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ng-untouched:nth-child(2)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "9b75900e-9022-4716-ab5b-74ea743493b9",
+          "targets": [
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "select",
+          "target": "css=.ng-untouched:nth-child(2)",
+          "value": "label=Alta (320 kbps)",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "81a38de3-71bf-44a7-bd5f-967fdc5dbe60",
+          "targets": [
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.form-group:nth-child(3) .custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "bb0b6e96-aa8c-425d-a72b-58bca87e3010",
+          "targets": [
+            [
+              "css=.form-group:nth-child(3) .custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.tab:nth-child(4)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "c5cbce07-3396-4433-8a6b-04f2dc1c5c4e",
+          "targets": [
+            [
+              "css=.tab:nth-child(4)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Privacidad')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.form-group:nth-child(2)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "7900f6d5-e7e1-4a95-90aa-0739278bda39",
+          "targets": [
+            [
+              "css=.form-group:nth-child(2)",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.form-group:nth-child(2) .custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "7fce5163-e4fe-4b76-9087-8bbadfc486ec",
+          "targets": [
+            [
+              "css=.form-group:nth-child(2) .custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.form-group:nth-child(2) .custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "ae71384d-2513-45e8-9d99-0b41aeb15de3",
+          "targets": [
+            [
+              "css=.form-group:nth-child(2) .custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.tab:nth-child(5)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "5d207b92-5b04-49a4-9a2b-ae8af712de59",
+          "targets": [
+            [
+              "css=.tab:nth-child(5)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Apariencia')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "mouseOver",
+          "target": "css=.tab:nth-child(5)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "a2e72178-7dc4-4733-8c9d-b9b414b80d85",
+          "targets": [
+            [
+              "css=.tab:nth-child(5)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Apariencia')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ng-untouched:nth-child(2)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "8dce9831-7055-4e6a-a881-c78abd23c783",
+          "targets": [
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ng-untouched:nth-child(2)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "5111fe35-c24e-4a60-9c7d-b4d476ddb537",
+          "targets": [
+            [
+              "css=.ng-untouched:nth-child(2)",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "307615ab-7b34-433a-ad50-3a4f72f5a6c6",
+          "targets": [
+            [
+              "css=.custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.custom-check",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "fb3beb6c-fc9e-4678-9b2d-829f9b5fb394",
+          "targets": [
+            [
+              "css=.custom-check",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.tab:nth-child(6)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "88930670-b234-4086-a45b-72b78ce2720e",
+          "targets": [
+            [
+              "css=.tab:nth-child(6)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Almacenamiento')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "mouseOver",
+          "target": "css=.tab:nth-child(6)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "106065b1-fbc7-4109-b4a5-3ec092803ce5",
+          "targets": [
+            [
+              "css=.tab:nth-child(6)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Almacenamiento')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ng-untouched",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e0386302-4496-4f70-afd3-634593aa9a08",
+          "targets": [
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ng-untouched",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "1ec38d4c-b1db-4245-aa62-4cb923d8fc63",
+          "targets": [
+            [
+              "css=.ng-untouched",
+              "css:finder"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.btn:nth-child(3)",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "e6ee07f9-a7c7-479e-87c2-3aa788c7fbbd",
+          "targets": [
+            [
+              "css=.btn:nth-child(3)",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Limpiar caché')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ml-4",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "50d803c1-7078-4f7f-b4da-781198ad62ee",
+          "targets": [
+            [
+              "css=.ml-4",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Cerrar sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "63daa820-7b0b-48d2-9193-48f7e4b7133e",
+      "name": "test-amigos",
+      "commands": [
+        {
+          "id": "3c71815e-48a9-42c5-88e8-1fd7c43106c2",
+          "command": "open",
+          "target": "http://localhost:4200/login",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "name=email_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "48614d3a-f10d-4ecf-9d98-5ae33193c583",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(1) > .bg-\\[\\#0f0f1a\\]",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=email_",
+          "value": "alu0101463858@ull.edu.es",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "b3cf2228-9efe-499c-a31c-d78c23eeea4c",
+          "targets": [
+            [
+              "name=email_",
+              "name"
+            ],
+            [
+              "css=.ng-valid",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='email_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "name=password_",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "4c697d53-59ee-44f2-9be4-4541b371d8bf",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(2) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "type",
+          "target": "name=password_",
+          "value": "1234",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "9083b86c-3e3e-4f0b-a690-113b602dfeac",
+          "targets": [
+            [
+              "name=password_",
+              "name"
+            ],
+            [
+              "css=div:nth-child(2) > .w-full",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@name='password_'])[1]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.hover\\3A bg-blue-700",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "830e6db8-9793-4753-a771-28e19af6373a",
+          "targets": [
+            [
+              "css=.hover\\3A bg-blue-700",
+              "css:finder"
+            ],
+            [
+              "xpath=(//button[@type='submit' and text()=' Iniciar Sesión '])[1]",
+              "xpath:attributes"
+            ],
+            [
+              "xpath=//button[contains(.,'Iniciar Sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "linkText=Amigos",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "ab31e24d-a9e7-4884-9adc-2881afb8320f",
+          "targets": [
+            [
+              "linkText=Amigos",
+              "linkText"
+            ],
+            [
+              "css=.hover\\3Atext-blue-400:nth-child(3)",
+              "css:finder"
+            ],
+            [
+              "xpath=(//a[contains(text(),'Amigos')])[1]",
+              "xpath:link"
+            ],
+            [
+              "xpath=(//a[contains(@href, '/friends')])[1]",
+              "xpath:href"
+            ],
+            [
+              "xpath=//a[contains(.,'Amigos')]",
+              "xpath:innerText"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.search-input",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "81c36bb4-a5d8-473a-ad11-a45ae77a41e6",
+          "targets": [
+            [
+              "css=.search-input",
+              "css:finder"
+            ],
+            [
+              "xpath=(//input[@type='text'])[2]",
+              "xpath:attributes"
+            ]
+          ]
+        },
+        {
+          "command": "click",
+          "target": "css=.ml-4",
+          "value": "",
+          "insertBeforeLastCommand": false,
+          "frameLocation": "root",
+          "winHandleId": "root",
+          "id": "9f441f18-5e21-4eec-aeb4-c7f96a58137d",
+          "targets": [
+            [
+              "css=.ml-4",
+              "css:finder"
+            ],
+            [
+              "xpath=//button[contains(.,'Cerrar sesión')]",
+              "xpath:innerText"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "snapshot": {
+    "dependencies": {},
+    "tests": [],
+    "jest": {
+      "extraGlobals": []
+    }
+  }
+}

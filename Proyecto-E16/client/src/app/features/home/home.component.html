@@ -1,0 +1,238 @@
+<div class="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-10 font-sans">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center mb-12">
+    <h1 class="text-4xl font-bold">Tempo</h1>
+
+    <!-- 🔍 Barra de búsqueda (ahora busca al pulsar ENTER) -->
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="searchYouTube()"
+      placeholder="Buscar canciones, artistas o álbumes..."
+      class="bg-gray-800 text-gray-200 px-4 py-2 rounded-lg w-80 outline-none border border-gray-700 focus:ring-2 focus:ring-indigo-500"
+    />
+  </header>
+
+  <!-- Playlists recomendadas -->
+  <section *ngIf="recommendedPlaylists.length > 0 || externalPlaylist" class="mb-16">
+    <h2 class="text-2xl font-semibold mb-6">Playlists recomendadas para ti</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div
+        *ngFor="let playlist of recommendedPlaylists"
+        (click)="openPlaylist(playlist)"
+        class="bg-gradient-to-b from-gray-800/70 to-gray-900/70 rounded-2xl p-4 shadow-lg hover:shadow-xl hover:scale-105 transition-all border border-gray-700/30 cursor-pointer"
+      >
+        <img [src]="playlist.cover_" alt="playlist cover" class="rounded-xl w-full h-48 object-cover mb-4" />
+        <h3 class="text-xl font-semibold">{{ playlist.name_ }}</h3>
+        <p class="text-gray-400 text-sm mt-1">{{ playlist.description_ }}</p>
+      </div>
+
+      <!-- Playlist externa de YouTube -->
+      <div 
+        *ngIf="externalPlaylist" 
+        (click)="openExternalPlaylist()"
+        class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700 cursor-pointer hover:scale-105 transition"
+      >
+        <img [src]="externalPlaylist.cover" class="rounded-xl w-full h-48 object-cover mb-3" />
+        <h3 class="font-bold text-lg">{{ externalPlaylist.name }}</h3>
+        <p class="text-gray-400 text-sm mt-1">{{ externalPlaylist.songsCount }} canciones</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔹 Recomendaciones -->
+  <section *ngIf="recommendedSongs.length > 0">
+    <h2 class="text-2xl font-semibold mb-6">Tus canciones recomendadas</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div *ngFor="let song of recommendedSongs" class="bg-gray-800 p-4 rounded-xl shadow">
+        <img [src]="song.thumbnailURL_" class="rounded-lg mb-3 w-full h-40 object-cover" alt="Cover" />
+        <h3 class="font-semibold text-lg truncate">{{ song.title_ }}</h3>
+        <p class="text-gray-400 text-sm truncate">{{ song.artist_ }}</p>
+
+        <button
+          (click)="openVideo(song)"
+          class="mt-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
+        >
+          ▶ Reproducir
+        </button>
+
+        <button
+          (click)="toggleLike(song)"
+          class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
+        >
+          {{ isLiked(song) ? '💔 Quitar de favoritos' : '❤️ Me gusta' }}
+        </button>
+
+        <button
+          (click)="addSongToPlaylist(song)"
+          class="mt-2 bg-green-600 hover:bg-green-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
+        >
+          ➕ Añadir a playlist
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 🔎 MODAL DE RESULTADOS DE BÚSQUEDA -->
+<div
+  *ngIf="showSearchModal && results.length > 0"
+  class="fixed inset-0 bg-black/70 flex justify-center items-start pt-24 z-40"
+  (click)="closeSearchModal()"
+>
+  <div
+    class="bg-gray-900 rounded-2xl w-full max-w-6xl mx-4 p-6 shadow-xl max-h-[80vh] overflow-y-auto"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-semibold">Resultados para "{{ searchQuery }}"</h2>
+      <button
+        (click)="closeSearchModal()"
+        class="text-2xl text-gray-300 hover:text-white"
+      >
+        ✖
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div
+        *ngFor="let video of results"
+        class="bg-[#1a1a22] border border-gray-700 rounded-2xl p-4 flex flex-col"
+      >
+        <img
+          [src]="video.thumbnailURL_"
+          alt="Miniatura"
+          class="rounded-lg w-full h-40 object-cover mb-3"
+        />
+        <h3 class="font-semibold text-lg truncate">{{ video.title_ }}</h3>
+        <p class="text-gray-400 text-sm truncate">{{ video.artist_ }}</p>
+
+        <button
+          (click)="openVideo(video)"
+          class="mt-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-full w-full transition"
+        >
+          ▶ Reproducir
+        </button>
+
+        <button
+          (click)="toggleLike(video)"
+          class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-full w-full transition"
+        >
+          {{ isLiked(video) ? '💔 Quitar de favoritos' : '❤️ Me gusta' }}
+        </button>
+
+        <button
+          (click)="addSongToPlaylist(video)"
+          class="mt-2 bg-green-600 hover:bg-green-500 text-white font-semibold py-2 rounded-full w-full transition"
+        >
+          ➕ Añadir a playlist
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🟦 MODAL DE PLAYLIST RECOMENDADA -->
+<div 
+  *ngIf="openedPlaylist" 
+  class="fixed inset-0 bg-black/70 flex justify-center items-center p-6 z-50"
+  (click)="closePlaylist()"
+>
+  <div 
+    class="bg-gray-900 p-6 rounded-2xl w-full max-w-4xl shadow-xl relative max-h-[90vh] overflow-y-auto"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Botón cerrar -->
+    <button 
+      (click)="closePlaylist()" 
+      class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300"
+    >
+      ✖
+    </button>
+
+    <h1 class="text-3xl font-bold mb-3">{{ openedPlaylist.name_ }}</h1>
+    <p class="text-gray-400 mb-6">{{ openedPlaylist.description_ }}</p>
+
+    <img 
+      [src]="openedPlaylist.cover_" 
+      class="w-48 h-48 object-cover rounded-xl mb-6 mx-auto"
+    />
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        *ngFor="let s of openedPlaylist.songs" 
+        class="bg-gray-800 p-4 rounded-xl shadow"
+      >
+        <img [src]="s.thumbnailURL_" class="rounded-lg mb-3 w-full h-40 object-cover" />
+        <h3 class="font-semibold text-lg truncate">{{ s.title_ }}</h3>
+        <p class="text-gray-400 text-sm truncate">{{ s.artist_ }}</p>
+
+        <button
+          (click)="openVideo(s)"
+          class="mt-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
+        >
+          ▶ Reproducir
+        </button>
+
+        <button
+          (click)="toggleLike(s)"
+          class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
+        >
+          {{ isLiked(s) ? '💔 Quitar de favoritos' : '❤️ Me gusta' }}
+        </button>
+
+        <button
+          (click)="openAddToPlaylist(s)"
+          class="mt-2 bg-green-600 hover:bg-green-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
+        >
+          ➕ Añadir a playlist
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🎵 MODAL: seleccionar playlist para añadir canción -->
+<div 
+  *ngIf="showAddToPlaylistModal"
+  class="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
+  (click)="closeAddToPlaylistModal()"
+>
+  <div 
+    class="bg-gray-900 p-6 rounded-xl w-full max-w-md shadow-lg"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 class="text-xl font-semibold mb-4 text-white">Añadir a playlist</h2>
+    <p class="text-gray-400 mb-3">
+      Selecciona la playlist donde quieres añadir 
+      <span class="font-semibold text-white">{{ songToAdd?.title_ }}</span>
+    </p>
+
+    <select
+      [(ngModel)]="selectedPlaylist"
+      class="w-full p-2 bg-gray-800 text-white rounded mb-4"
+    >
+      <option *ngFor="let pl of userPlaylists" [ngValue]="pl">
+        {{ pl.name_ || pl.name }}
+      </option>
+    </select>
+
+    <div class="flex justify-end gap-3">
+      <button 
+        (click)="closeAddToPlaylistModal()" 
+        class="bg-gray-700 px-4 py-2 rounded"
+      >
+        Cancelar
+      </button>
+
+      <button 
+        (click)="confirmAddToPlaylist()" 
+        class="bg-green-600 hover:bg-green-500 px-4 py-2 rounded"
+      >
+        Añadir
+      </button>
+    </div>
+  </div>
+</div>

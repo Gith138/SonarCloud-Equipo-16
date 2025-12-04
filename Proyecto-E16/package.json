@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "chromedriver": "^142.0.3",
+    "multer": "^2.0.2",
+    "selenium-webdriver": "^4.38.0",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/multer": "^2.0.0",
+    "@types/selenium-webdriver": "^4.35.4",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.5"
+  },
+    "scripts": {
+    "build": "ng build --configuration production"
+  }
+}

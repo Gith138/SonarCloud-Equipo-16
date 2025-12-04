@@ -1,0 +1,122 @@
+<div class="friends-page">
+
+  <!-- Sección para buscar y añadir amigos -->
+  <section class="search-add-friends">
+    <h2>Buscar y añadir amigos</h2>
+
+    <!-- Input de búsqueda -->
+   <div class="search-container">
+      <input
+        type="text"
+        [(ngModel)]="searchFriend"
+        (input)="searchUsers()"
+        placeholder="Busca por email o username..."
+        class="search-input"
+      />
+      <!-- Reemplazando lupa.png con un SVG o un Icono de texto -->
+      
+      <div class="search-icon" (click)="searchUsers()">
+        <svg
+          class="search-lupa"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+    </div>
+
+  </div>
+
+
+    <!-- Resultados de búsqueda (Aparecen aquí mismo) -->
+    <ul *ngIf="filteredUsers.length > 0" class="search-results">
+      <li *ngFor="let user of filteredUsers" class="search-item">
+        <div class="user-info">
+          <!-- Usamos un placeholder si no hay foto -->
+          <img [src]="getUserAvatar(user.profilePictureUrl_)" class="avatar-small" />
+          <span>{{ user.username_ }} <small class="email-text">({{ user.email_ }})</small></span>
+        </div>
+        <button (click)="addFriend(user)" class="btn-add">
+          <span class="icon-plus">+</span> Agregar
+        </button>
+      </li>
+    </ul>
+
+
+    <!-- Si no hay resultados -->
+    <p *ngIf="filteredUsers.length === 0 && searchFriend" class="no-results">
+      No se encontraron usuarios.
+    </p>
+  </section>
+
+  <!-- Solicitudes de amistad -->
+  <section *ngIf="friendRequests.length > 0" class="friends-list">
+    <h2>Solicitudes de amistad</h2>
+    <div class="grid">
+      <div *ngFor="let req of friendRequests" class="friend-card">
+        <img [src]="getUserAvatar(req.profilePictureUrl_)" class="avatar" />
+        <h3>{{ req.username_ }}</h3>
+
+        <div class="request-actions">
+          <button (click)="acceptRequest(req._id)" class="btn-add">
+            Aceptar
+          </button>
+          <button (click)="rejectRequest(req._id)" class="btn-remove">
+            Rechazar
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lista de amigos -->
+  <section *ngIf="friends.length > 0" class="friends-list">
+    <h2>Tus amigos</h2>
+    <div class="grid">
+      <div *ngFor="let friend of friends" class="friend-card">
+        <img [src]="friend.profilePictureUrl_" class="avatar" />
+        <h3>{{ friend.username_ }}</h3>
+        <button (click)="removeFriend(friend._id)" class="btn-remove">Eliminar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mensaje si no hay resultados -->
+  <p *ngIf="filteredUsers.length === 0 && searchFriend" class="no-results">
+    No se encontraron usuarios.
+  </p>
+
+  <!-- Actividad de amigos -->
+  <div class="activity-feed">
+    <h2>Actividad de tus amigos</h2>
+    <div *ngIf="friendsActivity.length > 0; else noActivity">
+      <div *ngFor="let activity of friendsActivity" class="activity-item">
+        <img [src]="activity.friendProfilePictureUrl" class="avatar-small" />
+        <div class="activity-details">
+          <p><strong>{{ activity.friendUsername }}</strong> está escuchando <em>{{ activity.songTitle }}</em> por {{ activity.artistName }}</p>
+          <span class="timestamp">{{ activity.timestamp }}</span>
+        </div>
+      </div>
+    </div>
+    <ng-template #noActivity>
+      <p>No hay actividad reciente de tus amigos.</p>
+    </ng-template>
+</div>
+
+
+<div id="overlay-message" class="overlay" 
+     *ngIf="overlayVisible"
+     [ngClass]="overlayType">
+  <div class="overlay-box">
+    {{ overlayMessage }}
+  </div>
+</div>
+

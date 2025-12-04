@@ -1,0 +1,429 @@
+/* Contenedor general */
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: #ffffff;
+  padding: 2.5rem;
+  background: linear-gradient(to bottom, #111827, #000000);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fondo general con degradado */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.header .subtitle {
+  color: #aaa;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  margin-bottom: 2rem;
+  background: rgba(17, 17, 17, 0.7); /* fondo translúcido */
+  border: 1px solid #333;
+  border-radius: 12px; /* redondeado en todo el contenedor */
+  backdrop-filter: blur(6px); /* efecto vidrio suave */
+  overflow: hidden; /* evita que las pestañas sobresalgan del borde redondeado */
+}
+
+.tab {
+  flex: 1;
+  padding: 0.75rem;
+  border-right: 1px solid #444;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+
+  background-color: rgba(255, 255, 255, 0.04); /* medio transparente */
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.tab:last-child {
+  border-right: none;
+}
+.tab.active,
+.tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff; /* borde inferior también resaltado */
+}
+
+/* Card */
+.card {
+  background: #1a1a22;
+  border: 1px solid #333;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+}
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.card .description {
+  color: #aaa;
+  margin-bottom: 1rem;
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+/* LABEL */
+.form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem; /* text-sm */
+  color: rgb(209 213 219); /* gray-300 */
+}
+
+/* INPUT + SELECT */
+.form-group input,
+.form-group select {
+  width: 100%;
+  background: #0f0f1a; /* igual que el formulario */
+  border: 1px solid #3f3f46; /* gray-700 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 0.625rem 1rem; /* px-4 py-2.5 */
+  font-size: 0.875rem; /* text-sm */
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+/* FOCUS */
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2563eb; /* blue-600 */
+  box-shadow: 0 0 0 2px #2563eb; /* anillo azul */
+}
+
+
+/* Toggles */
+.form-group.toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --- Checkbox personalizado --- */
+input[type="checkbox"] {
+  appearance: none;           /* Quita el estilo del navegador */
+  -webkit-appearance: none;
+  width: 50px;                /* Tamaño del checkbox */
+  height: 50px;
+  border: 2px solid #888;     /* Borde inicial */
+  border-radius: 6px;         /* Bordes redondeados */
+  background-color: #111;     /* Fondo base */
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+/* -----------Checkbox personalizado ----------- */
+/* Oculta el checkbox nativo */
+.toggle input[type="checkbox"] {
+  display: none;
+}
+
+/* El cuadrado visible */
+.toggle .custom-check {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+  vertical-align: middle;
+  margin-left: 8px; /* separación del label */
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+/* Cuando está marcado */
+.toggle input[type="checkbox"]:checked + .custom-check {
+  background-color: #2563EB;
+  border-color: #2563EB;
+}
+
+/* Marca de check */
+.toggle input[type="checkbox"]:checked + .custom-check::after {
+  content: "✔";
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* -------------------------------------Box------------------------------------------- */
+
+/* Texto junto al checkbox */
+label {
+  color: #fff;
+  font-size: 1rem;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: 0.2s;
+}
+.btn-primary {
+  background: #007bff;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #006ae6;
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid #444;
+  color: #fff;
+}
+.btn-outline:hover {
+  background: #222;
+}
+.btn-danger {
+  background: #e03e3e;
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #c32f2f;
+}
+
+/* Caché */
+.cache-display {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.cache-display .large {
+  font-size: 2rem;
+  font-weight: bold;
+}
+.cache-display .small {
+  color: #aaa;
+}
+
+/* --------------------------------- overlay ----------------------------------- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.overlay.success .overlay-box {
+  background: #1f2937;
+  border: 2px solid #00bcd4;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+}
+
+.overlay.error .overlay-box {
+  background: #1f2937;
+  border: 2px solid #f44336;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(248, 0, 0, 0.7);
+}
+
+.overlay-box {
+  padding: 1.5rem 2rem;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* -------------------------------------------------- */
+/* ESTILOS FALTANTES PARA PERFIL Y VALIDACIÓN */
+/* -------------------------------------------------- */
+
+/* Contenedor de la foto de perfil */
+.profile-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem; /* Espacio entre foto y botón */
+}
+
+/* La imagen circular (Avatar) */
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;       /* Lo hace redondo */
+  object-fit: cover;        /* Evita que la imagen se deforme */
+  border: 3px solid #333;   /* Borde sutil */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.05); /* Efecto zoom suave al pasar mouse */
+  border-color: #2563eb;  /* Borde azul al hacer hover */
+}
+
+/* Mensajes de validación (Contraseña) */
+small {
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+
+/* ------------------------------ Historial de reproducciones----------------------------------- */
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #444;
+}
+
+.song-info {
+  flex: 1;
+}
+
+.song-info .title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.song-info .artist {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.song-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.listened-at {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+/* ------------------------------ Fin Historial de reproducciones----------------------------------- */
+
+/* ------------------------------ Animaciones y Responsividad ----------------------------------- */
+/* Animación suave para mensajes de error */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ajuste para dispositivos móviles (Tabs) */
+@media (max-width: 768px) {
+  .tabs {
+    flex-direction: row;
+    overflow-x: auto; /* Scroll horizontal si no caben */
+    white-space: nowrap;
+    border-radius: 8px;
+  }
+  
+  .tab {
+    padding: 0.75rem 1rem;
+    flex: 0 0 auto; /* No encoger pestañas */
+  }
+  
+  .container {
+    padding: 1rem; /* Menos padding en celular */
+  }
+}
+
+.rating-stars {
+  display: flex;
+  gap: 0.2rem;
+  margin-top: 0.25rem;
+}
+
+.rating-stars span {
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #4b5563; /* gris apagado */
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.rating-stars span.filled {
+  color: #fbbf24; /* amarillo tipo Spotify */
+}
+
+.rating-stars span:hover {
+  transform: scale(1.1);
+}
+
+.unlike-btn {
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  border: none;
+  background-color: #ef4444;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  margin-left: 0.5rem;
+}
+
+.unlike-btn:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}

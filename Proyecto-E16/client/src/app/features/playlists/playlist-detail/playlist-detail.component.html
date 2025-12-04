@@ -1,0 +1,175 @@
+<div class="min-h-screen bg-gradient-to-b from-[#0b0b12] via-[#0f0f1a] to-[#141422] text-gray-100 p-8 max-w-6xl mx-auto">
+
+  <!-- CABECERA -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div>
+      <h1 class="text-5xl font-bold mb-2">{{ playlist?.name_ || 'Playlist sin nombre' }}</h1>
+      <p class="text-gray-400 text-lg">{{ playlist?.songs_?.length || 0 }} canciones • {{ playlist?.isPublic_ ? 'Pública' : 'Privada' }}</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-4">
+      <!-- Botón mostrar/ocultar formulario -->
+      <button
+        (click)="showForm = !showForm"
+        class="bg-blue-700 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
+      >
+        {{ showForm ? '✖ Cancelar' : '➕ Añadir canción' }}
+      </button>
+
+      <!-- Botón mostrar/ocultar compartir -->
+      <button
+        (click)="isSharing = !isSharing"
+        class="bg-green-900 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
+      >
+        {{ isSharing ? '✖ Cancelar compartir' : '🔗 Compartir playlist' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- FORMULARIO COMPARTIR -->
+  <div *ngIf="isSharing" class="mb-8 bg-[#1a1a22] border border-gray-700 p-6 rounded-xl shadow-lg">
+    <h2 class="text-2xl font-semibold mb-4">🔗 Compartir playlist</h2>
+
+    <label class="block text-gray-400 mb-2">Correo o username</label>
+    <input
+      type="text"
+      [(ngModel)]="shareTarget"
+      name="shareTarget"
+      class="w-full bg-[#0f0f1a] text-white px-4 py-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+      placeholder="usuario@ejemplo.com o nombreDeUsuario"
+      required
+    />
+
+    <div class="flex justify-end mt-4 gap-4">
+      <button
+        (click)="sharePlaylist()"
+        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
+      >
+        📩 Compartir
+      </button>
+
+      <button
+        (click)="isSharing = false"
+        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
+      >
+        ✖ Cancelar
+      </button>
+    </div>
+  </div>
+
+  <!-- FORMULARIO AÑADIR CANCIÓN -->
+  <div *ngIf="showForm" class="mb-8 bg-[#1a1a22] border border-gray-700 p-6 rounded-xl shadow-lg">
+    <h2 class="text-2xl font-semibold mb-4">🎶 Añadir nueva canción</h2>
+
+    <form (ngSubmit)="addSong()" #songForm="ngForm" class="space-y-4">
+      <div>
+        <label class="block text-gray-400 mb-1">Título</label>
+        <input
+          type="text"
+          [(ngModel)]="newSong.song_title"
+          name="song_title"
+          required
+          class="w-full bg-[#0f0f1a] text-white px-4 py-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          placeholder="Ej: Blinding Lights"
+        />
+      </div>
+
+      <div>
+        <label class="block text-gray-400 mb-1">URL de YouTube</label>
+        <input
+          type="text"
+          [(ngModel)]="newSong.youtube_url"
+          name="youtube_url"
+          required
+          class="w-full bg-[#0f0f1a] text-white px-4 py-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          placeholder="Ej: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        />
+      </div>
+
+      <div>
+        <label class="block text-gray-400 mb-1">Género</label>
+        <input
+          type="text"
+          [(ngModel)]="newSong.genre"
+          name="genre"
+          class="w-full bg-[#0f0f1a] text-white px-4 py-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          placeholder="Ej: Pop"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
+      >
+        💾 Guardar canción
+      </button>
+    </form>
+  </div>
+
+  <!-- LISTA DE CANCIONES -->
+  <div *ngIf="playlist?.songs_?.length; else noSongs" class="mb-12">
+    <div class="overflow-hidden rounded-2xl border border-gray-700 bg-[#1a1a22] shadow-lg">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-[#202028] text-gray-400 uppercase text-sm">
+            <th class="py-3 px-4 w-12">#</th>
+            <th class="py-3 px-4">Título</th>
+            <th class="py-3 px-4">Artista</th>
+            <th class="py-3 px-4 text-center">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let song of playlist.songs_; let i = index"
+            class="hover:bg-[#2a2a33] even:bg-[#1e1e28] transition-all duration-200"
+          >
+            <td class="py-3 px-4 text-gray-500">{{ i + 1 }}</td>
+            <td class="py-3 px-4 font-semibold">{{ song.title_ }}</td>
+            <td class="py-3 px-4 text-gray-400">{{ song.artist_ }}</td>
+            <td class="py-3 px-4 text-center flex justify-center gap-2">
+              <button
+                (click)="playSong(song.youtubeURL_, song.title_)"
+                class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded-lg text-sm shadow-sm transition-transform transform hover:scale-105"
+              >
+                ▶
+              </button>
+
+              <button
+                (click)="deleteSong(song._id, song.title_)"
+                class="bg-red-600 hover:bg-red-700 text-white py-1 px-4 rounded-lg text-sm shadow-sm transition-transform transform hover:scale-105"
+              >
+                🗑
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SI NO HAY CANCIONES -->
+  <ng-template #noSongs>
+    <div class="text-center py-16">
+      <p class="text-gray-400 text-lg">🎵 Esta playlist aún no tiene canciones.</p>
+    </div>
+  </ng-template>
+
+  <!-- REPRODUCTOR -->
+  <div *ngIf="currentSongUrl" class="mt-10 flex flex-col items-center gap-4">
+    <p class="text-gray-300 mb-2 text-lg">
+      🎵 Reproduciendo:
+      <span class="font-semibold text-white">{{ currentSongTitle }}</span>
+    </p>
+
+    <audio
+      [src]="currentSongUrl"
+      controls
+      autoplay
+      class="w-full max-w-3xl rounded-2xl shadow-xl bg-gradient-to-r from-blue-900 to-blue-800"
+      (error)="onAudioError()"
+    >
+      Tu navegador no soporta la reproducción de audio.
+    </audio>
+  </div>
+
+</div>
