@@ -8,29 +8,42 @@ on:
 
 jobs:
   # ===========================
-  # JOB 1: Backend (Jest Tests)
+  # JOB 1: Backend (Jest Tests + SonarCloud)
   # ===========================
   backend-tests:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Importante para que SonarCloud analice todo el historial
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
-          cache-dependency-path: server/package-lock.json
+          # Ajustamos la ruta del cache a la nueva estructura
+          cache-dependency-path: Proyecto-E16/server/package-lock.json
 
       - name: Instalar dependencias Backend
         working-directory: ./Proyecto-E16/server
         run: npm ci
 
-      - name: Ejecutar tests de Backend
+      - name: Ejecutar tests de Backend con Cobertura
         working-directory: ./Proyecto-E16/server
-        run: npm test -- --passWithNoTests
+        # Agregamos --coverage para que SonarCloud vea qué código está probado
+        run: npm test -- --passWithNoTests --coverage
+
+      # === AQUÍ AGREGAMOS SONARCLOUD ===
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          # Le decimos a Sonar que busque en la raíz del repo
+          projectBaseDir: .
 
   # ============================================
   # JOB 2: Frontend + Backend + Selenium E2E
@@ -38,6 +51,9 @@ jobs:
   e2e-tests:
     name: E2E Selenium Tests
     runs-on: ubuntu-latest
+    
+    # Este job espera a que el backend (y Sonar) terminen para no saturar
+    needs: backend-tests
 
     services:
       mongodb:
@@ -46,7 +62,6 @@ jobs:
           - 27017:27017
 
     env:
-      # CAMBIO CRÍTICO: Usar 127.0.0.1 en lugar de localhost para evitar errores de Node v17+
       MONGODB_URI: mongodb://127.0.0.1:27017/e2e_db
       JWT_SECRET: "secreto_temporal_para_ci"
       PORT: 3000
@@ -60,48 +75,38 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
+          # Corregimos las rutas del cache
           cache-dependency-path: |
-            server/package-lock.json
-            client/package-lock.json
+            Proyecto-E16/server/package-lock.json
+            Proyecto-E16/client/package-lock.json
 
       - name: Instalar dependencias Backend
-        working-directory: ./server
+        working-directory: ./Proyecto-E16/server  # <--- RUTA CORREGIDA
         run: npm ci
 
       - name: Instalar dependencias Frontend
-        working-directory: ./client
+        working-directory: ./Proyecto-E16/client  # <--- RUTA CORREGIDA
         run: npm install
 
       - name: Build Frontend
-        working-directory: ./client
+        working-directory: ./Proyecto-E16/client  # <--- RUTA CORREGIDA
         run: npm run build
-
-      # === PASO DE DEPURACIÓN ===
-      # Esto nos mostrará en el log exactamente cómo quedó la carpeta dist
-      - name: 🔍 Ver estructura del Build
-        working-directory: ./client
-        run: |
-          echo "Listando contenido de la carpeta dist:"
-          ls -R dist
 
       - name: Instalar herramientas globales
         run: npm install -g angular-http-server wait-on
 
       - name: Start Backend & Frontend & Run Selenium
         run: |
-          # 1. Iniciar Backend
+          # 1. Iniciar Backend (Corrigiendo ruta cd)
           echo "🔵 Iniciando Backend en puerto 3000..."
-          cd server
-          PORT=3000 nohup npm start > ../backend.log 2>&1 &
+          cd Proyecto-E16/server    # <--- RUTA CORREGIDA
+          PORT=3000 nohup npm start > ../../backend.log 2>&1 &
           sleep 5
 
-          # 2. Iniciar Frontend
+          # 2. Iniciar Frontend (Corrigiendo ruta cd)
           echo "🟢 Sirviendo Angular (Frontend) en puerto 4200..."
-          cd ../client
+          cd ../client              # Estamos en Proyecto-E16/server, bajamos a Proyecto-E16/client
           
-          # CAMBIO IMPORTANTE: Añadimos "/browser" al final de la ruta.
-          # Si en el paso de depuración ves que no existe 'browser', quítalo,
-          # pero en Angular moderno (v17+) es el estándar.
           if [ -d "./dist/client/browser" ]; then
             PATH_TO_SERVE="./dist/client/browser"
           else
@@ -109,18 +114,19 @@ jobs:
           fi
           
           echo "Sirviendo desde: $PATH_TO_SERVE"
-          nohup angular-http-server --path $PATH_TO_SERVE -p 4200 > ../frontend.log 2>&1 &
+          nohup angular-http-server --path $PATH_TO_SERVE -p 4200 > ../../frontend.log 2>&1 &
           sleep 2
 
           # 3. Esperar a los servidores
           echo "⏳ Esperando a que los servidores respondan..."
-          cd ..
+          cd ../..  # Volvemos a la raíz del repositorio
           npx wait-on tcp:3000 tcp:4200 --timeout 60000
 
           # 4. Ejecutar Tests
           echo "🚀 Ejecutando pruebas Selenium..."
-          cd client
-          # Ejecutamos el test que moviste dentro de client/tests/
+          # Asumimos que moviste la carpeta tests dentro de Proyecto-E16/client/tests
+          # Si 'tests' está en la raíz del repo, usa: tests/selenium-suite.spec.js
+          cd Proyecto-E16/client
           npx mocha tests/selenium-suite.spec.js --timeout 60000
 
       - name: Show Server Logs
