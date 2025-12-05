@@ -45,6 +45,17 @@ jobs:
           # Le decimos a Sonar que busque en la raíz del repo
           projectBaseDir: .
 
+      - name: Subir reporte a Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Esta línea es CLAVE: Apuntamos al mismo archivo que generó Jest
+          file: Proyecto-E16/server/coverage/lcov.info
+          # Opcional: Le dice a Coveralls dónde empieza la raíz del código real
+          base-path: Proyecto-E16/server
+        env:
+          # Necesario para repos privados
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
   # ============================================
   # JOB 2: Frontend + Backend + Selenium E2E
   # ============================================
