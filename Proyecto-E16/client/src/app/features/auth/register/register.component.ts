@@ -2,15 +2,16 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+
+import { AuthService } from '../../../services/auth.service'; 
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule], // HttpClientModule ya no hace falta aquí
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css'],
+  styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   username_ = '';
@@ -20,7 +21,8 @@ export class RegisterComponent {
   acceptTerms = false;
   errorMessage = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  // 2. Inyectamos AuthService en lugar de HttpClient
+  constructor(private authService: AuthService, private router: Router) {}
 
   formValid(): boolean {
     return (
@@ -46,17 +48,19 @@ export class RegisterComponent {
       password_: this.password_,
     };
 
-    // Llamada al backend
-    this.http.post('http://localhost:3000/api/auth/register', userData)
+    // 3. Usamos el servicio. 
+    // Si mañana cambia la URL del backend, solo la cambias en auth.service.ts
+    this.authService.register(userData)
       .subscribe({
-        next: (res: any) => {
+        next: (res) => {
           console.log('Usuario registrado:', res);
-          // Redirigir al login
+          // Redirigir al login para que inicie sesión
           this.router.navigate(['/login']);
         },
         error: (err) => {
           console.error('Error al registrar:', err);
-          this.errorMessage = err.error?.message || 'Error al registrar usuario';
+          // Manejo seguro del mensaje de error
+          this.errorMessage = err.error?.message || 'Error al conectar con el servidor';
         }
       });
   }

@@ -1,139 +1,198 @@
-<div *ngIf="errorMessage; else playlistsList" class="text-red-400 text-center mt-10">
-  {{ errorMessage }}
-</div>
+<!-- Contenedor Principal -->
+<div class="min-h-screen p-8 text-gray-100 font-sans bg-[#0B0B12]">
 
-<ng-template #playlistsList>
-  <div *ngIf="playlists.length > 0; else noPlaylists">
-    <!-- Cabecera con botón "Nueva playlist" -->
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-3xl font-bold text-white">Mis Playlists</h1>
-
-      <button
-        (click)="openCreateModal()"
-        class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-full transition"
-      >
-        ➕ Nueva playlist
-      </button>
-    </div>
-
-    <!-- Grid de playlists -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div
-        *ngFor="let p of playlists"
-        (click)="goToPlaylist(p._id)"
-        class="bg-gray-800 rounded-xl shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105 flex flex-col"
-      >
-        <!-- Imagen de portada -->
-        <img
-          [src]="'https://images.unsplash.com/photo-1669299866851-c3b48c7965ac?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDd8fHxlbnwwfHx8fHw%3D'"
-          alt="Cover"
-          class="w-full h-48 object-cover rounded-t-xl"
-        />
-
-        <!-- Contenido de la playlist -->
-        <div class="p-4 flex flex-col h-full">
-          <h2 class="text-white font-semibold text-lg truncate">
-            {{ p.name_ || 'Sin nombre' }}
-          </h2>
-          <p class="text-gray-400 text-sm mb-2 truncate">
-            {{ p.description_ || 'Sin descripción' }}
-          </p>
-          <p class="text-gray-300 text-xs mb-4">
-            {{ p.songs_?.length || 0 }} canciones
-          </p>
-
-          <!-- Botones inferiores -->
-          <div class="mt-auto flex gap-2">
-            <button
-              class="bg-green-600 hover:bg-green-500 text-white font-semibold py-1 px-4 rounded-full transition"
-              (click)="goToPlaylist(p._id); $event.stopPropagation()"
-            >
-              Ver playlist
-            </button>
-
-            <button
-              class="bg-red-600 hover:bg-red-500 text-white font-semibold py-1 px-4 rounded-full transition"
-              (click)="deletePlaylist(p, $event); $event.stopPropagation()"
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Banner de Error -->
+  <div *ngIf="errorMessage; else playlistsList" 
+       class="text-red-400 text-center mt-10 text-lg font-medium bg-red-500/10 p-4 rounded-lg border border-red-500/20">
+    {{ errorMessage }}
   </div>
 
-  <!-- Estado vacío: no hay playlists -->
-  <ng-template #noPlaylists>
-    <div class="text-center mt-16">
-      <p class="text-gray-400 mb-4">
-        No hay playlists todavía.
-      </p>
-      <button
-        (click)="openCreateModal()"
-        class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full transition"
-      >
-        ➕ Crear mi primera playlist
-      </button>
+  <ng-template #playlistsList>
+    <div *ngIf="playlists.length > 0; else noPlaylists">
+      
+      <!-- Cabecera -->
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold">Mis Playlists</h1>
+        <button (click)="openCreateModal()" class="btn-action btn-blue">
+          <span class="plus-circle">+</span>
+          <span>Nueva playlist</span>
+        </button>
+      </div>
+
+      <!-- Grid de Playlists -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-20">
+        
+        <!-- Tarjeta Única (Botones dentro) -->
+        <div
+          *ngFor="let p of playlists"
+          (click)="goToPlaylist(p._id)"
+          class="bg-[#141422] rounded-[1.25rem] border border-gray-800 shadow-[0_10px_25px_rgba(0,0,0,0.45)] overflow-hidden flex flex-col cursor-pointer transition-transform hover:-translate-y-1 h-full group"
+        >
+          <!-- Imagen -->
+          <img
+            [src]="getImage(p)"
+            alt="Cover"
+            class="w-full h-48 object-cover"
+          />
+
+          <!-- Contenido de la tarjeta (Flex column para usar mt-auto) -->
+          <div class="p-4 flex flex-col flex-grow">
+            <h2 class="text-white font-semibold text-lg truncate">{{ p.name_ || 'Sin nombre' }}</h2>
+            <p class="text-gray-400 text-sm mb-2 truncate">{{ p.description_ || 'Sin descripción' }}</p>
+            <p class="text-gray-300 text-xs mb-4">
+              {{ p.songs_?.length || 0 }} canciones
+            </p>
+
+            <!-- Botones de Acción (Pegados al fondo con mt-auto) -->
+            <div class="mt-auto flex gap-2 pt-2 items-center">
+              <!-- Ver playlist -->
+              <button
+                class="btn-pill btn-primary"
+                (click)="goToPlaylist(p._id); $event.stopPropagation()"
+              >
+                Ver playlist
+              </button>
+
+              <!-- Eliminar -->
+              <button
+                class="btn-pill btn-danger"
+                (click)="deletePlaylist(p, $event); $event.stopPropagation()"
+              >
+                Eliminar
+              </button>
+
+              <!-- Botón tres puntos (Editar) -->
+              <button
+                class="ml-auto px-2 py-1 rounded-full hover:bg-gray-800 text-gray-300 hover:text-white transition-colors"
+                (click)="openEditModal(p); $event.stopPropagation()"
+                title="Editar playlist"
+              >
+                ⋮
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+
+    <!-- Estado Vacío -->
+    <ng-template #noPlaylists>
+      <div class="text-center mt-20 flex flex-col items-center">
+        <p class="text-gray-400 mb-6 text-lg">No hay playlists todavía.</p>
+        <button (click)="openCreateModal()" 
+                class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-500 hover:shadow-lg transition-all duration-200">
+          ➕ Crear mi primera playlist
+        </button>
+      </div>
+    </ng-template>
   </ng-template>
-</ng-template>
 
-<!-- 🟦 MODAL: Crear nueva playlist -->
-<div
-  *ngIf="showCreateModal"
-  class="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
-  (click)="closeCreateModal()"
->
-  <div
-    class="bg-gray-900 p-6 rounded-2xl w-full max-w-md shadow-xl"
-    (click)="$event.stopPropagation()"
-  >
-    <h2 class="text-2xl font-semibold mb-4 text-white">
-      Nueva playlist
-    </h2>
+</div>
 
-    <label class="block mb-3 text-sm text-gray-300">
+<!-- Modal CREAR Playlist -->
+<div *ngIf="showCreateModal" 
+     class="fixed inset-0 bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm transition-opacity" 
+     (click)="closeCreateModal()">
+  
+  <!-- Modal Box -->
+  <div class="bg-gray-900 p-6 rounded-2xl w-full max-w-md shadow-2xl border border-gray-700" 
+       (click)="$event.stopPropagation()">
+    
+    <h2 class="text-2xl font-semibold mb-6 text-white">Nueva playlist</h2>
+
+    <label class="block mb-4 text-sm text-gray-300 font-medium">
       Nombre
       <input
         type="text"
         [(ngModel)]="newPlaylistName"
-        class="mt-1 w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="mt-2 w-full p-2.5 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-500"
         placeholder="Ej. Canciones para estudiar"
       />
     </label>
 
-    <label class="block mb-3 text-sm text-gray-300">
+    <label class="block mb-4 text-sm text-gray-300 font-medium">
       Descripción (opcional)
       <textarea
         rows="3"
         [(ngModel)]="newPlaylistDescription"
-        class="mt-1 w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="mt-2 w-full p-2.5 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-500 resize-none"
         placeholder="Ej. Mi playlist chill para concentrarme"
       ></textarea>
     </label>
 
-    <label class="flex items-center gap-2 text-sm text-gray-300 mb-4">
+    <label class="flex items-center gap-2 text-sm text-gray-300 mb-6 cursor-pointer select-none">
       <input
         type="checkbox"
         [(ngModel)]="newPlaylistIsPublic"
-        class="rounded bg-gray-800 border-gray-600"
+        class="w-4 h-4 rounded accent-blue-600 focus:ring-blue-500 focus:ring-2 bg-gray-700 border-gray-600"
       />
       Hacer playlist pública
     </label>
 
-    <div class="flex justify-end gap-3">
-      <button
-        (click)="closeCreateModal()"
-        class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition"
-      >
+    <!-- Botones del Modal -->
+    <div class="flex justify-end gap-3 mt-8">
+      <button (click)="closeCreateModal()" 
+              class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition font-medium">
         Cancelar
       </button>
-      <button
-        (click)="createPlaylist()"
-        class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded transition"
-      >
+      <button (click)="createPlaylist()" 
+              class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition shadow-lg">
         Crear
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal EDITAR Playlist -->
+<div *ngIf="showEditModal" 
+     class="fixed inset-0 bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm transition-opacity"
+     (click)="closeEditModal()">
+
+  <div class="bg-gray-900 p-6 rounded-2xl w-full max-w-md shadow-2xl border border-gray-700"
+       (click)="$event.stopPropagation()">
+    
+    <h2 class="text-2xl font-semibold mb-6 text-white">
+      Editar playlist
+    </h2>
+
+    <label class="block mb-4 text-sm text-gray-300 font-medium">
+      Nombre
+      <input
+        type="text"
+        [(ngModel)]="editName"
+        class="mt-2 w-full p-2.5 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-500"
+        placeholder="Nombre de la playlist"
+      />
+    </label>
+
+    <label class="block mb-4 text-sm text-gray-300 font-medium">
+      Descripción
+      <textarea
+        rows="3"
+        [(ngModel)]="editDescription"
+        class="mt-2 w-full p-2.5 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-500 resize-none"
+        placeholder="Descripción de la playlist"
+      ></textarea>
+    </label>
+
+    <label class="flex items-center gap-2 text-sm text-gray-300 mb-6 cursor-pointer select-none">
+      <input
+        type="checkbox"
+        [(ngModel)]="editIsPublic"
+        class="w-4 h-4 rounded accent-blue-600 focus:ring-blue-500 focus:ring-2 bg-gray-700 border-gray-600"
+      />
+      Playlist pública
+    </label>
+
+    <div class="flex justify-end gap-3 mt-8">
+      <button (click)="closeEditModal()" 
+              class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition font-medium">
+        Cancelar
+      </button>
+      <button (click)="saveEditPlaylist()" 
+              class="bg-green-600 hover:bg-green-500 text-white font-semibold py-2 px-4 rounded-lg transition shadow-lg">
+        Guardar cambios
       </button>
     </div>
   </div>

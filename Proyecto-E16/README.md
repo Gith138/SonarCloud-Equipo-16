@@ -146,7 +146,7 @@ Json:
 
 ### Estructura para iniciar sesion
 ```
-POST http://localhost:3000/api/users/login
+POST http://localhost:3000/api/auth/login
 Json:
 {
   "email_": "usuario@ejemplo.com",
@@ -218,4 +218,10 @@ npm install --save-dev @types/multer
 Instalar el sharp:
 ```
 npm install sharp
+```
+
+
+Instalar SuperTest:
+```
+npm install --save-dev supertest @types/supertest
 ```

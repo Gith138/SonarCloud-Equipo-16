@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard'; // 1. IMPORTANTE: Importar el guard
 
 import { HomeComponent } from './features/home/home.component';
+import { NotificationsComponent } from './features/notifications/notifications.component';
 import { FriendsComponent } from './features/friends/friends.component';
 import { SettingsComponent } from './features/settings/settings.component';
 import { PlaylistsComponent } from './features/playlists/playlists.component';
@@ -16,37 +17,42 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
 
   // --- RUTAS PRIVADAS (El Guard protege la entrada) ---
+  {
+    path: 'notifications', 
+    component: NotificationsComponent,
+    canActivate: [authGuard] 
+  },
   { 
     path: 'settings', 
     component: SettingsComponent,
-    canActivate: [authGuard] // <--- Añadido aquí
+    canActivate: [authGuard] 
   },
   { 
     path: 'home', 
     component: HomeComponent,
-    canActivate: [authGuard] // <--- Añadido aquí
+    canActivate: [authGuard] 
   },
   { 
     path: 'friends', 
     component: FriendsComponent,
-    canActivate: [authGuard] // <--- Añadido aquí
+    canActivate: [authGuard] 
   },
 
   // Playlists y sus sub-rutas
   { 
     path: 'playlists', 
     component: PlaylistsComponent,
-    canActivate: [authGuard] // <--- Añadido aquí
+    canActivate: [authGuard] 
   },
   { 
     path: 'playlists/:id', 
     component: PlaylistDetailComponent,
-    canActivate: [authGuard] // <--- Añadido aquí
+    canActivate: [authGuard] 
   },
   { 
     path: 'playlists/:id/add-song', 
     component: AddSongComponent,
-    canActivate: [authGuard] // <--- Añadido aquí
+    canActivate: [authGuard] 
   },
 
   // --- REDIRECCIONES ---

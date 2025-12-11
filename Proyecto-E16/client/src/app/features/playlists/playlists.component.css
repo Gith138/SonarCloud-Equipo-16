@@ -1,6 +1,7 @@
 :host {
   display: block;
   animation: fadeIn 0.6s ease-in-out;
+  background-color: #000; /* Dark background fallback */
 }
 
 @keyframes fadeIn {
@@ -12,4 +13,160 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+/* Contenedor Principal */
+.playlists-page {
+  /* El fondo global ya viene de styles.css, aquí ajustamos padding */
+  @apply min-h-screen p-8 text-gray-100 font-sans;
+}
+
+/* Banner de Error */
+.error-banner {
+  @apply text-red-400 text-center mt-10 text-lg font-medium bg-red-500/10 p-4 rounded-lg border border-red-500/20;
+}
+
+/* Cabecera */
+.header-section {
+  @apply flex items-center justify-between mb-8;
+}
+
+.page-title {
+  @apply text-3xl font-bold;
+}
+
+/* Botón "Nueva Playlist" (Principal) */
+.btn-new {
+  @apply bg-blue-600 text-white font-semibold py-2 px-4 rounded-full;
+  @apply hover:bg-blue-500 hover:shadow-lg transition-all duration-200;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-500 shadow-blue-900/20;
+}
+
+.btn-danger {
+  @apply bg-red-500/10 text-red-400 border border-red-500/30 
+  hover:bg-red-500 hover:text-white hover:border-transparent;
+}
+
+/* 🔹 Grid y Tarjetas */
+.playlists-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+}
+
+.playlist-card {
+  @apply mb-8 p-6 bg-[#141422] rounded-[1.25rem];
+  @apply border border-gray-800;
+  @apply shadow-[0_10px_25px_rgba(0,0,0,0.45)];
+}
+
+.card-img {
+  @apply w-full h-48 object-cover rounded-t-xl;
+}
+
+.card-content {
+  @apply p-4 flex flex-col h-full;
+}
+
+.card-title {
+  @apply text-white font-semibold text-lg truncate;
+}
+
+.card-desc {
+  @apply text-gray-400 text-sm mb-2 truncate;
+}
+
+.card-meta {
+  @apply text-gray-300 text-xs mb-4;
+}
+
+/* Botones dentro de la tarjeta */
+.card-actions {
+  @apply mt-auto flex gap-2;
+}
+
+.btn-view {
+  @apply bg-green-600 hover:bg-green-500 text-white font-semibold py-1 px-4 rounded-full text-sm transition shadow-sm;
+}
+
+.btn-delete {
+  @apply bg-red-600 hover:bg-red-500 text-white font-semibold py-1 px-4 rounded-full text-sm transition shadow-sm;
+}
+
+/* 🔹 Estado Vacío */
+.empty-state {
+  @apply text-center mt-20 flex flex-col items-center;
+}
+
+.empty-text {
+  @apply text-gray-400 mb-6 text-lg;
+}
+
+/* 🟦 Modal de Creación */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm transition-opacity;
+}
+
+.modal-box {
+  @apply bg-gray-900 p-6 rounded-2xl w-full max-w-md shadow-2xl border border-gray-700;
+}
+
+.modal-title {
+  @apply text-2xl font-semibold mb-6 text-white;
+}
+
+/* Inputs del Modal (Consistentes con el resto de la app) */
+.input-label {
+  @apply block mb-4 text-sm text-gray-300 font-medium;
+}
+
+.input-field {
+  @apply mt-2 w-full p-2.5 rounded-lg bg-gray-800 text-white border border-gray-700;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  @apply transition-all duration-200 placeholder-gray-500;
+}
+
+.checkbox-label {
+  @apply flex items-center gap-2 text-sm text-gray-300 mb-6 cursor-pointer select-none;
+}
+
+/* Botones del Modal */
+.modal-actions {
+  @apply flex justify-end gap-3;
+}
+
+.btn-cancel {
+  @apply bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition font-medium;
+}
+
+.btn-create {
+  @apply bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition shadow-lg;
+}
+
+.btn-pill {
+  @apply px-4 py-1.5 rounded-full text-[0.85rem] font-semibold transition-all duration-200 flex items-center gap-1;
+}
+
+
+.btn-remove {
+  @apply bg-red-600/10 text-red-400 border border-red-600/30;
+  @apply hover:bg-red-600 hover:text-white hover:border-transparent;
+}
+
+.btn-action {
+  @apply font-semibold py-2 px-6 rounded-full shadow-md transition-all duration-200;
+  @apply transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2;
+}
+
+.btn-blue {
+  @apply bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20;
+}
+
+.plus-circle {
+  @apply inline-flex items-center justify-center w-6 h-6 rounded-full
+         bg-blue-500/25 border border-blue-300/40 mr-2;
+  font-size: 1.1rem;   /* un pelín más grande */
+  line-height: 0;      /* quita la altura de línea para centrar verticalmente */
 }

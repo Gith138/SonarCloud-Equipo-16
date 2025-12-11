@@ -3,12 +3,26 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MusicService } from '../../services/music.service';
 
+import { SafeUrl } from '@angular/platform-browser';
+
+import { UserService } from '../../services/user.service';
+import { NotificationService } from '../../services/notification.service';
+
+// Interfaz local para tipar amigos en el Home
+interface FriendInHome {
+  _id: string;
+  username_: string;
+  email_: string;
+  displayAvatar?: SafeUrl | string; // Propiedad para la imagen visual
+}
+
+
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  styleUrl: './home.component.css',
 })
 export class HomeComponent {
   searchQuery = '';
@@ -24,17 +38,55 @@ export class HomeComponent {
   showAddToPlaylistModal = false;
   songToAdd: any = null;
 
+ // Variables para Recomendación
+  showRecommendModal = false;
+  songToRecommend: any = null;
+  myFriends: FriendInHome[] = []; // Lista de amigos con avatar
+  selectedFriendId: string = '';
+  recommendMessage: string = '';
+
   private likedSongsList: any[] = [];
   private likedKeys = new Set<string>();
 
-  constructor(private musicService: MusicService) {}
+  constructor(private musicService: MusicService, private userService: UserService, private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.loadLikedSongs();
     this.loadRecommendations();
     this.loadUserPlaylists();
+    this.loadFriends();
   }
 
+   loadFriends() {
+    this.userService.getFriendsList().subscribe({
+      next: (res: any[]) => {
+        this.myFriends = res || [];
+        
+        // Iteramos sobre cada amigo para cargar su foto usando la caché
+        this.myFriends.forEach(friend => {
+          this.loadFriendAvatar(friend);
+        });
+      },
+      error: (err) => console.error('Error cargando amigos', err)
+    });
+  }
+    // Helper para cargar imagen individual (Usa la caché del servicio)
+  private loadFriendAvatar(friend: FriendInHome) {
+    // 1. Ponemos placeholder inicial
+    friend.displayAvatar = 'assets/perfil.png'; 
+
+    // 2. Pedimos la foto al servicio (si ya está en RAM, es instantáneo)
+    this.userService.getAvatar(friend._id).subscribe({
+      next: (safeUrl) => {
+        friend.displayAvatar = safeUrl;
+      },
+      error: () => { /* Se queda con el placeholder */ }
+    });
+  }
+  
+  // -----------------------------
+  // PLAYLISTS Y RECOMENDACIONES
+  // -----------------------------
   loadUserPlaylists(): void {
     if (!this.token) return;
 
@@ -277,5 +329,51 @@ export class HomeComponent {
     this.showAddToPlaylistModal = false;
     this.songToAdd = null;
     this.selectedPlaylist = null;
+  }
+
+
+  // -----------------------------
+  // RECOMENDACIONES
+  // -----------------------------
+  // ==========================================
+  // LÓGICA DEL MODAL DE RECOMENDACIÓN
+  // ==========================================
+  
+  openRecommendModal(song: any) {
+    this.songToRecommend = song;
+    this.selectedFriendId = ''; // Resetear selección
+    this.recommendMessage = '';
+    this.showRecommendModal = true;
+  }
+
+  closeRecommendModal() {
+    this.showRecommendModal = false;
+    this.songToRecommend = null;
+  }
+
+  selectFriend(friendId: string) {
+    this.selectedFriendId = friendId;
+  }
+
+  sendRecommendation() {
+    if (!this.selectedFriendId) {
+      alert('Por favor, selecciona un amigo.');
+      return;
+    }
+
+    this.notificationService.recommendSongToFriend(
+      this.selectedFriendId,
+      this.songToRecommend,
+      this.recommendMessage
+    ).subscribe({
+      next: () => {
+        alert('Recomendación enviada correctamente.');
+        this.closeRecommendModal();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al enviar la recomendación.');
+      }
+    });
   }
 }

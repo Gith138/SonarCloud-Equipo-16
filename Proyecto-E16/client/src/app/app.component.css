@@ -1,0 +1,101 @@
+/* ===========================================
+   NAVBAR CONTAINER
+   =========================================== */
+.navbar-container {
+  @apply flex items-center justify-between px-6 py-3;
+  @apply bg-[#0b0b12] text-gray-200 border-b border-[#1f1f2a];
+  @apply sticky top-0 z-50 transition-all duration-300;
+  box-shadow: 0 10px 25px rgba(10, 14, 58, 0.5);
+}
+
+/* ===========================================
+   LOGO
+   =========================================== */
+.logo-section {
+  @apply flex items-center gap-3 select-none cursor-pointer;
+}
+
+.logo-img {
+  @apply w-9 h-9 object-contain;
+  @apply drop-shadow-[0_0_6px_rgba(59,130,246,0.6)];
+}
+
+.logo-text {
+  @apply text-2xl font-bold text-blue-400 tracking-wide;
+}
+
+/* ===========================================
+   SECCIÓN DERECHA (Links + Iconos)
+   =========================================== */
+.right-section {
+  @apply flex items-center gap-6;
+}
+
+/* --- Links de Navegación --- */
+.links-section {
+  @apply flex items-center gap-2 text-sm font-medium mr-4;
+}
+
+.nav-link {
+  @apply relative px-4 py-2 rounded-full text-sm font-medium;
+  @apply text-gray-400 cursor-pointer transition-all duration-200;
+  @apply hover:text-white hover:bg-white/5;
+}
+
+/* Link Activo (Estilo pastilla azul) */
+.nav-link-active {
+  @apply bg-blue-600 text-white shadow-lg shadow-blue-500/30;
+}
+
+/* ===========================================
+   PERFIL (Avatar + Dropdown)
+   =========================================== */
+.profile-wrapper {
+  @apply relative;
+}
+
+/* Botón Circular del Avatar */
+.profile-btn {
+  @apply w-10 h-10 rounded-full border-2 border-gray-700 bg-[#111827];
+  @apply flex items-center justify-center cursor-pointer overflow-hidden;
+  @apply transition-all duration-200 hover:border-blue-500 hover:scale-105;
+}
+
+.avatar-nav {
+  @apply w-full h-full rounded-full object-cover;
+}
+
+.avatar-placeholder {
+  @apply text-sm font-bold text-white bg-gradient-to-br from-blue-600 to-purple-600;
+  @apply flex items-center justify-center w-full h-full;
+}
+
+/* --- Menú Desplegable --- */
+.profile-menu {
+  @apply absolute right-0 mt-3 w-48 bg-[#1f2937] border border-gray-700;
+  @apply rounded-xl shadow-2xl py-2 z-50 overflow-hidden;
+  animation: slideDown 0.2s ease-out;
+}
+
+.profile-menu-item {
+  @apply w-full text-left px-4 py-3 text-sm text-gray-300;
+  @apply hover:bg-gray-700 hover:text-white cursor-pointer flex items-center;
+  @apply transition-colors duration-150;
+}
+
+.logout-item {
+  @apply text-red-400 hover:bg-red-500/10 hover:text-red-300 border-t border-gray-700 mt-1;
+}
+
+/* ===========================================
+   LAYOUT PRINCIPAL
+   =========================================== */
+.main-content {
+  @apply min-h-screen w-full bg-[#0B0C15];
+}
+
+/* Animación del menú */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

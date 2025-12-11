@@ -31,7 +31,7 @@ export const getPlaylists = async (req: Request, res: Response) => {
         { owner_group_: user_id },
         { isPublic_: true }
       ]
-    }).populate("owner_ songs_");
+    }).populate("songs_").populate("owner_", "username_").populate("owner_group_", "username_");
 
     res.json(playlists);
   } catch (error) {
@@ -39,16 +39,44 @@ export const getPlaylists = async (req: Request, res: Response) => {
   }
 };
 
-export const getPlaylistById = async (req: Request, res: Response) => {
+/* export const getPlaylistById = async (req: Request, res: Response) => {
   try {
     const user_id = (req as any).user?.id;
-    const playlist = await Playlist.findById(req.params.id).populate("owner_ songs_");
+    const playlist = await Playlist.findById(req.params.id).populate("songs_").populate("owner_", "username_").populate("owner_group_", "username_");
 
     if (!playlist) return res.status(404).json({ message: "Playlist no encontrada" });
 
     const is_owner = (playlist.owner_ as any)?._id?.toString() ?? (playlist.owner_ as any).toString();
     const is_shared_user = Array.isArray(playlist.owner_group_) && playlist.owner_group_.some((id: any) => id.toString() === user_id);
     
+    if (!playlist.isPublic_ && !is_owner && !is_shared_user) return res.status(403).json({ message: "Acceso denegado: playlist privada" });
+
+    res.json(playlist);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener playlist", error });
+  }
+}; */
+
+export const getPlaylistById = async (req: Request, res: Response) => {
+  try {
+    const user_id = (req as any).user?.id;
+    const playlist = await Playlist.findById(req.params.id)
+        .populate("songs_")
+        .populate("owner_", "username_")
+        .populate("owner_group_", "username_");
+
+    if (!playlist) return res.status(404).json({ message: "Playlist no encontrada" });
+
+    // 👇 CORRECCIÓN AQUÍ 👇
+    // 1. Obtenemos el ID del dueño
+    const ownerId = (playlist.owner_ as any)?._id?.toString() ?? (playlist.owner_ as any).toString();
+    
+    // 2. Comparamos si es igual al usuario logueado (Devuelve true/false)
+    const is_owner = ownerId === user_id; 
+
+    const is_shared_user = Array.isArray(playlist.owner_group_) && playlist.owner_group_.some((id: any) => id.toString() === user_id);
+    
+    // Ahora esta lógica funcionará bien
     if (!playlist.isPublic_ && !is_owner && !is_shared_user) return res.status(403).json({ message: "Acceso denegado: playlist privada" });
 
     res.json(playlist);
@@ -65,10 +93,16 @@ export const updatePlaylist = async (req: Request, res: Response) => {
     if (!playlist) return res.status(404).json({ message: "Playlist no encontrada" });
     if (!playlist.isPublic_ && playlist.owner_.toString() !== user_id) return res.status(403).json({ message: "No tienes permiso para editar esta playlist privada" });
     
+    const updates: any = {};
 
-    const updated = await Playlist.findByIdAndUpdate(
+    if (req.body.name_ !== undefined) updates.name_ = req.body.name_;
+    if (req.body.description_ !== undefined) updates.description_ = req.body.description_;
+    if (req.body.cover_ !== undefined) updates.cover_ = req.body.cover_;
+    if (typeof req.body.isPublic_ === "boolean") updates.isPublic_ = req.body.isPublic_;
+
+   const updated = await Playlist.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updates,
       { new: true }
     );
     res.json({ message: "Playlist actualizada", playlist: updated });
@@ -138,7 +172,6 @@ export const addSongToPlaylist = async (req: Request, res: Response) => {
           ? `https://img.youtube.com/vi/${video_id}/hqdefault.jpg`
           : "https://placehold.co/200x200?text=Sin+Portada",
         genre_: genre || "Desconocido",
-        durationInSeconds_: 0,
         uploadedAt_: new Date(),
         addedByUserId_: new mongoose.Types.ObjectId(String(user_id)),
       });

@@ -1,0 +1,75 @@
+<div class="notification-widget" (clickOutside)="clickout($event)">
+  
+  <button class="bell-btn" (click)="toggleMenu()" [class.has-unread]="unreadCount > 0">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="bell-icon">
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+    </svg>
+    <span *ngIf="unreadCount > 0" class="badge-count">{{ unreadCount }}</span>
+  </button>
+
+  <div class="dropdown-menu" *ngIf="isOpen">
+    <div class="dropdown-header">
+      <h3>Notificaciones</h3>
+      <small *ngIf="notifications.length > 0" (click)="clearAll($event)" class="clear-link">Borrar todo</small>
+    </div>
+
+    <div class="dropdown-content">
+      <div *ngIf="notifications.length === 0" class="empty">
+        No tienes notificaciones
+      </div>
+
+      <div *ngFor="let notif of notifications" 
+           class="notif-item" 
+           [class.unread]="!notif.isRead_"
+           (click)="handleNotificationClick(notif)">
+        
+        <!-- 🔥 IMAGEN SEGURA -->
+        <img [src]="notif.displayAvatar" class="avatar-mini" alt="Avatar">
+        
+        <div class="info">
+          <!-- 1. ENCABEZADO: Quién y Qué -->
+          <p class="text">
+            <strong>{{ notif.senderId_?.username_ || 'Sistema' }}</strong>
+            
+            <span *ngIf="notif.type_ === 'friend_request'"> quiere ser tu amigo.</span>
+            <span *ngIf="notif.type_ === 'friend_accept'"> aceptó tu solicitud.</span>
+            <span *ngIf="notif.type_ === 'system_alert'">: {{ notif.message_ }}</span>
+            
+            <!-- Texto simple para recomendación -->
+            <span *ngIf="notif.type_ === 'song_recommendation'"> te recomienda:</span>
+          </p>
+
+          <!-- 2. CAJA DE LA CANCIÓN -->
+          <div *ngIf="notif.type_ === 'song_recommendation'" 
+               class="mt-1 p-2 bg-black/20 rounded flex items-center gap-3 border border-gray-700/50">
+             
+             <!-- Foto -->
+             <img 
+               [src]="notif.data_?.thumbnail || 'assets/default-album.png'" 
+               class="w-10 h-10 rounded object-cover shadow-sm flex-shrink-0"
+             >
+             
+              <!-- Título -->
+             <div class="overflow-hidden w-full">
+               <p class="text-xs text-white font-bold whitespace-normal break-words leading-tight"
+                  [innerHTML]="notif.data_?.title">
+               </p>
+             </div>
+          </div>
+          <!-- 3. MENSAJE DEL AMIGO (Abajo y fuera de la caja) -->
+          <p *ngIf="notif.type_ === 'song_recommendation' && notif.message_" 
+             class="mt-1.5 text-xs text-gray-400 italic leading-snug">
+             "{{ notif.message_ }}"
+          </p>
+          
+          <!-- 4. FECHA -->
+          <span class="time">{{ notif.formattedDate }}</span>
+        </div>
+
+        
+        <span class="indicator" *ngIf="!notif.isRead_">•</span>
+      </div>
+    </div>
+  </div>
+</div>

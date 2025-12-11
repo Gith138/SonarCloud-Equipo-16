@@ -14,6 +14,7 @@ import authRoutes from "./routes/auth_routes";
 import streamRoutes from "./routes/stream_routes";
 import youtubeRoutes from "./routes/youtube_routes";
 import recommendationRoutes from "./routes/recommendation_routes";
+import notificationRoutes from "./routes/notification_routes";
 
 const app = express();
 app.use(cors());
@@ -42,6 +43,7 @@ mongoose.connect(process.env.MONGO_URI!)
     app.use("/api/playlists", playlistsRoutes);
     app.use("/api", streamRoutes);
     app.use("/api", recommendationRoutes);
+    app.use("/api/notifications", notificationRoutes);
 
     // ---------------------------------------------------------
     // 3. LEVANTAR SERVIDOR

@@ -41,6 +41,10 @@ export class MusicService {
     return this.http.post(`${this.apiUrl}/playlists`, body, this.getAuthOptions());
   }
 
+  updatePlaylist(id: string, updates: any) {
+    return this.http.put(`${this.apiUrl}/playlists/${id}`, updates, this.getAuthOptions());
+  }
+
   deletePlaylist(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/playlists/${id}`, this.getAuthOptions());
   }
@@ -63,6 +67,10 @@ export class MusicService {
 
   getSongs(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/songs`, this.getAuthOptions());
+  }
+
+  getSongById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/songs/${id}`, this.getAuthOptions());
   }
 
   addSong(song: any) {

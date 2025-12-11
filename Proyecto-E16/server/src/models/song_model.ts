@@ -6,7 +6,6 @@ export interface Song extends Document {
   youtubeURL_: string;
   thumbnailURL_: string; // Miniatura
   genre_?: string;
-  durationInSeconds_: number;
   uploadedAt_: Date;
   addedByUserId_?: mongoose.Types.ObjectId;
 }
@@ -17,7 +16,6 @@ const songSchema: Schema = new Schema({
   youtubeURL_: { type: String, required: true, unique: true },
   thumbnailURL_: { type: String, required: true },
   genre_: { type: String },
-  durationInSeconds_: { type: Number, required: true },
   uploadedAt_: { type: Date, default: Date.now },
   addedByUserId_: { type: Schema.Types.ObjectId, ref: 'User' },
 });

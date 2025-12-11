@@ -1,6 +1,6 @@
 import multer from "multer";
 
-// CAMBIO: Usamos memoria en lugar de disco para poder editarla antes de guardar
+// Usamos memoria en lugar de disco para poder editarla antes de guardar
 const storage = multer.memoryStorage();
 
 export const upload = multer({

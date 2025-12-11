@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { recommendFromLikes, buildInternalPlaylists, buildExternalPlaylistFromUserLikes} from "../recommendation/recommendation";
+import { getGlobalPopularityRecommendations } from "../recommendation/initial_recommendation"; 
 import User from "../models/user_model";
 
 export const recommendation = async (req: Request, res: Response) => {
-  try { 
+  try {
     const userId = (req as any).user.id;
     const user = await User.findById(userId).populate("likedSongs_");
 
@@ -15,70 +16,32 @@ export const recommendation = async (req: Request, res: Response) => {
       });
     }
 
-    const recommendations = await recommendFromLikes(user);
-    const internalPlaylists = buildInternalPlaylists(recommendations);
-    const externalPlaylist = await buildExternalPlaylistFromUserLikes(userId);
+    const hasLikes = Array.isArray((user as any).likedSongs_) && (user as any).likedSongs_.length > 0;
+    const hasHistory = Array.isArray((user as any).history_) && (user as any).history_.length > 0;
+
+    let recommendations: any[] = [];
+    let internalPlaylists: any[] = [];
+    let externalPlaylist: any = null;
+
+
+    if (!hasLikes && !hasHistory) {
+      const globalSongs = await getGlobalPopularityRecommendations(40);
+      recommendations = globalSongs;
+      internalPlaylists = buildInternalPlaylists(globalSongs);
+      externalPlaylist = null;
+    } else {
+      recommendations = await recommendFromLikes(user);
+      internalPlaylists = buildInternalPlaylists(recommendations);
+      externalPlaylist = await buildExternalPlaylistFromUserLikes(userId);
+    }
 
     return res.json({
       recommendations,
       playlists: internalPlaylists,
       externalPlaylist,
     });
-
   } catch (error) {
     console.error("Error en recommendation:", error);
     res.status(500).json({ message: "Error generando recomendaciones" });
   }
 };
-
-
-/*export const recommendation = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id;
-
-    const { users, songs, matrix } = await buildUtilityMatrix();
-
-    if (!users.length || !songs.length) {
-      return res.json({
-        recommendations: [],
-        playlists: [],
-        externalPlaylist: null,
-      });
-    }
-
-    const userIndex = users.findIndex(
-      (u: any) => u._id.toString() === userId
-    );
-
-    if (userIndex === -1) {
-      return res.json({
-        recommendations: [],
-        playlists: [],
-        externalPlaylist: null,
-      });
-    }
-
-    const similarities = computeItemSimilarities(matrix);
-    const withScores = recommendedForUser(
-      userIndex,
-      matrix,
-      similarities,
-      songs,
-      20 
-    );
-
-    const recommendations = withScores.map((r) => r.song);
-
-    const playlists = buildInternalPlaylistsFromRecommendations(recommendations);
-    const externalPlaylist = await buildExternalPlaylistFromUserLikes(userId);
-
-    return res.json({
-      recommendations,
-      playlists,
-      externalPlaylist,
-    });
-  } catch (error) {
-    console.error("Error en recommendation:", error);
-    return res.status(500).json({ message: "Error generando recomendaciones" });
-  }
-};*/

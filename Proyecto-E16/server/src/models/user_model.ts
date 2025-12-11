@@ -14,6 +14,10 @@ export interface User extends Document {
     rating: number;
     listenedAt: Date;
   }[];
+  preferences_?: {
+    privateSession: boolean;
+    showFriendActivity: boolean;
+  };
 }
 
 const userSchema: Schema = new Schema({
@@ -32,6 +36,10 @@ const userSchema: Schema = new Schema({
       listenedAt: { type: Date, default: Date.now },
     },
   ],
+  preferences_: {
+    privateSession: { type: Boolean, default: false },
+    showFriendActivity: { type: Boolean, default: true },
+  },
 });
 
 export default mongoose.model<User>('User', userSchema);

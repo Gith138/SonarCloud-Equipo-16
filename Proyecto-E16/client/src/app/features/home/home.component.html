@@ -1,238 +1,390 @@
-<div class="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-10 font-sans">
+<div class="home-container">
 
-  <!-- Header -->
-  <header class="flex justify-between items-center mb-12">
-    <h1 class="text-4xl font-bold">Tempo</h1>
+  <header class="header-section">
+    <h1 class="app-title">Tempo</h1>
 
-    <!-- 🔍 Barra de búsqueda (ahora busca al pulsar ENTER) -->
-    <input
-      type="text"
-      [(ngModel)]="searchQuery"
-      (keyup.enter)="searchYouTube()"
-      placeholder="Buscar canciones, artistas o álbumes..."
-      class="bg-gray-800 text-gray-200 px-4 py-2 rounded-lg w-80 outline-none border border-gray-700 focus:ring-2 focus:ring-indigo-500"
-    />
-  </header>
+    <!-- Contenedor con icono + input -->
+    <div class="search-wrapper">
+      <span class="search-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+        </svg>
+      </span>
 
-  <!-- Playlists recomendadas -->
-  <section *ngIf="recommendedPlaylists.length > 0 || externalPlaylist" class="mb-16">
-    <h2 class="text-2xl font-semibold mb-6">Playlists recomendadas para ti</h2>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="searchYouTube()"
+        placeholder="Buscar canciones, artistas o álbumes..."
+        class="search-input"
+      />
+    </div>
+</header>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <section *ngIf="recommendedPlaylists.length > 0 || externalPlaylist" class="mb-12">
+    <h2 class="section-title">Playlists recomendadas para ti</h2>
+
+    <div class="grid-cards">
       <div
         *ngFor="let playlist of recommendedPlaylists"
         (click)="openPlaylist(playlist)"
-        class="bg-gradient-to-b from-gray-800/70 to-gray-900/70 rounded-2xl p-4 shadow-lg hover:shadow-xl hover:scale-105 transition-all border border-gray-700/30 cursor-pointer"
+        class="playlist-card"
       >
-        <img [src]="playlist.cover_" alt="playlist cover" class="rounded-xl w-full h-48 object-cover mb-4" />
-        <h3 class="text-xl font-semibold">{{ playlist.name_ }}</h3>
-        <p class="text-gray-400 text-sm mt-1">{{ playlist.description_ }}</p>
+        <img [src]="playlist.cover_" alt="Cover" class="card-img" />
+        <h3 class="card-title">{{ playlist.name_ }}</h3>
+        <p class="card-desc">{{ playlist.description_ }}</p>
       </div>
 
-      <!-- Playlist externa de YouTube -->
       <div 
         *ngIf="externalPlaylist" 
         (click)="openExternalPlaylist()"
-        class="bg-gray-800 rounded-xl p-4 text-center border border-gray-700 cursor-pointer hover:scale-105 transition"
+        class="playlist-card"
       >
-        <img [src]="externalPlaylist.cover" class="rounded-xl w-full h-48 object-cover mb-3" />
-        <h3 class="font-bold text-lg">{{ externalPlaylist.name }}</h3>
-        <p class="text-gray-400 text-sm mt-1">{{ externalPlaylist.songsCount }} canciones</p>
+        <img [src]="externalPlaylist.cover" class="card-img" />
+        <h3 class="card-title">{{ externalPlaylist.name }}</h3>
+        <p class="card-desc">{{ externalPlaylist.songsCount }} canciones</p>
       </div>
     </div>
   </section>
 
-  <!-- 🔹 Recomendaciones -->
   <section *ngIf="recommendedSongs.length > 0">
-    <h2 class="text-2xl font-semibold mb-6">Tus canciones recomendadas</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div *ngFor="let song of recommendedSongs" class="bg-gray-800 p-4 rounded-xl shadow">
-        <img [src]="song.thumbnailURL_" class="rounded-lg mb-3 w-full h-40 object-cover" alt="Cover" />
-        <h3 class="font-semibold text-lg truncate">{{ song.title_ }}</h3>
-        <p class="text-gray-400 text-sm truncate">{{ song.artist_ }}</p>
+    <h2 class="section-title">Tus canciones recomendadas</h2>
+    
+    <div class="grid-songs">
+      <div *ngFor="let song of recommendedSongs" class="song-card">
+        <img [src]="song.thumbnailURL_" class="song-img" alt="Cover" />
 
-        <button
-          (click)="openVideo(song)"
-          class="mt-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
+        <div class="song-info">
+          <h3 class="song-title">{{ song.title_ }}</h3>
+          <p class="song-artist">{{ song.artist_ }}</p>
+        </div>
+
+        <!-- fila de iconos -->
+        <div class="home-song-actions">
+          <!-- Añadir a playlist (izquierda) -->
+          <button
+            type="button"
+            class="icon-circle icon-add"
+            (click)="addSongToPlaylist(song)"
+            title="Añadir a una playlist"
+          >
+            <!-- puedes cambiar por tu PNG si quieres -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="14" y2="7"></line>
+              <line x1="4" y1="12" x2="14" y2="12"></line>
+              <line x1="4" y1="17" x2="10" y2="17"></line>
+              <line x1="18" y1="11" x2="18" y2="17"></line>
+              <line x1="15" y1="14" x2="21" y2="14"></line>
+            </svg>
+          </button>
+
+          <!-- Reproducir (centro) -->
+          <button
+            type="button"
+            class="icon-circle icon-play"
+            (click)="openVideo(song)"
+            title="Reproducir"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <polygon points="9,8 9,16 16,12"></polygon>
+            </svg>
+          </button>
+
+         <button
+          type="button"
+          class="icon-circle icon-share"
+          (click)="openRecommendModal(song); $event.stopPropagation()" 
+          title="Recomendar a un amigo"
         >
-          ▶ Reproducir
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg> 
         </button>
 
-        <button
-          (click)="toggleLike(song)"
-          class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
-        >
-          {{ isLiked(song) ? '💔 Quitar de favoritos' : '❤️ Me gusta' }}
-        </button>
-
-        <button
-          (click)="addSongToPlaylist(song)"
-          class="mt-2 bg-green-600 hover:bg-green-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
-        >
-          ➕ Añadir a playlist
-        </button>
+          <!-- Like (derecha) -->
+          <button
+            type="button"
+            class="icon-circle icon-like"
+            [class.liked]="isLiked(song)"
+            (click)="toggleLike(song)"
+            [attr.aria-label]="isLiked(song) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+            [attr.aria-pressed]="isLiked(song)"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </section>
 </div>
 
-<!-- 🔎 MODAL DE RESULTADOS DE BÚSQUEDA -->
-<div
-  *ngIf="showSearchModal && results.length > 0"
-  class="fixed inset-0 bg-black/70 flex justify-center items-start pt-24 z-40"
-  (click)="closeSearchModal()"
->
-  <div
-    class="bg-gray-900 rounded-2xl w-full max-w-6xl mx-4 p-6 shadow-xl max-h-[80vh] overflow-y-auto"
-    (click)="$event.stopPropagation()"
-  >
-    <div class="flex justify-between items-center mb-4">
+<div *ngIf="showSearchModal && results.length > 0" class="modal-overlay pt-24" (click)="closeSearchModal()">
+  <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
       <h2 class="text-2xl font-semibold">Resultados para "{{ searchQuery }}"</h2>
-      <button
-        (click)="closeSearchModal()"
-        class="text-2xl text-gray-300 hover:text-white"
+      <button (click)="closeSearchModal()" class="close-btn">✖</button>
+    </div>
+
+    <div class="grid-songs">
+      <div *ngFor="let video of results" class="song-card">
+        <img [src]="video.thumbnailURL_" class="song-img" />
+
+        <div class="song-info">
+          <h3 class="song-title">{{ video.title_ }}</h3>
+          <p class="song-artist">{{ video.artist_ }}</p>
+        </div>
+
+        <div class="home-song-actions">
+          <button
+            type="button"
+            class="icon-circle icon-add"
+            (click)="addSongToPlaylist(video)"
+            title="Añadir a una playlist"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="14" y2="7"></line>
+              <line x1="4" y1="12" x2="14" y2="12"></line>
+              <line x1="4" y1="17" x2="10" y2="17"></line>
+              <line x1="18" y1="11" x2="18" y2="17"></line>
+              <line x1="15" y1="14" x2="21" y2="14"></line>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="icon-circle icon-play"
+            (click)="openVideo(video)"
+            title="Reproducir"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <polygon points="9,8 9,16 16,12"></polygon>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="icon-circle icon-share"
+            (click)="openRecommendModal(video); $event.stopPropagation()" 
+            title="Recomendar a un amigo"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg> 
+          </button>
+
+          <button
+            type="button"
+            class="icon-circle icon-like"
+            [class.liked]="isLiked(video)"
+            (click)="toggleLike(video)"
+            [attr.aria-label]="isLiked(video) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+            [attr.aria-pressed]="isLiked(video)"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="openedPlaylist" class="modal-overlay flex-center" (click)="closePlaylist()">
+  <div class="modal-content modal-md" (click)="$event.stopPropagation()">
+    
+    <button (click)="closePlaylist()" class="close-btn absolute top-4 right-4">✖</button>
+
+    <div class="text-center mb-8">
+      <img [src]="openedPlaylist.cover_" class="w-48 h-48 object-cover rounded-xl mx-auto mb-4 shadow-lg" />
+      <h1 class="text-3xl font-bold">{{ openedPlaylist.name_ }}</h1>
+      <p class="text-gray-400 mt-2">{{ openedPlaylist.description_ }}</p>
+    </div>
+
+    <div class="grid-songs">
+      <div *ngFor="let s of openedPlaylist.songs" class="song-card">
+        <img [src]="s.thumbnailURL_" class="song-img" />
+
+        <div class="song-info">
+          <h3 class="song-title">{{ s.title_ }}</h3>
+          <p class="song-artist">{{ s.artist_ }}</p>
+        </div>
+
+        <div class="home-song-actions">
+          <button
+            type="button"
+            class="icon-circle icon-add"
+            (click)="openAddToPlaylist(s)"
+            title="Añadir a una playlist"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="7" x2="14" y2="7"></line>
+              <line x1="4" y1="12" x2="14" y2="12"></line>
+              <line x1="4" y1="17" x2="10" y2="17"></line>
+              <line x1="18" y1="11" x2="18" y2="17"></line>
+              <line x1="15" y1="14" x2="21" y2="14"></line>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="icon-circle icon-play"
+            (click)="openVideo(s)"
+            title="Reproducir"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <polygon points="9,8 9,16 16,12"></polygon>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="icon-circle icon-share"
+            (click)="openRecommendModal(s); $event.stopPropagation()" 
+            title="Recomendar a un amigo"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg> 
+          </button>
+
+          <button
+            type="button"
+            class="icon-circle icon-like"
+            [class.liked]="isLiked(s)"
+            (click)="toggleLike(s)"
+            [attr.aria-label]="isLiked(s) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+            [attr.aria-pressed]="isLiked(s)"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE RECOMENDACIÓN -->
+<div *ngIf="showRecommendModal" class="modal-overlay flex-center" (click)="closeRecommendModal()">
+  <div class="modal-content modal-md" (click)="$event.stopPropagation()">
+    
+    <!-- Header Modal -->
+    <div class="modal-header mb-4 flex justify-between items-center">
+      <h2 class="text-xl font-bold">Recomendar Canción</h2>
+      <button (click)="closeRecommendModal()" class="close-btn text-2xl hover:text-red-500">✖</button>
+    </div>
+
+    <!-- Preview de la canción (Esto ya lo tenías bien) -->
+    <div class="flex items-center gap-3 mb-6 bg-white/5 p-3 rounded-lg border border-gray-700">
+      <img [src]="songToRecommend?.thumbnailURL_" class="w-14 h-14 rounded-md object-cover shadow-lg">
+      <div class="overflow-hidden">
+        <p class="font-bold truncate text-base text-white">{{ songToRecommend?.title_ }}</p>
+        <p class="text-sm text-gray-400 truncate">{{ songToRecommend?.artist_ }}</p>
+      </div>
+    </div>
+
+    <!-- LISTA DE AMIGOS CON FOTO (Estilo Friends) -->
+    <p class="text-sm text-gray-400 mb-2 font-medium">Selecciona un amigo:</p>
+    
+    <div class="friend-list-container max-h-60 overflow-y-auto pr-1">
+      
+      <!-- Estado vacío -->
+      <div *ngIf="myFriends.length === 0" class="text-center py-6 text-gray-500 italic">
+        No tienes amigos agregados aún.
+      </div>
+
+      <!-- Item Amigo -->
+      <div 
+        *ngFor="let friend of myFriends" 
+        class="friend-item flex items-center justify-between p-3 border-b border-gray-800 cursor-pointer hover:bg-white/5 transition-colors"
+        [class.selected]="selectedFriendId === friend._id"
+        (click)="selectedFriendId = friend._id"
       >
-        ✖
+        <!-- Info Usuario (Foto + Nombre) -->
+        <div class="flex items-center gap-3">
+          <!-- 🔥 FOTO DEL AMIGO (La que cargaste en loadFriends) -->
+          <img 
+            [src]="friend.displayAvatar" 
+            class="w-10 h-10 rounded-full object-cover border border-gray-600"
+            alt="Avatar"
+          >
+          <div>
+            <p class="text-white font-medium text-sm">{{ friend.username_ }}</p>
+            <p class="text-gray-500 text-xs">{{ friend.email_ }}</p>
+          </div>
+        </div>
+
+        <!-- Checkbox visual de selección -->
+        <div class="w-5 h-5 rounded-full border border-gray-500 flex items-center justify-center transition-all"
+             [ngClass]="selectedFriendId === friend._id ? 'bg-blue-600 border-blue-600' : ''">
+          <svg *ngIf="selectedFriendId === friend._id" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensaje Opcional -->
+    <div class="mt-6 mb-6">
+      <label class="block text-sm text-gray-400 mb-2">Mensaje (opcional):</label>
+      <textarea 
+        [(ngModel)]="recommendMessage" 
+        rows="2" 
+        class="w-full bg-[#0b0b12] border border-gray-700 rounded-xl p-3 text-white text-sm outline-none focus:border-blue-500 transition-colors"
+        placeholder="¡Escucha esto, te va a gustar!">
+      </textarea>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end gap-3 pt-2 border-t border-gray-800">
+      <button (click)="closeRecommendModal()" class="px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-medium text-sm">Cancelar</button>
+      <button 
+        (click)="sendRecommendation()" 
+        [disabled]="!selectedFriendId"
+        class="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-bold text-sm transition-all shadow-lg shadow-blue-900/20">
+        Enviar recomendación
       </button>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div
-        *ngFor="let video of results"
-        class="bg-[#1a1a22] border border-gray-700 rounded-2xl p-4 flex flex-col"
-      >
-        <img
-          [src]="video.thumbnailURL_"
-          alt="Miniatura"
-          class="rounded-lg w-full h-40 object-cover mb-3"
-        />
-        <h3 class="font-semibold text-lg truncate">{{ video.title_ }}</h3>
-        <p class="text-gray-400 text-sm truncate">{{ video.artist_ }}</p>
-
-        <button
-          (click)="openVideo(video)"
-          class="mt-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-full w-full transition"
-        >
-          ▶ Reproducir
-        </button>
-
-        <button
-          (click)="toggleLike(video)"
-          class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-full w-full transition"
-        >
-          {{ isLiked(video) ? '💔 Quitar de favoritos' : '❤️ Me gusta' }}
-        </button>
-
-        <button
-          (click)="addSongToPlaylist(video)"
-          class="mt-2 bg-green-600 hover:bg-green-500 text-white font-semibold py-2 rounded-full w-full transition"
-        >
-          ➕ Añadir a playlist
-        </button>
-      </div>
-    </div>
   </div>
 </div>
 
-<!-- 🟦 MODAL DE PLAYLIST RECOMENDADA -->
-<div 
-  *ngIf="openedPlaylist" 
-  class="fixed inset-0 bg-black/70 flex justify-center items-center p-6 z-50"
-  (click)="closePlaylist()"
->
-  <div 
-    class="bg-gray-900 p-6 rounded-2xl w-full max-w-4xl shadow-xl relative max-h-[90vh] overflow-y-auto"
-    (click)="$event.stopPropagation()"
-  >
-    <!-- Botón cerrar -->
-    <button 
-      (click)="closePlaylist()" 
-      class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300"
-    >
-      ✖
-    </button>
 
-    <h1 class="text-3xl font-bold mb-3">{{ openedPlaylist.name_ }}</h1>
-    <p class="text-gray-400 mb-6">{{ openedPlaylist.description_ }}</p>
-
-    <img 
-      [src]="openedPlaylist.cover_" 
-      class="w-48 h-48 object-cover rounded-xl mb-6 mx-auto"
-    />
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div 
-        *ngFor="let s of openedPlaylist.songs" 
-        class="bg-gray-800 p-4 rounded-xl shadow"
-      >
-        <img [src]="s.thumbnailURL_" class="rounded-lg mb-3 w-full h-40 object-cover" />
-        <h3 class="font-semibold text-lg truncate">{{ s.title_ }}</h3>
-        <p class="text-gray-400 text-sm truncate">{{ s.artist_ }}</p>
-
-        <button
-          (click)="openVideo(s)"
-          class="mt-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
-        >
-          ▶ Reproducir
-        </button>
-
-        <button
-          (click)="toggleLike(s)"
-          class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
-        >
-          {{ isLiked(s) ? '💔 Quitar de favoritos' : '❤️ Me gusta' }}
-        </button>
-
-        <button
-          (click)="openAddToPlaylist(s)"
-          class="mt-2 bg-green-600 hover:bg-green-500 text-white font-semibold px-3 py-2 rounded-full w-full transition"
-        >
-          ➕ Añadir a playlist
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 🎵 MODAL: seleccionar playlist para añadir canción -->
-<div 
-  *ngIf="showAddToPlaylistModal"
-  class="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
-  (click)="closeAddToPlaylistModal()"
->
-  <div 
-    class="bg-gray-900 p-6 rounded-xl w-full max-w-md shadow-lg"
-    (click)="$event.stopPropagation()"
-  >
-    <h2 class="text-xl font-semibold mb-4 text-white">Añadir a playlist</h2>
-    <p class="text-gray-400 mb-3">
-      Selecciona la playlist donde quieres añadir 
-      <span class="font-semibold text-white">{{ songToAdd?.title_ }}</span>
+<div *ngIf="showAddToPlaylistModal" class="modal-overlay flex-center" (click)="closeAddToPlaylistModal()">
+  <div class="modal-content modal-sm" (click)="$event.stopPropagation()">
+    
+    <h2 class="text-xl font-semibold mb-4">Añadir a playlist</h2>
+    <p class="text-gray-400 mb-4 text-sm">
+      Selecciona dónde guardar <span class="text-white font-semibold">{{ songToAdd?.title_ }}</span>
     </p>
 
-    <select
-      [(ngModel)]="selectedPlaylist"
-      class="w-full p-2 bg-gray-800 text-white rounded mb-4"
-    >
+    <select [(ngModel)]="selectedPlaylist" class="select-input">
       <option *ngFor="let pl of userPlaylists" [ngValue]="pl">
         {{ pl.name_ || pl.name }}
       </option>
     </select>
 
-    <div class="flex justify-end gap-3">
-      <button 
-        (click)="closeAddToPlaylistModal()" 
-        class="bg-gray-700 px-4 py-2 rounded"
-      >
-        Cancelar
-      </button>
-
-      <button 
-        (click)="confirmAddToPlaylist()" 
-        class="bg-green-600 hover:bg-green-500 px-4 py-2 rounded"
-      >
-        Añadir
-      </button>
+    <div class="flex justify-end gap-3 mt-6">
+      <button (click)="closeAddToPlaylistModal()" class="btn-cancel">Cancelar</button>
+      <button (click)="confirmAddToPlaylist()" class="btn-confirm">Añadir</button>
     </div>
+
   </div>
 </div>

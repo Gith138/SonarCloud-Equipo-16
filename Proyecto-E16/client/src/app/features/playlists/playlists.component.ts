@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { Router } from '@angular/router';
 import { MusicService } from '../../services/music.service';
+import { identifierName } from '@angular/compiler';
+
 
 @Component({
   selector: 'app-playlists',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './playlists.component.html',
+  styleUrl: './playlists.component.css',
 })
 
 export class PlaylistsComponent implements OnInit {
@@ -18,6 +21,11 @@ export class PlaylistsComponent implements OnInit {
   newPlaylistName = '';
   newPlaylistDescription = '';
   newPlaylistIsPublic = false;
+  showEditModal = false;
+  playlistBeingEdited: any;
+  editName = '';
+  editDescription = '';
+  editIsPublic = false;
 
   constructor(private musicService: MusicService, private router: Router) {}
 
@@ -70,6 +78,7 @@ export class PlaylistsComponent implements OnInit {
   closeCreateModal() {
     this.showCreateModal = false;
   }
+  
 
   createPlaylist() {
     const name = this.newPlaylistName.trim();
@@ -85,9 +94,11 @@ export class PlaylistsComponent implements OnInit {
     };
 
     this.musicService.createPlaylist(body).subscribe({
-      next: (created) => {
+      next: (res: any) => {
+        const created = res.playlist ?? res;
+
         const normalized = this.normalizePlaylist(created);
-        this.playlists.push(normalized);
+        this.playlists = [...this.playlists, normalized];
         this.showCreateModal = false;
         this.newPlaylistName = '';
         this.newPlaylistDescription = '';
@@ -114,6 +125,64 @@ export class PlaylistsComponent implements OnInit {
       error: (err) => {
         console.error('Error al eliminar playlist:', err);
         alert('No se pudo eliminar la playlist.');
+      },
+    });
+  }
+
+  getImage(p: any): string {
+    // Si la playlist tiene una imagen definida, la usamos
+    if (p.imageUrl) return p.imageUrl;
+
+    // Si no, usamos una imagen por defecto basada en el ID para variedad
+    const defaultImages = [
+      'https://images.unsplash.com/photo-1669299866851-c3b48c7965ac?w=600&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=60',
+      'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=600&auto=format&fit=crop&q=60',
+    ];
+    const index = p._id ? p._id.charCodeAt(0) % defaultImages.length : 0;
+    return defaultImages[index];
+  }
+
+  openEditModal(p: any) {
+    this.playlistBeingEdited = p;
+    this.editName = p.name_ || '';
+    this.editDescription = p.description_ || '';
+    this.editIsPublic = !!p.isPublic_;
+    this.showEditModal = true;
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.playlistBeingEdited = null;
+    this.editName = '';
+    this.editDescription = '';
+    this.editIsPublic = false;
+  }
+
+  saveEditPlaylist() {
+    if (!this.playlistBeingEdited) return; 
+
+    const updates: any = {
+      name_: this.editName,
+      description_: this.editDescription,
+      isPublic_: this.editIsPublic,
+    };
+
+    this.musicService.updatePlaylist(this.playlistBeingEdited._id, updates).subscribe({
+      next: (res: any) => {
+        const index = this.playlists.findIndex((p: any) => p._id === this.playlistBeingEdited._id);
+        if (index !== -1 && res.playlist) {
+          this.playlists[index] = {
+            ...this.playlists[index],
+            ...res.playlist,
+          };
+        }
+        this.closeEditModal();
+      },
+      error: (err) => {
+        console.error('Error al actualizar playlist:', err);
+        alert('No se pudo actualizar la playlist.');
       },
     });
   }

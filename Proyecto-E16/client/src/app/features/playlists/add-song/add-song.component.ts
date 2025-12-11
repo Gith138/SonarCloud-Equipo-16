@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './add-song.component.html',
-  styleUrls: ['./add-song.component.css']
+  styleUrl: './add-song.component.css'
 })
 export class AddSongComponent implements OnInit {
   playlistId: string = '';
@@ -52,6 +52,7 @@ export class AddSongComponent implements OnInit {
           this.songTitle = '';
           this.youtubeUrl = '';
           this.genre = '';
+          alert(this.message);
         },
         error: (err) => {
           console.error(err);

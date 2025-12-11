@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; 
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser'; 
+
 import { UserService } from '../../services/user.service';
 import { MusicService } from '../../services/music.service';
-import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-settings',
@@ -13,195 +15,121 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule]
 })
 export class SettingsComponent implements OnInit {
-  // ---------------------------
-  constructor(private userService: UserService, private musicService: MusicService, private router: Router) {}
-  // Datos del usuario editables
+  
+  // Imagen segura para la vista (evita parpadeos)
+  displayAvatar: SafeUrl | string = 'assets/perfil.png';
+
+  // Datos del usuario (lógica interna)
   user = {
     username_: '',
     email_: '',
-    profilePictureUrl_: ''
+    profilePictureUrl_: '' 
   };
 
-  token: string | null = sessionStorage.getItem('token');
+  // Variables de UI
+  activeTab: string = 'profile';
+  userName = '';
+  userEmail = '';
+  newPassword = '';
+  confirmNewPassword = '';
 
-  calculateCacheSize() {
-    if (navigator.storage && navigator.storage.estimate) {
-      navigator.storage.estimate().then((estimate: any) => {
-        const usedMB = ((estimate.usage || 0) / (1024 * 1024)).toFixed(2);
-        this.cacheSize = `${usedMB} MB`;
+  // Configuración 
+  privateSession = false;
+  showFriendActivity = true;
 
-        // Aviso de que es un valor real
-        console.log(`Cache size real: ${this.cacheSize}`);
-      });
-    } else {
-      // Valor ficticio si el navegador NO soporta estimate()
-      const fakeValue = 120; // MB inventados
-      this.cacheSize = `${fakeValue} MB`;
+  // Gestión de imágenes (Subida)
+  selectedImage: string | null = null; 
+  selectedImageFile: File | null = null;
 
-      // Aviso en consola de que es estimado
-      console.log(`Cache size estimado: ${this.cacheSize} (navegador no compatible)`);
-    }
-  }
+  // Datos
+  history: any[] = [];
+  likedSongs: any[] = [];
+  likesLoaded = false;
+  cacheSize = ''; 
 
+  // Overlay
+  overlayMessage: string = '';
+  overlayType: 'success' | 'error' = 'success';
+  overlayVisible: boolean = false;
+  private timeoutId: any;
 
-  // ---------------------------
-  // CARGAR DATOS DEL USUARIO AL ENTRAR
-  // ---------------------------
+  emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  constructor(
+    private userService: UserService, 
+    private musicService: MusicService, 
+    private router: Router,
+    private sanitizer: DomSanitizer
+  ) {}
+
   ngOnInit() {
     this.conectarDatosUsuario();
     this.calculateCacheSize();
     this.loadHistory();
   }
 
-  // Cargar historial desde backend
-  loadHistory() {
-    this.userService.gethistory().subscribe({
-      next: (res) => {
-        this.history = res.history; // usar la propiedad 'history' del backend
-      },
-      error: (err) => {
-        console.error('Error al cargar historial:', err);
-        this.showOverlay('Error al cargar historial', 'error');
-      }
-    });
-  }
-
-  // Cargar imagen de perfil desde backend
-  loadProfilePicture() {
-    this.userService.getProfilePicture().subscribe({
-      next: (blob) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.user.profilePictureUrl_ = reader.result as string; // base64 lista
-        };
-        reader.readAsDataURL(blob);
-      },
-      error: () => {
-        console.log("No hay imagen en servidor, usando por defecto.");
-        this.user.profilePictureUrl_ = "assets/perfil.png";
-      }
-    });
-  }
-
+  // ---------------------------
+  // Cargar datos del usuario
+  // ---------------------------
   conectarDatosUsuario() {
     this.userService.getCurrentUser().subscribe({
-    next: (user) => {
-      this.userName = user.username_;
-      this.userEmail = user.email_;
-      this.user.username_ = user.username_;
-      this.user.email_ = user.email_;
+      next: (user) => {
+        this.userName = user.username_;
+        this.userEmail = user.email_;
+        this.user.username_ = user.username_;
+        this.user.email_ = user.email_;
 
-      // NO cargar la imagen de la BD → siempre pedir la del servidor
-      this.user.profilePictureUrl_ = '';
+        //  Cargar imagen usando el servicio inteligente (Caché)
+        this.loadProfilePicture(user._id);
 
-      this.loadProfilePicture();
+        this.newPassword = '';
+        this.confirmNewPassword = '';
+        this.loadPreferences();
+      },
+      error: (err) => console.error("Error al cargar usuario:", err)
+    });
+  }
 
-      this.newPassword = '';
-      this.confirmNewPassword = '';
-    },
-    error: (err) => {
-      console.error("Error al cargar usuario:", err);
-    }
-  });
+  // Usamos getAvatar del servicio para no recargar si ya existe
+  loadProfilePicture(userId: string) {
+    this.userService.getAvatar(userId).subscribe({
+      next: (safeUrl) => {
+        this.displayAvatar = safeUrl;
+      },
+      error: () => {
+        this.displayAvatar = 'assets/perfil.png';
+      }
+    });
   }
   
-  // ---------------------------
-  // OBTENER URL DE IMAGEN DE PERFIL
-  // ---------------------------
-  get profilePictureUrl() {
-    return this.user.profilePictureUrl_ || 'assets/perfil.png';
-  }
-
-  // ---------------------------
-  // PROPIEDADES USADAS EN EL HTML
-  // ---------------------------
-  activeTab: string = 'profile';
-
-  likedSongs: any[] = [];
-  likesLoaded = false;
-
-  userName = 'Usuario Tempo';
-  userEmail = 'usuario@tempo.com';
-  newPassword: string = '';
-  confirmNewPassword: string = '';
-
-  emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  selectedImage: string | null = null;
-  selectedImageFile: File | null = null;
-
-  // Historial de reproducciones
-  history: any[] = [];
-
-  audioQuality = 'high';
-  autoplay = true;
-  normalizationVolume = true;
-  gaplessPlayback = true;
-
-  playlistUpdates = true;
-
-  privateSession = false;
-  showRecentlyPlayed = true;
-  allowExplicitContent = true;
-
-  language = 'es';
-  showFriendActivity = false;
-  downloadQuality = 'high';
-  cacheSize = ''; // o '0 MB'
-
-  // 
-  overlayMessage: string = '';
-  overlayType: 'success' | 'error' = 'success';
-
-
-  // ---------------------------
-  // VALIDACIÓN
-  // ---------------------------
+  // Validar formulario
   formValid(): boolean {
-    return (
-      this.user.username_.trim() !== '' &&
-      this.emailRegex.test(this.user.email_)
-    );
+    return this.user.username_.trim() !== '' && this.emailRegex.test(this.user.email_);
   }
-
-
-  hasChanges(): boolean {
-    // Comprueba username y email
-    if (this.user.username_ !== this.userName || this.user.email_ !== this.userEmail) return true;
-
-    // Comprueba contraseña
-    if (this.newPassword.trim().length > 0) return true;
-
-    // Comprueba imagen seleccionada
-    if (this.selectedImageFile) return true;
-
-    return false; // nada ha cambiado
-  }
-
 
   // ---------------------------
   // GUARDAR PERFIL
   // ---------------------------
   handleSaveProfile() {
-    // Validaciones de formulario(email, username)
+    // validación formulario(email y username)
     if (!this.formValid()) {
       this.showOverlay('Por favor completa los campos correctamente.', 'error');
       return;
     }
-
-    // Si no hay cambios, no hacer nada
-    if (!this.hasChanges()) {
+    
+    // Si estamos en la pestaña de preferencias, permitimos guardar aunque no cambie el nombre
+    if (this.activeTab !== 'preferences' && !this.hasChanges()) {
       this.showOverlay('No se hicieron cambios.', 'success');
       return;
     }
 
     if (this.newPassword.trim().length > 0) {
-      // Si la nueva contraseña es muy corta
+      // Validar contraseña
       if (this.newPassword.length < 6) {
         this.showOverlay('La contraseña debe tener al menos 6 caracteres.', 'error');
         return;
       }
-      // Si las contraseñas no coinciden
+      // Comprobar confirmación
       if (this.newPassword !== this.confirmNewPassword) {
         this.showOverlay('Las contraseñas no coinciden.', 'error');
         return;
@@ -215,11 +143,13 @@ export class SettingsComponent implements OnInit {
     if (this.newPassword.trim().length >= 6) formData.append("password_", this.newPassword);
     if (this.selectedImageFile) formData.append("profilePicture", this.selectedImageFile);
   
+    // EMPAQUETAR PREFERENCIAS
+    const allSettings = this.getAllSettingsObject();
+    formData.append("settings_", JSON.stringify(allSettings));
+
     this.userService.updateSettings(formData).subscribe({
-      // AQUI ESTA LA CLAVE: Recibimos 'updatedUser' del backend
       next: (updatedUser: any) => { 
-      
-        // 1. Actualizamos las variables visuales "estáticas" (las que están fuera del form)
+                // 1. Actualizamos las variables visuales "estáticas" (las que están fuera del form)
         this.userName = updatedUser.username_;
         this.userEmail = updatedUser.email_;
 
@@ -234,7 +164,11 @@ export class SettingsComponent implements OnInit {
         this.selectedImageFile = null;
 
         this.showOverlay('Datos actualizados correctamente', 'success');
-      }, error: (err) => {
+
+        this.conectarDatosUsuario(); // recargar datos para asegurar consistencia
+      }, 
+      error: (err) => {
+        
         console.error(err);
 
         if (err.status === 401 && err.error?.message === 'Token expirado') {
@@ -243,43 +177,43 @@ export class SettingsComponent implements OnInit {
           return;
         }
         this.showOverlay(err.error?.message || 'Error al actualizar usuario', 'error');
+
       }
     });
   }
 
-  // ---------------------------
-  // OVERLAY
-  // ---------------------------
-  showOverlay(message: string, type: 'success' | 'error' = 'success') {
-    this.overlayMessage = message;
-    this.overlayType = type;
+  // Helper para recolectar los 3 checkboxes
+  private getAllSettingsObject() {
+    return {
+      privateSession_: this.privateSession,
+      showFriendActivity_: this.showFriendActivity
+    };
+  }
 
-    const overlay = document.getElementById('overlay-message');
-    if (!overlay) return;
-
-    overlay.classList.remove('success', 'error');
-    overlay.classList.add(type);
-
-    overlay.classList.add('active');
-    setTimeout(() => overlay.classList.remove('active'), 2000);
+  // Restablecer valores por defecto
+  handleResetSettings() {
+    this.privateSession = false;
+    this.showFriendActivity = true;
+    this.showOverlay('Valores restablecidos. Pulsa Guardar para confirmar.', 'success');
   }
 
   // ---------------------------
-  // IMAGEN
+  // IMAGEN PREVIEW LOCAL
   // ---------------------------
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (!file) return;
-
     this.selectedImageFile = file;
 
     const reader = new FileReader();
     reader.onload = () => {
       this.selectedImage = reader.result as string;
+      // Actualizamos visualmente al instante
+      this.displayAvatar = this.selectedImage; 
     };
     reader.readAsDataURL(file);
   }
-  
+
   // ---------------------------
   // ELIMINAR CUENTA
   // ---------------------------
@@ -291,16 +225,13 @@ export class SettingsComponent implements OnInit {
     this.userService.deleteUser().subscribe({
       next: () => {
 
-        // 1 Mensaje de éxito
         this.showOverlay('Cuenta eliminada correctamente.', 'success');
 
-        // 2️ Limpiar sesión
         localStorage.clear();
 
-        // 3️ Redirigir después de 2 segundos (cuando el overlay desaparece)
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 2000);
+        }, 3000);
       },
       error: (err) => {
         console.error(err);
@@ -311,45 +242,148 @@ export class SettingsComponent implements OnInit {
   }
 
   // ---------------------------
-  // Cache y restablecer ajustes
+  // UTILIDADES Y OVERLAY
   // ---------------------------
-  handleClearCache() {
-    this.showOverlay('Caché limpiado exitosamente', 'success');
-    this.cacheSize = '0 MB';
-  }
+  
+  showOverlay(message: string, type: 'success' | 'error' = 'success') {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
 
-  handleResetSettings() {
-    // Restablecer valores predeterminados
-    this.audioQuality = 'high';
-    this.autoplay = true;
-    this.normalizationVolume = true;
-    this.gaplessPlayback = true;
+    this.overlayMessage = message;
+    this.overlayType = type;
+    this.overlayVisible = true;
 
- 
-    this.playlistUpdates = true;
-
-    this.privateSession = false;
-    this.showRecentlyPlayed = true;
-    this.allowExplicitContent = true;
-
-    this.language = 'es';
-    this.showFriendActivity = false;
-    this.downloadQuality = 'high';
-
-
-    this.showOverlay('Configuración restablecida a los valores predeterminados', 'success');
+    this.timeoutId = setTimeout(() => {
+      this.overlayVisible = false; // Ocultamos
+      this.timeoutId = null;       // Limpiamos la variable
+    }, 3000);
   }
 
 
   // ---------------------------
-  // Historial
+  // DETECCIÓN DE CAMBIOS
   // ---------------------------
+
+  // Comprobar si hay cambios en el formulario
+  hasChanges(): boolean {
+    if (this.user.username_ !== this.userName || this.user.email_ !== this.userEmail) return true;
+
+    if (this.newPassword.trim().length > 0) return true;
+
+    if (this.selectedImageFile) return true;
+
+    return false; // nada ha cambiado
+  }
+
+  // Manejar cambio de pestaña
+  onTabChange(tab: string) {
+    this.activeTab = tab;
+    if (tab === 'history') this.loadHistory();
+    if (tab === 'likes' && !this.likesLoaded) this.loadLikedSongs();
+  }
+
+  // ---------------------------
+  // GESTIÓN DE CACHÉ
+  // ---------------------------
+  
+// ---------------------------
+  // GESTIÓN DE CACHÉ (Navegador + RAM)
+  // ---------------------------
+  
+calculateCacheSize() { 
+    // 1. Consultar RAM (Tus avatares)
+    const avatarsCount = this.userService.getAvatarCacheSize();
+
+    // 2. Calcular localStorage y sessionStorage MANUALMENTE (Esto es lo que te falta)
+    let totalStringSize = 0;
+
+    // Sumamos sessionStorage (donde está tu Token)
+    for (let key in sessionStorage) {
+      if (sessionStorage.hasOwnProperty(key)) {
+        totalStringSize += (sessionStorage[key].length + key.length) * 2;
+      }
+    }
+    console.log(`Tamaño sessionStorage: ${totalStringSize} bytes`);
+
+    // 3. Consultar Storage "Pesado" (IndexedDB/Cache API)
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then((estimate: any) => {
+        // Sumamos lo nativo + lo manual
+        const nativeUsed = estimate.usage || 0;
+        const totalUsed = nativeUsed + totalStringSize; // Suma total real
+
+        // Convertir a MB con 4 decimales si es muy pequeño, o 2 si es grande
+        const usedMB = (totalUsed / (1024 * 1024)).toFixed(3); 
+
+        // Mostrar resultado
+        if (totalUsed > 0) {
+            this.cacheSize = `${usedMB} MB en Disco ( + ${avatarsCount} imgs en RAM)`;
+        } else {
+            this.cacheSize = `Vacío ( + ${avatarsCount} imgs en RAM)`;
+        }
+        
+        console.log(`Uso real total: ${totalUsed} bytes`);
+      });
+    } else {
+      // Fallback
+      const usedMB = (totalStringSize / (1024 * 1024)).toFixed(3);
+      this.cacheSize = `${usedMB} MB Local ( + ${avatarsCount} imgs en RAM)`;
+    }  
+  }
+  
+  async handleClearCache() {
+    // 1. Limpiar Caché del Navegador (Service Workers / HTTP Cache)
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      for (const key of keys) {
+        await caches.delete(key);
+      }
+    }
+
+    // 2. Limpiar Caché de Avatares (RAM) 🔥 IMPORTANTE
+    this.userService.clearAvatarCache();
+
+    // 3. Feedback Visual
+    this.cacheSize = "0 MB";
+    this.showOverlay("Caché limpiado correctamente", "success");
+
+    // 4. Recargar datos tras 3 segundos (como tenías en tu código)
+    setTimeout(() => {
+      // Recargamos likes por si acaso las imágenes venían de caché
+      this.loadLikedSongs(); 
+      // También es buena idea recargar el perfil para regenerar el avatar propio
+      this.conectarDatosUsuario();
+    }, 3000);
+  }
+
+  // ---------------------------
+  // HISTORIAL DE REPRODUCCIÓN
+  // ---------------------------
+
+  // Cargar historial de reproducción
+  loadHistory() {
+    this.userService.gethistory().subscribe({
+      next: (res) => {
+        this.history = res.history; // usar la propiedad 'history' del backend
+      },
+      error: (err) => {
+        console.error('Error al cargar historial:', err);
+        this.showOverlay('Error al cargar historial', 'error');
+      }
+    });
+  }
+  
   // Limpiar historial
   clearHistory() {
     this.userService.getcleanhistory().subscribe({
       next: () => {
         this.history = [];
         this.showOverlay('Historial limpiado', 'success');
+        setTimeout(() => {
+          this.loadHistory();
+        }, 2000); // espera lo mismo que el overlay
+
       },
       error: (err) => {
         console.error('Error al limpiar historial:', err);
@@ -358,34 +392,13 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-    // Método para cambiar tab y cargar historial solo cuando se abra
-  onTabChange(tab: string) {
-    this.activeTab = tab;
-    if (tab === 'history') this.loadHistory();
-    if (tab === 'likes' && !this.likesLoaded) this.loadLikedSongs();
-  }
 
-  setRating(entry: any, rating: number) {
-    const songId = entry.song?._id;
 
-    if (!songId) {
-      console.error('No se encontró el _id de la canción en el entry de historial');
-      return;
-    }
+  // ---------------------------
+  // CANCIONES ME GUSTA
+  // ---------------------------
 
-    this.userService.updateHistoryRating(songId, rating).subscribe({
-      next: () => {
-        entry.rating = rating; // Actualizamos en memoria para que se vea al instante
-        this.showOverlay('Valoración actualizada', 'success');
-      },
-      error: (err) => {
-        console.error('Error al actualizar valoración:', err);
-        const msg = err.error?.message || 'Error al actualizar valoración';
-        this.showOverlay(msg, 'error');
-      }
-    });
-  }
-
+  // Cargar canciones de Me Gusta
   loadLikedSongs() {
     this.musicService.getLikedSongs().subscribe({
       next: (res: any) => {
@@ -402,17 +415,87 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  unlikeFromSettings(song: any) {
-    const songId = song._id;
-    if (!songId) return;
 
-    this.musicService.removeLikedSong(songId).subscribe({
-      next: () => {
-        this.likedSongs = this.likedSongs.filter(s => s._id !== songId);
-      },
-      error: (err) => {
-        console.error('Error al quitar like desde ajustes:', err);
+  // Quitar canción de Me Gusta
+  unlikeFromSettings(song: any) {
+    if(!song._id) return;
+    this.musicService.removeLikedSong(song._id).subscribe({
+      next: () =>{ 
+        this.likedSongs = this.likedSongs.filter(s => s._id !== song._id);
+        setTimeout(() => {
+         this.loadLikedSongs(); 
+        }, 3000);
+      }, error: (err) => {
+        console.error('Error al quitar canción de Me Gusta:', err);
+        this.showOverlay('No se pudo quitar la canción de Me Gusta', 'error');
+        setTimeout(() => {
+         this.loadLikedSongs(); 
+        }, 3000);
       }
+    });
+  }
+
+
+  // ---------------------------
+  // PREFERENCIAS
+  // ---------------------------
+  // Cargar preferencias desde el backend
+  loadPreferences() {
+    this.userService.getPreferences().subscribe({
+      next: (prefs: any) => {
+        if (prefs) {
+          this.privateSession = prefs.privateSession;
+          this.showFriendActivity = prefs.showFriendActivity;
+        }
+        console.log('Preferencias visuales actualizadas:', {
+          private: this.privateSession,
+          friends: this.showFriendActivity
+        });
+      },
+      error: (err) => console.error('Error cargando preferencias:', err)
+    });
+  }
+
+  // Guardar preferencias
+  savePreferences() {
+    const prefs = {
+      privateSession: this.privateSession,
+      showFriendActivity: this.showFriendActivity
+    };
+
+    this.userService.updatePreferences(prefs).subscribe({
+      next: (res) => {
+        console.log('Guardado:', res);
+       
+        this.showOverlay('Preferencias guardadas', 'success');
+        setTimeout(() => {
+         this.loadPreferences(); 
+        }, 3000);
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  resetPreferences() {
+    this.privateSession = false;
+    this.showFriendActivity = true;
+
+    const prefs = {
+      privateSession: this.privateSession,
+      showFriendActivity: this.showFriendActivity
+    };
+
+    this.userService.updatePreferences(prefs).subscribe({
+      next: (res) => {
+        console.log('Restablecer:', res);
+        
+        this.showOverlay('Preferencias restablecidas', 'success');
+        setTimeout(() => {
+         this.loadPreferences(); 
+        }, 3000);
+
+      },
+      error: (err) => console.error(err)
     });
   }
 }

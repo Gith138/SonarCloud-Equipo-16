@@ -2,6 +2,7 @@ import express from "express";
 import { resizeProfileImage } from "../middlewares/resize";
 import { upload } from "../config/multer";
 import { registerUser, getUsers, getProfilePictureById, getMe, deleteUser, actualizar_settings, getFotoPerfil,
+  getPreferences, actualizarPreferences,
   getUserById, searchUser, addLikedSong, removeLikedSong, getLikedSongs,addToHistory, getHistory, clearHistory, 
   updateHistoryRating, getFriendsList, getFriendsLastSong, addFriend, removeFriend, getFriendRequests, 
   acceptFriendRequest, rejectFriendRequest } from "../controllers/user_controller";
@@ -17,10 +18,14 @@ router.delete("/me", deleteUser);
 router.get("/me/image",  getFotoPerfil);
 
 // ---------- Gestión de configuración del usuario ----------
-router.put("/me/settings", upload.single("profilePicture"), resizeProfileImage, actualizar_settings);
 
-// ----- Búsqueda de usuarios ----- (funciona)
+router.put("/me/settings", upload.single("profilePicture"), resizeProfileImage, actualizar_settings);
+// ----- Búsqueda de usuarios ----- 
 router.get("/search/user", searchUser);
+
+// ------ Gestión de preferencias de canciones ------
+router.get("/me/settings/preferences", getPreferences); // Obtener preferencias del usuario
+router.put("/me/settings/preferences", actualizarPreferences); // Actualizar preferencias del usuario
 
 // ----- Gestión de canciones -----
 router.get("/me/likes", getLikedSongs); // Obtener canciones favoritas del usuario

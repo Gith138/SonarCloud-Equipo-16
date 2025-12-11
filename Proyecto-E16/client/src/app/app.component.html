@@ -1,40 +1,61 @@
-<!-- 🌌 NAVBAR estilo Spotify -->
-<nav
-  *ngIf="hasToken()"
-  class="flex items-center justify-between px-6 py-3 bg-[#0b0b12] text-gray-200 border-b border-[#1f1f2a]"
->
-  <!-- 🔹 IZQUIERDA: Logo + Nombre -->
-  <div class="flex items-center gap-3">
+<nav *ngIf="hasToken()" class="navbar-container">
+  <!-- Logo -->
+  <div class="logo-section" routerLink="/home">
     <img
-      src="assets/logo-tempo.png"
+      src="/assets/logo-tempo.png"
       alt="Tempo logo"
-      class="w-10 h-10 object-contain drop-shadow-[0_0_6px_rgba(59,130,246,0.6)]"
+      class="logo-img"
     />
-    <span class="text-2xl font-semibold text-blue-400 tracking-wide">
-      Tempo
-    </span>
+    <span class="logo-text">Tempo</span>
   </div>
 
-  <!-- 🔹 DERECHA: Enlaces y botón -->
-  <div class="flex items-center gap-6 text-sm">
-    <a routerLink="/home" class="hover:text-blue-400 transition">Inicio</a>
-    <a routerLink="/playlists" class="hover:text-blue-400 transition"
-      >Playlists</a
-    >
-    <a routerLink="/friends" class="hover:text-blue-400 transition"
-      >Amigos</a
-    >
-    <a routerLink="/settings" class="hover:text-blue-400 transition"
-      >Ajustes</a
-    >
-    <button
-      (click)="logout()"
-      class="ml-4 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-full font-medium transition"
-    >
-      Cerrar sesión
-    </button>
+  <!-- Sección Derecha: Enlaces + Notificaciones + Perfil -->
+  <div class="right-section">
+    
+    <!-- Enlaces Centrales -->
+    <div class="links-section">
+      <a routerLink="/home" routerLinkActive="nav-link-active" class="nav-link">Inicio</a>
+      <a routerLink="/playlists" routerLinkActive="nav-link-active" class="nav-link">Playlists</a>
+      <a routerLink="/friends" routerLinkActive="nav-link-active" class="nav-link">Amigos</a>
+    </div>
+
+    <!-- 🔔 Componente de Notificaciones (Widget) -->
+    <app-notifications></app-notifications>
+    
+    <!-- 👤 Avatar + Menú Desplegable -->
+    <div class="profile-wrapper">
+      <button class="profile-btn" (click)="toggleProfileMenu($event)">
+        <!-- Si hay avatar, mostramos imagen segura -->
+        <ng-container *ngIf="avatarUrl; else defaultAvatar">
+          <img [src]="avatarUrl" alt="Perfil" class="avatar-nav" />
+        </ng-container>
+        
+        <!-- Si no, mostramos placeholder -->
+        <ng-template #defaultAvatar>
+          <div class="avatar-nav avatar-placeholder">
+            <span>U</span>
+          </div>
+        </ng-template>
+      </button>
+
+      <!-- Dropdown del Perfil -->
+      <div *ngIf="isProfileMenuOpen" class="profile-menu">
+        <button routerLink="/settings" (click)="isProfileMenuOpen = false" class="profile-menu-item">
+          <!-- Icono Ajustes pequeño -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Ajustes
+        </button>
+        
+        <button (click)="logout()" class="profile-menu-item logout-item">
+          <!-- Icono Logout pequeño -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
   </div>
 </nav>
 
-<!-- 🔸 Contenido dinámico -->
-<router-outlet></router-outlet>
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>

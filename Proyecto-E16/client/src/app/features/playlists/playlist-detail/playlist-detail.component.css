@@ -1,0 +1,329 @@
+/* playlist-detail.component.css */
+
+/* 🌌 Contenedor Principal */
+.playlist-detail-page {
+  @apply min-h-screen bg-gradient-to-b from-[#0b0b12] via-[#0f0f1a] to-[#141422];
+  @apply text-gray-100 p-6 md:p-8 font-sans;
+}
+
+.content-wrapper {
+  @apply max-w-6xl mx-auto;
+}
+
+/* 🔹 CABECERA */
+.header-section {
+  @apply flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6;
+}
+
+.playlist-title {
+  @apply text-4xl md:text-5xl font-bold mb-2 text-white;
+}
+
+.playlist-meta {
+  @apply text-gray-400 text-lg flex items-center gap-2;
+}
+
+.header-actions {
+  @apply flex flex-wrap gap-3;
+}
+
+.header-btn {
+  @apply inline-flex items-center gap-2;
+  @apply px-4 py-2 rounded-full text-sm font-semibold;
+  @apply border border-transparent;
+  @apply bg-[#111827] text-gray-200;
+  @apply shadow-md shadow-black/40;
+  @apply hover:bg-[#1f2937] hover:-translate-y-[1px];
+  @apply transition-all duration-150 ease-out;
+}
+
+/* Variante azul (añadir canción) */
+.header-btn-primary {
+  @apply bg-blue-600 text-white border-blue-500/70;
+  @apply hover:bg-blue-500 hover:border-blue-400;
+}
+
+/* Variante verde (compartir) */
+.header-btn-secondary {
+  @apply bg-green-600 text-white border-green-500/70;
+  @apply hover:bg-green-500 hover:border-green-400;
+}
+
+.header-btn-icon {
+  @apply w-7 h-7 rounded-full flex items-center justify-center;
+  @apply bg-black/20;
+}
+
+/* 🔘 BOTONES GENERÁLICOS */
+.btn-action {
+  @apply font-semibold py-2 px-6 rounded-full shadow-md transition-all duration-200;
+  @apply transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2;
+}
+
+/* Variantes de color */
+.btn-blue {
+  @apply bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20;
+}
+
+.btn-green {
+  @apply bg-green-700 hover:bg-green-600 text-white shadow-green-900/20;
+}
+
+.btn-red {
+  @apply bg-red-600 hover:bg-red-500 text-white shadow-red-900/20;
+}
+
+/* Botones pequeños de la tabla */
+.btn-icon {
+  @apply inline-flex items-center justify-center
+         w-9 h-9              /* cuadrado => círculo */
+         rounded-full
+         text-sm shadow-sm
+         border border-gray-700/60
+         bg-transparent
+         transition-transform duration-200 hover:scale-110;
+}
+
+
+.btn-pill {
+  @apply px-4 py-1.5 rounded-full text-[0.85rem] font-semibold transition-all duration-200 flex items-center gap-1;
+}
+
+
+.btn-remove {
+  @apply bg-red-600/10 text-red-500 border border-red-600/30;
+  @apply hover:bg-red-600 hover:text-white hover:border-transparent;
+}
+
+/* 📝 FORMULARIOS (Compartir y Añadir) */
+.form-card {
+  @apply mb-8 bg-[#1a1a22] border border-gray-700 p-6 rounded-xl shadow-xl;
+  @apply animation-slide-down; /* Animación opcional abajo */
+}
+
+.form-title {
+  @apply text-2xl font-semibold mb-4 text-white;
+}
+
+.input-label {
+  @apply block text-gray-400 mb-1.5 text-sm font-medium;
+}
+
+.input-field {
+  @apply w-full bg-[#0f0f1a] text-white px-4 py-2.5 rounded-lg border border-gray-600;
+  @apply focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all;
+  @apply placeholder-gray-600;
+}
+
+.form-actions {
+  @apply flex justify-end mt-6 gap-3;
+}
+
+/* 🎵 TABLA DE CANCIONES */
+.table-container {
+  @apply overflow-hidden rounded-2xl border border-gray-800 bg-[#1a1a22] shadow-2xl mb-12;
+}
+
+.song-table {
+  @apply w-full text-left border-collapse;
+}
+
+.table-head-row {
+  @apply bg-[#202028] text-gray-400 uppercase text-xs tracking-wider border-b border-gray-700;
+}
+
+.table-body-row {
+  @apply border-b border-gray-800/50 last:border-0 transition-colors;
+  @apply hover:bg-[#252530] even:bg-[#1e1e28];
+}
+
+/* 🚫 ESTADO VACÍO */
+.empty-state {
+  @apply text-center py-20 bg-[#1a1a22]/50 rounded-2xl border border-dashed border-gray-700;
+}
+
+/* 🔊 REPRODUCTOR FLOTANTE/FIJO */
+.player-section {
+  @apply mt-10 flex flex-col items-center gap-4 bg-[#1a1a22] p-6 rounded-2xl border border-gray-700 shadow-2xl;
+  @apply sticky bottom-4 z-50 backdrop-blur-md bg-opacity-95; /* Opcional: hacerlo sticky */
+}
+
+.player-info {
+  @apply text-gray-300 text-lg;
+}
+
+.player-song-title {
+  @apply font-semibold text-white text-xl;
+}
+
+.audio-element {
+  @apply w-full max-w-3xl h-10 rounded-full;
+}
+
+/* Animación simple de entrada para los formularios */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animation-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+
+.autocomplete-list {
+  @apply absolute top-full left-0 w-full mt-2;
+  @apply bg-[#0b0b12] border border-gray-700 rounded-lg shadow-xl z-50;
+  @apply max-h-60 overflow-y-auto; /* Scroll si hay muchos resultados */
+}
+
+.autocomplete-item {
+  @apply flex items-center justify-between p-3 cursor-pointer transition-colors;
+  @apply border-b border-gray-800 last:border-0;
+  @apply hover:bg-gray-800;
+}
+
+.avatar-mini {
+  @apply w-8 h-8 rounded-full object-cover border border-gray-600;
+}
+
+/* Scrollbar fina para la lista */
+.autocomplete-list::-webkit-scrollbar {
+  width: 6px;
+}
+.autocomplete-list::-webkit-scrollbar-thumb {
+  background-color: #374151;
+  border-radius: 3px;
+}
+
+.sharing-header {
+  @apply flex items-start gap-3 mb-2;
+}
+
+.sharing-icon {
+  @apply w-9 h-9 rounded-full bg-blue-600/10 border border-blue-500/40
+         flex items-center justify-center text-lg text-blue-400;
+}
+
+/* 🟢 “Píldora” de usuario seleccionado */
+.selected-user-pill {
+  @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+         bg-gray-800 border border-gray-600 text-xs sm:text-sm text-gray-200;
+}
+
+.clear-pill-btn {
+  @apply text-gray-400 hover:text-red-400 text-xs font-semibold;
+}
+
+.sort-bar {
+  @apply flex items-center justify-end gap-2 mb-4;
+}
+
+.sort-label {
+  @apply text-xs md:text-sm text-gray-400 mr-1;
+}
+
+.sort-pill {
+  @apply px-3 py-1 rounded-full text-[0.75rem] md:text-xs font-medium;
+  @apply border border-gray-600/70 text-gray-300 bg-transparent;
+  @apply cursor-pointer select-none transition-all duration-150;
+  @apply hover:bg-gray-800 hover:border-gray-500;
+}
+
+.sort-pill-active {
+  @apply bg-blue-600 border-blue-500 text-white;
+  @apply shadow-md shadow-blue-900/30;
+}
+
+/* 🔍 Barra de búsqueda para añadir canciones */
+.playlist-search-wrapper {
+  @apply flex flex-col gap-2;
+}
+
+/* Contenedor de la barra, un poco más ancho */
+.search-wrapper {
+  @apply relative w-full max-w-3xl;
+}
+
+/* Misma estética que en Home */
+.search-input {
+  @apply w-full bg-[#0f0f1a] text-gray-200 pl-10 pr-4 py-2.5 rounded-full;
+  @apply border border-gray-700 outline-none;
+  @apply focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+  @apply placeholder-gray-500 text-sm;
+}
+
+/* Icono lupa dentro del input */
+.search-icon {
+  @apply absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none;
+}
+
+.search-help-text {
+  @apply text-xs text-gray-500;
+}
+
+/* Resultados de búsqueda dentro de la tarjeta */
+.search-results {
+  @apply mt-4;
+}
+
+.search-results-title {
+  @apply text-sm text-gray-300 mb-2 font-semibold;
+}
+
+/* Tarjetas de resultados (puedes adaptar si ya tienes algo similar) */
+.grid-songs {
+  @apply grid gap-4 md:grid-cols-2;
+}
+
+.song-card.compact {
+  @apply bg-[#1a1a22] border border-gray-700 rounded-xl p-3 flex gap-3 items-center;
+}
+
+.song-img {
+  @apply w-16 h-16 rounded-md object-cover;
+}
+
+/* 👉 muy importante: que esta columna pueda encogerse */
+.song-card.compact .song-info {
+  @apply flex-1 min-w-0;
+}
+
+.song-card.compact .song-text {
+  @apply flex flex-col min-w-0;
+}
+
+/* 👉 título en una sola línea con puntos suspensivos */
+.song-card.compact .song-title {
+  @apply text-sm font-semibold text-white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* opcional: el artista también truncado */
+.song-card.compact .song-artist {
+  @apply text-xs text-gray-400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-actions {
+  @apply flex flex-col gap-1;
+}
+
+.song-search-section {
+  @apply mt-6 mb-8;
+}
+
+.icon-actions {
+  @apply flex items-center gap-3 justify-end;
+}
+
+/* Botón de “añadir a playlist” tipo icono circular */
+.btn-add-icon {
+  @apply border border-purple-500/60 text-purple-300 bg-transparent;
+  @apply hover:bg-purple-600 hover:text-white hover:border-transparent;
+  @apply shadow-sm shadow-purple-900/30;
+}

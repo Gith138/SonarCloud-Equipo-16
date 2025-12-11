@@ -1,20 +1,88 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #0b0b12, #0f0f1a, #141422);
-  color: #e5e7eb;
+/* Contenedor Principal */
+.register-container {
+  @apply relative flex justify-center items-center min-h-screen text-white font-sans;
+  /* El fondo base ya viene global, aquí solo centramos */
 }
 
-a {
-  color: #3b82f6; /* azul Tailwind 500 */
+/* Fondo con Imagen */
+.bg-overlay {
+  @apply absolute inset-0 bg-cover bg-center blur-sm brightness-50;
+  /* Imagen de fondo específica para el registro */
+  background-image: url('https://images.unsplash.com/photo-1468164016595-6108e4c60c8b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170');
 }
 
-a:hover {
-  color: #60a5fa; /* azul Tailwind 400 */
+/* Tarjeta del Registro */
+.register-card {
+  @apply bg-[#0b0b12]/90 border border-gray-800 rounded-2xl shadow-2xl;
+  @apply p-10 w-full max-w-[420px] text-center text-gray-200 relative z-10;
+  @apply backdrop-blur-sm;
 }
 
-a:visited {
-  color: #3b82f6; /* evita el morado de enlaces visitados */
+/* Cabecera e Icono */
+.header-icon {
+  @apply flex justify-center mb-6;
+}
+
+.icon-circle {
+  @apply bg-blue-600 p-3 rounded-full flex items-center justify-center w-12 h-12 text-white text-2xl;
+}
+
+.title {
+  @apply text-2xl font-semibold mb-2;
+}
+
+.subtitle {
+  @apply text-sm text-gray-400 mb-6;
+}
+
+/* Formulario General */
+.form-content {
+  @apply space-y-4 text-left;
+}
+
+/* Inputs */
+.input-group {
+  @apply flex flex-col;
+}
+
+.input-label {
+  @apply block text-xs mb-1 text-gray-300 font-medium;
+}
+
+.input-field {
+  @apply w-full bg-[#0f0f1a]/50 border border-gray-700 rounded-lg p-2.5 text-sm text-white;
+  @apply outline-none transition-all duration-200;
+  @apply focus:border-blue-500 focus:bg-[#0f0f1a] focus:ring-1 focus:ring-blue-500/50;
+  @apply placeholder-gray-500; /* Placeholder gris */
+}
+
+/* Términos y Condiciones */
+.terms-container {
+  @apply flex items-center gap-2 text-sm text-gray-400 mt-2;
+}
+
+.link-terms {
+  @apply text-blue-400 hover:underline cursor-pointer transition-colors;
+}
+
+/* Mensajes de Error */
+.error-msg {
+  @apply text-red-400 text-sm text-center bg-red-500/10 p-2 rounded border border-red-500/20;
+}
+
+/* Botón de Registro */
+.btn-register {
+  @apply w-full bg-blue-600 text-white font-semibold rounded-lg py-2.5 mt-2;
+  @apply hover:bg-blue-700 hover:shadow-lg transition-all duration-200;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600;
+}
+
+/* Enlace a Login */
+.login-row {
+  @apply text-center text-gray-400 text-sm mt-4;
+}
+
+.login-link {
+  @apply text-blue-400 hover:underline font-medium ml-1 transition-colors;
 }

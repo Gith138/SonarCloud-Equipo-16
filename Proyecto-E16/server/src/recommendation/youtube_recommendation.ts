@@ -1,6 +1,5 @@
 import axios from "axios";
 
-const YOUTUBE_API_KEY = process.env.YT_API_KEY;
 
 interface YouTubeSearchResponse {
   items: {
@@ -42,6 +41,7 @@ const EXCLUDED_CHANNEL_KEYWORDS = ["music media", "party tunes", "Adela Anghelic
 
 export const fetchYouTubeSongs = async (query: string, maxResults = 10) => {
   try {
+    const YOUTUBE_API_KEY = process.env.YT_API_KEY;
     if (!YOUTUBE_API_KEY) {
       console.warn("YT_API_KEY no está configurada en el .env");
       return [];
@@ -64,7 +64,9 @@ export const fetchYouTubeSongs = async (query: string, maxResults = 10) => {
       if ((titleLc.includes("best ") || titleLc.includes("top ")) && (titleLc.includes(" song") || titleLc.includes(" songs"))) return false;
       
       // Canales sospechosos de subir mixes/listas
-      if (EXCLUDED_CHANNEL_KEYWORDS.some((bad) => channelLc.includes(bad))) return false;
+      // if (EXCLUDED_CHANNEL_KEYWORDS.some((bad) => channelLc.includes(bad))) return false;
+      // Opción alternativa: forzar minúsculas en la comparación
+      if (EXCLUDED_CHANNEL_KEYWORDS.some((bad) => channelLc.includes(bad.toLowerCase()))) return false;
       
       const commaCount = (titleLc.match(/,/g) || []).length;
       if (commaCount >= 3) return false;

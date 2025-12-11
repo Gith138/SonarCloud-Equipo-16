@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MusicService } from '../../../services/music.service';
+import { UserService } from '../../../services/user.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -10,19 +11,24 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './playlist-detail.component.html',
+  styleUrl: './playlist-detail.component.css'
 })
 
 export class PlaylistDetailComponent {
   playlist: any;
   currentSongUrl: SafeResourceUrl | null = null;
   currentSongTitle: string | null = null;
-  newSong = { song_title: '', youtube_url: '', genre: '' };
   showForm = false;
   shareTarget: string = '';
   isSharing = false;
   audio = new Audio(); 
+  songSortOrder: 'asc' | 'desc' = 'asc';
+  searchQuery: string = '';
+  searchResults: any[] = [];
+  isSearching = false;
 
-  constructor(private route: ActivatedRoute, private musicService: MusicService, private sanitizer: DomSanitizer) {}
+  filteredUsersForShare: any[] = []; // Lista de resultados de búsqueda
+  constructor(private route: ActivatedRoute, private musicService: MusicService, private sanitizer: DomSanitizer, private userService: UserService) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -37,17 +43,34 @@ export class PlaylistDetailComponent {
     });
   }
 
-  playSong(youtubeUrl: string, title: string = 'Desconocido') {
+  
+  playSong(youtubeUrl: string, title: string = 'Desconocido', songObj?: any) {
     const videoId = this.extractVideoId(youtubeUrl);
+    
     if (!videoId) {
-      console.error("No se pudo extraer el ID del video:", youtubeUrl);
+      console.error("No se pudo extraer ID:", youtubeUrl);
       return;
     }
+    
+    // ✅ CORRECCIÓN: Cadena bien cerrada
+    const youtubeLink = `https://www.youtube.com/watch?v=${videoId}`; 
 
-    const youtubeLink = `https://www.youtube.com/watch?v=${videoId}`;
-    window.open(youtubeLink, '_blank'); // Abre el video en una nueva pestaña
+    window.open(youtubeLink, '_blank'); 
+    console.log(`🎵 Abriendo:`, youtubeLink);
 
-    console.log(`🎵 Abriendo "${title}" en YouTube:`, youtubeLink);
+    // ✅ CORRECCIÓN: Asegurar thumbnailURL_ para evitar el error del backend
+    const songData = songObj || {
+      title_: title,
+      youtubeURL_: youtubeLink,
+      // Si venía de búsqueda, intentamos sacar la miniatura, si no, placeholder
+      thumbnailURL_: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      artist_: "Desconocido" // Valor por defecto
+    };
+
+    this.musicService.addSongToHistory(songData).subscribe({
+      next: () => console.log(`Historial actualizado`),
+      error: (err) => console.error('Error historial', err),
+    });
   }
 
   onAudioError() {
@@ -64,24 +87,48 @@ export class PlaylistDetailComponent {
     }
   }
 
-  addSong() {
-    if (!this.playlist?._id) return;
+  searchSongsForPlaylist() {
+    const query = this.searchQuery.trim();
+    if (!query) {
+      this.searchResults = [];
+      return;
+    }
 
-    const { song_title, youtube_url, genre } = this.newSong;
+    this.isSearching = true;
 
-    this.musicService.addSongToPlaylist(this.playlist._id, {
-      song_title,
-      youtube_url,
-      genre,
-    }).subscribe({
-      next: (res) => {
-        console.log('Canción añadida:', res);
-        this.playlist.songs_.push(res.song);
-        this.newSong = { song_title: '', youtube_url: '', genre: '' };
-        this.showForm = false;
+    this.musicService.searchYouTube(query).subscribe({
+      next: (res: any) => {
+        this.searchResults = res || [];
+        this.isSearching = false;
       },
       error: (err) => {
-        console.error('Error al añadir canción:', err);
+        console.error('Error al buscar en YouTube:', err);
+        this.searchResults = [];
+        this.isSearching = false;
+      },
+    });
+  }
+
+  addSearchResultToPlaylist(video: any) {
+    if (!this.playlist?._id) return;
+
+    const payload = {
+      song_title: video.title_,
+      youtube_url: video.youtubeURL_,
+      genre: video.genre_ || 'Desconocido',
+    };
+
+    this.musicService.addSongToPlaylist(this.playlist._id, payload).subscribe({
+      next: (res: any) => {
+        // Añadimos la canción devuelta a la lista de la playlist
+        if (res?.song) {
+          this.playlist.songs_.push(res.song);
+        }
+        alert(`"${video.title_}" añadida a la playlist`);
+      },
+      error: (err) => {
+        console.error('Error al añadir canción desde búsqueda:', err);
+        alert('No se pudo añadir la canción.');
       },
     });
   }
@@ -98,6 +145,38 @@ export class PlaylistDetailComponent {
       },
     });
   }
+
+  // FUNCIÓN PARA BUSCAR USUARIOS (Conectada al input)
+  searchUsersToShare() {
+    // Si el campo está vacío, limpiamos la lista
+    if (!this.shareTarget.trim()) {
+      this.filteredUsersForShare = [];
+      return;
+    }
+
+    this.userService.searchUsers(this.shareTarget).subscribe({
+      next: (res: any) => {
+        // Guardamos los usuarios encontrados
+        this.filteredUsersForShare = res.users || []; 
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  //  FUNCIÓN CUANDO SELECCIONAS UN USUARIO DE LA LISTA
+  selectUserForShare(user: any) {
+    // Rellenamos el input con el email (o username)
+    this.shareTarget = user.email_; 
+    
+    // Limpiamos la lista de sugerencias para que desaparezca
+    this.filteredUsersForShare = [];
+  }
+
+  // Helper para la imagen (si no lo tienes ya en este componente)
+  getUserAvatar(url: string) {
+    return url || 'assets/default-avatar.png'; // Pon tu ruta por defecto
+  }
+
 
   sharePlaylist() {
     const target = this.shareTarget.trim();
@@ -116,6 +195,20 @@ export class PlaylistDetailComponent {
       error: (err) => {
         console.error('Error al compartir:', err);
       },
+    });
+  }
+
+  get sortedSongs(): any[] {
+    const songs = this.playlist?.songs_ || [];
+    const dir = this.songSortOrder === 'asc' ? 1 : -1;
+
+    return [...songs].sort((a: any, b: any) => {
+      const titleA = (a.title_ || '').toLowerCase();
+      const titleB = (b.title_ || '').toLowerCase();
+
+      if (titleA < titleB) return -1 * dir;
+      if (titleA > titleB) return 1 * dir;
+      return 0;
     });
   }
 }

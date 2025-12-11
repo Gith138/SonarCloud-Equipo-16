@@ -3,10 +3,10 @@ import axios from "axios";
 import { fetchYouTubeSongsByArtist } from "../recommendation/youtube_recommendation";
 
 const router = express.Router();
-const YT_API_KEY = process.env.YT_API_KEY;
 
 router.get("/youtube/search", async (req, res) => {
   try {
+    const YT_API_KEY = process.env.YT_API_KEY;
     const { q } = req.query;
     if (!q) return res.status(400).json({ message: "Falta el parámetro 'q'" });
 
