@@ -8,10 +8,23 @@ on:
 
 jobs:
   # ===========================
-  # JOB 1: Backend (Jest Tests)
+  # JOB 1: Backend (Jest Tests + Sonar + Coveralls)
   # ===========================
   backend-tests:
     runs-on: ubuntu-latest
+
+    # 1. CORRECCIÓN: Añadimos MongoDB aquí también
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+
+    # 2. CORRECCIÓN: Variables de entorno para Jest
+    env:
+      MONGO_URI: mongodb://127.0.0.1:27017/test_db_unit
+      JWT_SECRET: secreto_test
+      PORT: 3000
 
     steps:
       - name: Checkout
@@ -28,9 +41,28 @@ jobs:
         working-directory: ./server
         run: npm ci
 
-      - name: Ejecutar tests de Backend
+      # 3. OPTIMIZACIÓN: Un solo paso para testear y generar cobertura
+      - name: Ejecutar tests con Cobertura
         working-directory: ./server
-        run: npm test -- --passWithNoTests
+        run: npm test -- --passWithNoTests --coverage --forceExit
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: .
+
+      - name: Subir reporte a Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # 4. CORRECCIÓN DE RUTAS: Quitamos "Proyecto-E16/"
+          file: server/coverage/lcov.info
+          base-path: server
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   # ============================================
   # JOB 2: Frontend + Backend + Selenium E2E
@@ -47,11 +79,9 @@ jobs:
 
     env:
       MONGO_URI: mongodb://127.0.0.1:27017/e2e_db
-      # 2. Secretos Reales: Le decimos a GitHub que inyecte las claves ocultas
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       YT_API_KEY: ${{ secrets.YT_API_KEY }}
       LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
-      # 3. Configuración estándar
       PORT: 3000
 
     steps:
@@ -79,7 +109,6 @@ jobs:
         working-directory: ./client
         run: npm run build
 
-      # === PASO DE DEPURACIÓN ===
       - name: Ver estructura del Build
         working-directory: ./client
         run: |
@@ -95,7 +124,6 @@ jobs:
           echo "🔵 Iniciando Backend en puerto 3000..."
           cd server
           PORT=3000 nohup npx ts-node src/app.ts > ../backend.log 2>&1 &
-          PID_BACKEND=$!
           sleep 10
 
           # 2. Iniciar Frontend
@@ -113,14 +141,13 @@ jobs:
           sleep 2
 
           # 3. Esperar a los servidores
-          echo "Esperando a que los servidores respondan..."
+          echo "⏳ Esperando a que los servidores respondan..."
           cd ..
           npx wait-on tcp:3000 tcp:4200 --timeout 60000
 
           # 4. Ejecutar Tests
-          echo "Ejecutando pruebas Selenium..."
+          echo "🚀 Ejecutando pruebas Selenium..."
           cd client
-          # Ejecutamos el test E2E con Mocha
           npx mocha tests/selenium-suite.spec.js --timeout 60000
 
       - name: Show Server Logs
