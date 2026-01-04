@@ -75,6 +75,8 @@ jobs:
     env:
       MONGODB_URI: mongodb://127.0.0.1:27017/e2e_db
       JWT_SECRET: "secreto_temporal_para_ci"
+      YT_API_KEY: "AIzaSyDtwoyYFh8LMIeSIu_g6_9t0H8tF9eL3Yo"
+      LASTFM_API_KEY: "bcd373117b5cceb4dcaa95ca7f9eff99"
       PORT: 3000
 
     steps:
@@ -97,46 +99,46 @@ jobs:
 
       - name: Instalar dependencias Frontend
         working-directory: ./Proyecto-E16/client  # <--- RUTA CORREGIDA
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build Frontend
         working-directory: ./Proyecto-E16/client  # <--- RUTA CORREGIDA
         run: npm run build
 
+      - name: Ver estructura del Build
+        working-directory: ./Proyecto-E16/client
+        run: |
+            echo "Listando contenido de la carpeta dist:"
+            ls -R dist
+        
       - name: Instalar herramientas globales
         run: npm install -g angular-http-server wait-on
 
       - name: Start Backend & Frontend & Run Selenium
         run: |
-          # 1. Iniciar Backend (Corrigiendo ruta cd)
           echo "🔵 Iniciando Backend en puerto 3000..."
-          cd Proyecto-E16/server    # <--- RUTA CORREGIDA
-          PORT=3000 nohup npm start > ../../backend.log 2>&1 &
-          sleep 5
+          cd Proyecto-E16/server
+          PORT=3000 nohup npx ts-node src/app.ts > ../../backend.log 2>&1 &
+          sleep 10
 
-          # 2. Iniciar Frontend (Corrigiendo ruta cd)
           echo "🟢 Sirviendo Angular (Frontend) en puerto 4200..."
-          cd ../client              # Estamos en Proyecto-E16/server, bajamos a Proyecto-E16/client
-          
+          cd ../client
+
           if [ -d "./dist/client/browser" ]; then
             PATH_TO_SERVE="./dist/client/browser"
           else
             PATH_TO_SERVE="./dist/client"
           fi
-          
+
           echo "Sirviendo desde: $PATH_TO_SERVE"
           nohup angular-http-server --path $PATH_TO_SERVE -p 4200 > ../../frontend.log 2>&1 &
           sleep 2
 
-          # 3. Esperar a los servidores
           echo "⏳ Esperando a que los servidores respondan..."
-          cd ../..  # Volvemos a la raíz del repositorio
+          cd ../..
           npx wait-on tcp:3000 tcp:4200 --timeout 60000
 
-          # 4. Ejecutar Tests
           echo "🚀 Ejecutando pruebas Selenium..."
-          # Asumimos que moviste la carpeta tests dentro de Proyecto-E16/client/tests
-          # Si 'tests' está en la raíz del repo, usa: tests/selenium-suite.spec.js
           cd Proyecto-E16/client
           npx mocha tests/selenium-suite.spec.js --timeout 60000
 
