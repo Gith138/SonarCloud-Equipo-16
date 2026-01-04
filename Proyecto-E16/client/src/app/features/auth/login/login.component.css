@@ -1,13 +1,11 @@
-/* Contenedor Principal (Pantalla completa) */
+/* Contenedor Principal */
 .login-container {
   @apply relative flex justify-center items-center min-h-screen text-white;
-  /* La fuente 'Inter' ya es global gracias a tu styles.css, no hace falta repetirla */
 }
 
 /* Fondo con Imagen */
 .bg-overlay {
   @apply absolute inset-0 bg-cover bg-center blur-sm brightness-50;
-  /* Definimos la imagen aquí para mantener el HTML limpio */
   background-image: url('https://images.unsplash.com/photo-1468164016595-6108e4c60c8b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170');
 }
 
@@ -15,7 +13,7 @@
 .login-card {
   @apply relative bg-[#1b1b28]/90 p-10 rounded-2xl shadow-2xl;
   @apply w-full max-w-md border border-gray-700;
-  @apply backdrop-blur-sm; /* Opcional: añade un efecto vidrio extra */
+  @apply backdrop-blur-sm; 
 }
 
 /* Cabecera de la Tarjeta */
@@ -25,7 +23,7 @@
 
 .icon-wrapper {
   @apply bg-blue-600 p-3 rounded-full mb-3 text-white text-xl;
-  @apply flex items-center justify-center w-12 h-12; /* Asegura círculo perfecto */
+  @apply flex items-center justify-center w-12 h-12; 
 }
 
 .title {
@@ -63,6 +61,10 @@
 
 .forgot-link {
   @apply hover:text-blue-400 transition-colors;
+  
+  position: relative; 
+  z-index: 50; 
+  cursor: pointer; 
 }
 
 /* Botón Principal */

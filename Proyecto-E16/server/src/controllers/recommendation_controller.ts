@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { recommendFromLikes, buildInternalPlaylists, buildExternalPlaylistFromUserLikes} from "../recommendation/recommendation";
+import { recommendFromLikes, buildInternalPlaylists, buildExternalPlaylistFromUserLikes, getFriendsBasedRecommendations, mergeUniqueWithLimit} from "../recommendation/recommendation";
 import { getGlobalPopularityRecommendations } from "../recommendation/initial_recommendation"; 
 import User from "../models/user_model";
 
@@ -30,9 +30,19 @@ export const recommendation = async (req: Request, res: Response) => {
       internalPlaylists = buildInternalPlaylists(globalSongs);
       externalPlaylist = null;
     } else {
-      recommendations = await recommendFromLikes(user);
-      internalPlaylists = buildInternalPlaylists(recommendations);
-      externalPlaylist = await buildExternalPlaylistFromUserLikes(userId);
+      const likeBased = hasLikes ? await recommendFromLikes(user) : [];
+      const friendBased = await getFriendsBasedRecommendations(userId, 20);
+      let merged = mergeUniqueWithLimit(30, likeBased, friendBased);
+
+      if (merged.length < 15) {
+        const globalSongs = await getGlobalPopularityRecommendations(20);
+        merged = mergeUniqueWithLimit(30, merged, globalSongs);
+      }
+
+      recommendations = merged;
+      internalPlaylists = buildInternalPlaylists(merged);
+
+      externalPlaylist = hasLikes ? await buildExternalPlaylistFromUserLikes(userId) : null;
     }
 
     return res.json({

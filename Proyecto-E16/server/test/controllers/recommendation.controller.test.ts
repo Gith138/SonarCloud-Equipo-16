@@ -1,12 +1,7 @@
 import { recommendation } from "../../src/controllers/recommendation_controller";
 import User from "../../src/models/user_model";
 
-// 1. Ajusta esto al nombre real de tu archivo
-import { 
-  recommendFromLikes, 
-  buildInternalPlaylists, 
-  buildExternalPlaylistFromUserLikes 
-} from "../../src/recommendation/recommendation"; 
+import { recommendFromLikes, buildInternalPlaylists, buildExternalPlaylistFromUserLikes, getFriendsBasedRecommendations, mergeUniqueWithLimit } from "../../src/recommendation/recommendation"; 
 
 import { getGlobalPopularityRecommendations } from "../../src/recommendation/initial_recommendation";
 import { Request, Response } from 'express';
@@ -21,7 +16,6 @@ describe("recommendation controller", () => {
   let res: Partial<Response>;
 
   beforeEach(() => {
-    // 🧹 LIMPIEZA TOTAL: Borra implementaciones previas para evitar que el "DB Error" se filtre
     jest.resetAllMocks();
 
     req = { user: { id: "123" } } as any;
@@ -30,21 +24,19 @@ describe("recommendation controller", () => {
       status: jest.fn().mockReturnThis()
     };
 
-    // 🏗️ CONFIGURACIÓN POR DEFECTO (HAPPY PATH)
-    // Configuramos aquí lo que debería pasar si todo sale BIEN.
-    // Así, los tests de éxito no necesitan repetir código, y el test de error sobrescribirá esto.
-
-    // 1. User.findById por defecto devuelve un usuario válido
     (User.findById as jest.Mock).mockReturnValue({
         populate: jest.fn().mockResolvedValue({ likedSongs_: [] })
     });
 
-    // 2. Funciones de recomendación por defecto devuelven arrays vacíos o datos simples
+    // Funciones de recomendación por defecto devuelven arrays vacíos o datos simples
     (recommendFromLikes as jest.Mock).mockResolvedValue([]);
     (buildInternalPlaylists as jest.Mock).mockReturnValue([]);
     (buildExternalPlaylistFromUserLikes as jest.Mock).mockResolvedValue(null);
     
-    // 3. Importante: Initial Recommendation por defecto devuelve vacío para no explotar
+    // Estas funciones por defecto devuelven vacío para no explotar
+    (getGlobalPopularityRecommendations as jest.Mock).mockResolvedValue([]);
+    (getFriendsBasedRecommendations as jest.Mock).mockResolvedValue([]);
+    (mergeUniqueWithLimit as jest.Mock).mockReturnValue([]);
     (getGlobalPopularityRecommendations as jest.Mock).mockResolvedValue([]);
   });
 
@@ -72,12 +64,13 @@ describe("recommendation controller", () => {
   test("devuelve recomendaciones, playlists y playlist externa", async () => {
     const mockUser = { likedSongs_: ["songA"] };
 
-    // Sobrescribimos mocks con datos específicos para este test
     (User.findById as jest.Mock).mockReturnValue({
       populate: jest.fn().mockResolvedValue(mockUser)
     });
 
     (recommendFromLikes as jest.Mock).mockResolvedValue(["song1", "song2"]);
+    (buildInternalPlaylists as jest.Mock).mockReturnValue(["playlist1"]);
+    (mergeUniqueWithLimit as jest.Mock).mockReturnValue(["song1", "song2"]);
     (buildInternalPlaylists as jest.Mock).mockReturnValue(["playlist1"]);
     (buildExternalPlaylistFromUserLikes as jest.Mock).mockResolvedValue("external123");
 
@@ -85,6 +78,7 @@ describe("recommendation controller", () => {
 
     // Verificaciones
     expect(recommendFromLikes).toHaveBeenCalledWith(mockUser);
+    expect(mergeUniqueWithLimit).toHaveBeenCalled();
     expect(buildInternalPlaylists).toHaveBeenCalledWith(["song1", "song2"]);
     expect(buildExternalPlaylistFromUserLikes).toHaveBeenCalledWith("123");
 
@@ -100,6 +94,7 @@ describe("recommendation controller", () => {
    */
   test("maneja errores devolviendo 500", async () => {
     // Sobrescribimos para forzar el error
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (User.findById as jest.Mock).mockImplementation(() => {
       throw new Error("DB error");
     });
@@ -110,5 +105,6 @@ describe("recommendation controller", () => {
     expect(res.json).toHaveBeenCalledWith({
       message: "Error generando recomendaciones",
     });
+    consoleSpy.mockRestore();
   });
 });

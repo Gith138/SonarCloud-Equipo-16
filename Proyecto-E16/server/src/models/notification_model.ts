@@ -7,7 +7,9 @@ export type NotificationType =
   | "new_follower"
   | "system_alert"
   | "like_song"
-  | "message";
+  | "message"
+  | "playlist_share"
+  | "playlist_unshare";
 
 export interface Notification extends Document {
   senderId_?: mongoose.Types.ObjectId;   // opcional si es system_alert
@@ -41,7 +43,9 @@ const notificationSchema: Schema = new Schema({
       "new_follower",
       "system_alert",
       "like_song",
-      "message"
+      "message",
+      "playlist_share",
+      "playlist_unshare"
     ],
     required: true,
   },

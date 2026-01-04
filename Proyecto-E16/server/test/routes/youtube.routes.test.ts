@@ -66,10 +66,12 @@ describe('YouTube Routes', () => {
     });
 
     it('debería devolver 500 si Axios falla', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
       mockedAxios.get.mockRejectedValue(new Error('API Error'));
       
       const res = await request(app).get('/youtube/search?q=crash');
       expect(res.status).toBe(500);
+      consoleSpy.mockRestore();
     });
   });
 
@@ -94,10 +96,12 @@ describe('YouTube Routes', () => {
     });
 
     it('debería devolver 500 si el helper falla', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
       (ytRec.fetchYouTubeSongsByArtist as jest.Mock).mockRejectedValue(new Error('Helper Error'));
 
       const res = await request(app).get('/youtube/artist?q=Star');
       expect(res.status).toBe(500);
+      consoleSpy.mockRestore();
     });
   });
 });

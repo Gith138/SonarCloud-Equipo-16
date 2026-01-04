@@ -79,7 +79,6 @@
             (click)="addSongToPlaylist(song)"
             title="Añadir a una playlist"
           >
-            <!-- puedes cambiar por tu PNG si quieres -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="4" y1="7" x2="14" y2="7"></line>
               <line x1="4" y1="12" x2="14" y2="12"></line>
@@ -89,7 +88,7 @@
             </svg>
           </button>
 
-          <!-- Reproducir (centro) -->
+          <!-- Reproducir -->
           <button
             type="button"
             class="icon-circle icon-play"
@@ -113,7 +112,7 @@
           </svg> 
         </button>
 
-          <!-- Like (derecha) -->
+          <!-- Like -->
           <button
             type="button"
             class="icon-circle icon-like"
@@ -293,7 +292,7 @@
       <button (click)="closeRecommendModal()" class="close-btn text-2xl hover:text-red-500">✖</button>
     </div>
 
-    <!-- Preview de la canción (Esto ya lo tenías bien) -->
+    <!-- Preview de la canción -->
     <div class="flex items-center gap-3 mb-6 bg-white/5 p-3 rounded-lg border border-gray-700">
       <img [src]="songToRecommend?.thumbnailURL_" class="w-14 h-14 rounded-md object-cover shadow-lg">
       <div class="overflow-hidden">
@@ -302,7 +301,7 @@
       </div>
     </div>
 
-    <!-- LISTA DE AMIGOS CON FOTO (Estilo Friends) -->
+    <!-- LISTA DE AMIGOS CON FOTO  -->
     <p class="text-sm text-gray-400 mb-2 font-medium">Selecciona un amigo:</p>
     
     <div class="friend-list-container max-h-60 overflow-y-auto pr-1">
@@ -321,7 +320,7 @@
       >
         <!-- Info Usuario (Foto + Nombre) -->
         <div class="flex items-center gap-3">
-          <!-- 🔥 FOTO DEL AMIGO (La que cargaste en loadFriends) -->
+          <!-- FOTO DEL AMIGO -->
           <img 
             [src]="friend.displayAvatar" 
             class="w-10 h-10 rounded-full object-cover border border-gray-600"
@@ -340,7 +339,6 @@
         </div>
       </div>
     </div>
-
     <!-- Mensaje Opcional -->
     <div class="mt-6 mb-6">
       <label class="block text-sm text-gray-400 mb-2">Mensaje (opcional):</label>

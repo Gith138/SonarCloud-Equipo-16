@@ -20,7 +20,6 @@ describe('YouTube Service', () => {
    */
   describe('fetchYouTubeSongs', () => {
     it('debería filtrar resultados no deseados (Shorts, Mixes, Full Album)', async () => {
-      // 👇 CORRECCIÓN: Añadimos 'thumbnails' a TODOS los items para evitar crash
       mockedAxios.get.mockResolvedValue({
         data: {
           items: [
@@ -30,7 +29,7 @@ describe('YouTube Service', () => {
               snippet: { 
                 title: 'Coldplay - Yellow', 
                 channelTitle: 'Coldplay', 
-                thumbnails: { high: { url: 'img_valid' } } // ✅ Tiene thumbnails
+                thumbnails: { high: { url: 'img_valid' } } 
               } 
             },
             // 2. INVÁLIDO (Shorts)
@@ -39,7 +38,7 @@ describe('YouTube Service', () => {
               snippet: { 
                 title: 'Funny Moments #Shorts', 
                 channelTitle: 'Random',
-                thumbnails: { high: { url: 'img_bad1' } } // ✅ Añadido para evitar crash
+                thumbnails: { high: { url: 'img_bad1' } }
               } 
             },
             // 3. INVÁLIDO (Playlist)
@@ -48,7 +47,7 @@ describe('YouTube Service', () => {
               snippet: { 
                 title: 'Best Rock Songs 2000s Playlist', 
                 channelTitle: 'MusicHub',
-                thumbnails: { high: { url: 'img_bad2' } } // ✅ Añadido
+                thumbnails: { high: { url: 'img_bad2' } } 
               } 
             },
             // 4. INVÁLIDO (Canal prohibido)
@@ -57,7 +56,7 @@ describe('YouTube Service', () => {
               snippet: { 
                 title: 'Song OK', 
                 channelTitle: 'Adela Anghelici',
-                thumbnails: { high: { url: 'img_bad3' } } // ✅ Añadido
+                thumbnails: { high: { url: 'img_bad3' } } 
               } 
             }
           ]

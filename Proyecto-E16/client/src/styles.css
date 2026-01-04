@@ -5,10 +5,10 @@
 @tailwind utilities;
 
 html, body {
-  /* 🔹 height: 100% asegura que el gradiente cubra todo, incluso si hay poco contenido */
+  /* Height: 100% asegura que el gradiente cubra todo, incluso si hay poco contenido */
   height: 100%; 
   margin: 0;
   
-  /* Usamos font-sans */
+  /* font-sans */
   @apply bg-gradient-to-b from-[#0b0b12] via-[#0f0f1a] to-[#141422] text-gray-100 font-sans min-h-screen;
 }

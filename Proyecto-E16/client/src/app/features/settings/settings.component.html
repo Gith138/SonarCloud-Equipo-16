@@ -60,9 +60,7 @@
     </button>
   </div>
 
-  <!-- ========================================== -->
   <!-- 1. PERFIL (Inputs con Iconos) -->
-  <!-- ========================================== -->
   <ng-container *ngIf="activeTab === 'profile'">
     <div class="card">
       <h2>Información del Perfil</h2>
@@ -99,7 +97,6 @@
         <label>Nombre de usuario</label>
         <div class="relative">
           <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-            <!-- Icono Usuario -->
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
           </div>
           <input type="text" [(ngModel)]="user.username_" class="!pl-14 w-full" placeholder="Tu nombre de usuario">
@@ -111,7 +108,6 @@
         <label>Correo electrónico</label>
         <div class="relative">
           <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-             <!-- Icono Mail -->
              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           </div>
           <input type="email" [(ngModel)]="user.email_" class="!pl-14 w-full" placeholder="tu@email.com">
@@ -123,7 +119,6 @@
         <label>Nueva Contraseña</label>
         <div class="relative">
           <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-            <!-- Icono Candado -->
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <input type="password" [(ngModel)]="newPassword" class="!pl-14 w-full" placeholder="Dejar en blanco para mantener la actual" autocomplete="new-password">
@@ -135,7 +130,6 @@
         <label>Confirmar Contraseña</label>
         <div class="relative">
           <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-            <!-- Icono Candado -->
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <input type="password" [(ngModel)]="confirmNewPassword" class="!pl-14 w-full" placeholder="Repite la contraseña" autocomplete="new-password">   
@@ -150,14 +144,23 @@
     <div class="card danger border-red-900/30">
       <h2 class="text-red-400">Zona de Peligro</h2>
       <p class="description">Acciones irreversibles con tu cuenta</p>
-      <button class="btn btn-danger" (click)="handleDeleteAccount()">Eliminar cuenta</button>
+      
+      <button
+          class="unlike-btn flex items-center gap-1 pr-3"
+          (click)="handleDeleteAccount()"
+        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        <span>Eliminar cuenta</span>
+      </button>
+      
     </div>
   </ng-container>
 
 
-  <!-- ========================================== -->
   <!-- 2. HISTORIAL -->
-  <!-- ========================================== -->
   <ng-container *ngIf="activeTab === 'history'">
     <div class="card">
       <div class="flex justify-between items-center mb-6">
@@ -165,24 +168,51 @@
           <h2>Historial de Reproducción</h2>
           <p class="description mb-0">Canciones que has escuchado recientemente</p>
         </div>
-        <button class="btn-pill btn-secondary text-xs py-1 px-3 h-fit" (click)="clearHistory()">Limpiar</button>
+        <button
+          class="unlike-btn flex items-center gap-1 pr-3"
+          (click)="clearHistory()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>Limpiar</span>
+        </button>
       </div>
 
       <ul class="history-list">
-        <li *ngFor="let entry of history" class="history-item">
-          <div class="song-info w-full">
-            <p class="title">{{ entry.song.title_ }}</p>
-            <p class="artist">{{ entry.song.artist_ }}</p>
+        <li *ngFor="let entry of history" 
+             class="history-item flex items-center justify-between cursor-pointer hover:bg-[#1f2130] transition-colors"
+            (click)="playSong(entry.song)">
+          
+          <div class="flex items-center gap-4">
+            <img 
+              [src]="entry.song.thumbnailURL_ || 'assets/default-thumbnail.png'" 
+              class="thumbnail" 
+              alt="Miniatura"
+            />
+            <div class="song-info">
+              <p class="title">{{ entry.song.title_ }}</p>
+              <p class="artist">{{ entry.song.artist_ }}</p>
+            </div>
           </div>
+
+          <div class="text-right">
+            <span class="text-xs text-gray-500 font-mono uppercase tracking-wider">
+              {{ entry.listenedAt.formatted }}
+            </span>
+          </div>
+
         </li>
       </ul>
-      <div *ngIf="history.length === 0" class="text-center py-8 text-gray-500 italic">No tienes historial reciente.</div>
+
+      <div *ngIf="history.length === 0" class="text-center py-8 text-gray-500 italic">
+        No tienes historial reciente.
+      </div>
     </div>
   </ng-container>
-  
-  <!-- ========================================== -->
+
   <!-- 3. PREFERENCIAS -->
-  <!-- ========================================== -->
   <ng-container *ngIf="activeTab === 'preferences'">
     <div class="card">
       <h2>Social y Privacidad</h2>
@@ -228,7 +258,6 @@
 
       <!-- Botones de Acción -->
       <div class="buttons mt-8">
-        <!-- Corregido el nombre de la función a handleResetSettings -->
         <button class="btn btn-outline" (click)="handleResetSettings()">Restablecer</button>
         
         <button class="btn btn-primary" (click)="savePreferences()">Guardar Cambios</button>
@@ -236,9 +265,7 @@
     </div>
   </ng-container>
 
-  <!-- ========================================== -->
   <!-- Likes -->
-  <!-- ========================================== -->
   <section *ngIf="activeTab === 'likes'" class="settings-card">
     <div class="card">
       <h2>Favoritos</h2>
@@ -246,10 +273,9 @@
 
       <ng-container *ngIf="likedSongs.length > 0; else noLikes">
         <ul class="history-list">
-          <li *ngFor="let song of likedSongs" class="history-item">
-            
-            <!-- Grupo IZQUIERDA: Imagen + Texto -->
-            <!-- Hemos sacado la imagen del song-meta para que esté a la izquierda -->
+          <li *ngFor="let song of likedSongs" 
+            class="history-item flex items-center justify-between cursor-pointer hover:bg-[#1f2130] transition-colors"
+            (click)="playSong(song)">
             <div class="flex items-center gap-4 flex-1">
               <img
                 [src]="song.thumbnailURL_"
@@ -261,13 +287,11 @@
                 <p class="artist">{{ song.artist_ }}</p>
               </div>
             </div>
-
-            <!-- Grupo DERECHA: Botón Eliminar con el SVG que pediste -->
+            <!-- Grupo DERECHA: Botón Eliminar -->
             <button
               class="unlike-btn flex items-center gap-1 pr-3"
               (click)="unlikeFromSettings(song)"
             >
-              <!-- Aquí está tu SVG de 20x20 con el icono de papelera dentro -->
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -284,11 +308,8 @@
     </div>
   </section>
 
-  <!-- ========================================== -->
   <!-- 4. ALMACENAMIENTO -->
-  <!-- ========================================== -->
   <ng-container *ngIf="activeTab === 'storage'">
-
     <div class="card">
       <h2>Caché y Datos</h2>
       <div class="cache-display">
@@ -296,7 +317,16 @@
         <p class="small">Almacenamiento en caché</p>
       </div>
       <div class="flex justify-center">
-        <button class="btn btn-outline" (click)="handleClearCache()">Limpiar caché</button>
+        <button
+          class="unlike-btn flex items-center gap-1 pr-3"
+          (click)="handleClearCache()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>Limpiar caché</span>
+        </button>
       </div>
     </div>
 

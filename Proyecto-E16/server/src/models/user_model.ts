@@ -9,10 +9,17 @@ export interface User extends Document {
   friends_: mongoose.Types.ObjectId[];
   friendRequests_: mongoose.Types.ObjectId[];
   likedSongs_: mongoose.Types.ObjectId[];
+  resetPasswordToken?: string; // El signo ? significa que puede ser undefined
+  resetPasswordExpires?: Date;
   history_: {
     songId: mongoose.Types.ObjectId;
-    rating: number;
     listenedAt: Date;
+  }[];
+  recommendations_: {
+    fromUserId_: mongoose.Types.ObjectId;
+    songId_: mongoose.Types.ObjectId; // Referencia a la canción (la crearemos si no existe)
+    message_: string;
+    receivedAt_: Date;
   }[];
   preferences_?: {
     privateSession: boolean;
@@ -32,14 +39,21 @@ const userSchema: Schema = new Schema({
   history_: [
     {
       songId: { type: Schema.Types.ObjectId, ref: 'Song', required: true },
-      rating: { type: Number, min: 1, max: 5, default: 3 },
       listenedAt: { type: Date, default: Date.now },
     },
   ],
+  recommendations_: [{
+    fromUserId_: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    songId_: { type: Schema.Types.ObjectId, ref: 'Song', required: true },
+    message_: { type: String, default: '' },
+    receivedAt_: { type: Date, default: Date.now }
+  }],
   preferences_: {
     privateSession: { type: Boolean, default: false },
     showFriendActivity: { type: Boolean, default: true },
   },
+  resetPasswordToken: { type: String, default: undefined }, // La llave temporal
+  resetPasswordExpires: { type: Date, default: undefined }  // Cuándo caduca esa llave
 });
 
 export default mongoose.model<User>('User', userSchema);

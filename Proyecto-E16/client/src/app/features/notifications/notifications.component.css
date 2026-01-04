@@ -17,7 +17,7 @@
   position: relative;
   transition: all 0.3s ease;
   
-  /* Color por defecto (Gris clarito tipo Configuración) */
+  /* Color por defecto  */
   color: #d1d5db; 
 }
 
@@ -27,7 +27,7 @@
   transform: scale(1.05);
 }
 
-/* --- ESTADO ROJO (Cuando hay notificaciones) --- */
+/* --- Estado rojo  --- */
 .bell-btn.has-unread {
   color: #ef4444; /* Rojo intenso */
   filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.5)); /* Pequeño brillo rojo */
@@ -38,7 +38,7 @@
   color: #ff6b6b; /* Rojo más claro al hacer hover */
 }
 
-/* --- Badge Numérico (Pequeñito) --- */
+/* --- Badge Numérico --- */
 .badge-count {
   position: absolute;
   top: 2px;
@@ -49,10 +49,10 @@
   font-weight: 800;
   padding: 1px 4px;
   border-radius: 6px;
-  border: 2px solid #111827; /* Borde del color del fondo para separar */
+  border: 2px solid #111827; 
 }
 
-/* --- Dropdown (Estilos anteriores mejorados) --- */
+/* --- Dropdown  --- */
 .dropdown-menu {
   position: absolute;
   top: 130%; /* Un poco más separado */
@@ -115,7 +115,7 @@
 }
 
 .notif-item.unread {
-  background: rgba(37, 99, 235, 0.1); /* Fondo azulado muy sutil */
+  background: rgba(37, 99, 235, 0.1); 
   border-left: 3px solid #2563eb;
 }
 

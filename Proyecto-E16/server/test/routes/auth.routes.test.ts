@@ -7,6 +7,8 @@ import * as authController from '../../src/controllers/auth_controller';
 jest.mock('../../src/controllers/auth_controller', () => ({
   register: jest.fn((req, res) => res.status(200).send('Register OK')),
   login: jest.fn((req, res) => res.status(200).send('Login OK')),
+  forgotPassword: jest.fn((req, res) => res.status(200).send('Forgot Password OK')),
+  resetPassword: jest.fn((req, res) => res.status(200).send('Reset Password OK')),
 }));
 
 const app = express();
@@ -26,5 +28,11 @@ describe('Auth Routes', () => {
     expect(res.status).toBe(200);
     expect(res.text).toBe('Login OK');
     expect(authController.login).toHaveBeenCalled();
+  });
+
+  it('POST /auth/forgot-password debería llamar al controlador forgotPassword', async () => {
+    const res = await request(app).post('/auth/forgot-password').send({});
+    expect(res.status).toBe(200);
+    expect(authController.forgotPassword).toHaveBeenCalled();
   });
 });

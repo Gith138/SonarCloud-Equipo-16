@@ -1,188 +1,136 @@
 <div class="friends-page">
 
+  <!-- BUSCADOR -->
   <section class="section-card">
     <h2 class="section-title">Buscar y añadir amigos</h2>
-
     <div class="search-wrapper">
-      <input
-        type="text"
-        [(ngModel)]="searchFriend"
-        (input)="searchUsers()"
-        placeholder="Busca por email o username..."
-        class="search-input"
-      />
-      
+      <input type="text" [(ngModel)]="searchFriend" (input)="searchUsers()" placeholder="Busca por email o username..." class="search-input"/>
       <div class="search-icon-btn" (click)="searchUsers()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.3-4.3"/>
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       </div>
     </div>
 
     <div *ngIf="filteredUsers.length > 0" class="search-results-list">
       <div *ngFor="let user of filteredUsers" class="search-result-item">
         <div class="user-info">
-          <img 
-            [src]="user.displayAvatar || 'assets/perfil.png'" 
-            class="avatar-small" 
-            alt="Avatar de {{ user.username_ }}"
-          />
+          <img [src]="user.displayAvatar || 'assets/perfil.png'" class="avatar-small" alt="Avatar"/>
           <span>
             {{ user.username_ }} 
             <span class="email-text">({{ user.email_ }})</span>
           </span>
         </div>
-        <button (click)="addFriend(user)" class="btn-pill btn-add">
-          <span>+</span> Agregar
-        </button>
+        <button (click)="addFriend(user)" class="btn-pill btn-add"><span>+</span> Agregar</button>
       </div>
     </div>
-
-    <p *ngIf="filteredUsers.length === 0 && searchFriend" class="no-results-msg">
-      No se encontraron usuarios con ese nombre.
-    </p>
+    <p *ngIf="filteredUsers.length === 0 && searchFriend" class="no-results-msg">No se encontraron usuarios.</p>
   </section>
 
-
+  <!-- SOLICITUDES -->
   <section *ngIf="friendRequests.length > 0" class="section-card">
     <h2 class="section-title">Solicitudes de amistad</h2>
-    
     <div class="requests-grid">
       <div *ngFor="let req of friendRequests" class="friend-card">
-        <img 
-          [src]="req.displayAvatar || 'assets/perfil.png'" 
-          class="avatar-large" 
-          alt="Perfil"
-        />
+        <img [src]="req.displayAvatar || 'assets/perfil.png'" class="avatar-large" alt="Perfil"/>
         <h3 class="card-username">{{ req.username_ }}</h3>
-
         <div class="request-actions">
-          <button (click)="acceptRequest(req._id)" class="btn-pill btn-add">
-            Aceptar
-          </button>
-          <button (click)="rejectRequest(req._id)" class="btn-pill btn-remove">
-            Rechazar
-          </button>
+          <button (click)="acceptRequest(req._id)" class="btn-pill btn-add">Aceptar</button>
+          <button (click)="rejectRequest(req._id)" class="btn-pill btn-remove">Rechazar</button>
         </div>
       </div>
     </div>
   </section>
 
-
+  <!-- AMIGOS -->
   <section *ngIf="friends.length > 0" class="section-card">
     <h2 class="section-title">Tus amigos</h2>
-    
     <div class="friends-horizontal-list">
       <div *ngFor="let friend of friends" class="friend-card">
-        <img 
-        [src]="friend.displayAvatar || 'assets/perfil.png'" 
-        class="avatar-large" 
-        alt="Perfil"
-        />
+        <img [src]="friend.displayAvatar || 'assets/perfil.png'" class="avatar-large" alt="Perfil"/>
         <h3 class="card-username">{{ friend.username_ }}</h3>
-        <button (click)="removeFriend(friend._id)" class="btn-pill btn-remove">
-          Eliminar
+        <button (click)="removeFriend(friend._id)" 
+          class="text-xs font-medium text-gray-500 hover:text-red-500 border border-gray-700 hover:border-red-500/50 rounded-full px-3 py-1 transition-all mt-2">
+          Dejar de seguir
         </button>
       </div>
     </div>
   </section>
 
-
+  <!-- ACTIVIDAD  -->
   <section class="section-card">
     <h2 class="section-title">Actividad de tus amigos</h2>
     
-    <div *ngIf="friendsActivity.length > 0; else noActivity">
+    <div *ngIf="friendsActivity.length > 0; else noActivity" class="space-y-4">
       <div *ngFor="let activity of friendsActivity" class="activity-item">
-
         <img [src]="activity.displayAvatar || 'assets/perfil.png'" class="avatar-small" />
         
-        <div class="activity-details">
-          <p class="activity-text">
-            <strong>{{ activity.friendUsername }}</strong> está escuchando 
-            
-           <span 
-            class="activity-highlight cursor-pointer hover:underline" 
-            (click)="handleSongClick(activity)"
-            title="Abrir en YouTube y guardar en historial">
-            
-            {{ activity.songTitle }}
-          </span> 
+        <div class="flex flex-col w-full min-w-0">
+          <div class="flex justify-between items-start w-full gap-2">
+            <p class="text-sm text-gray-300 truncate">
+              <strong class="text-white">{{ activity.friendUsername }}</strong> está escuchando:
+            </p>
+            <span class="activity-date flex-shrink-0">{{ activity.timestamp }}</span>
+          </div>
 
-            por {{ activity.artistName }}
-          </p>
-          <img [src]="activity.songThumbnail || 'assets/default-thumbnail.png'" class="song-thumbnail" alt="Portada de la canción" />
-          <span class="activity-time">{{ activity.timestamp }}</span>
+          <div class="music-card-inner group bg-[#1F212E] hover:bg-[#2A2C3D] border border-gray-700/50 
+                      p-2 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-[1.01] cursor-pointer 
+                      flex items-center gap-3 mt-2" (click)="handleSongClick(activity)" title="Escuchar">
+            <img [src]="activity.songThumbnail || 'assets/default-thumbnail.png'" class="music-thumbnail" />
+            <p class="music-title line-clamp-2" [innerHTML]="activity.songTitle"></p>
+          </div>
         </div>
       </div>
     </div>
 
     <ng-template #noActivity>
-      <p class="text-gray-500 italic">No hay actividad reciente de tus amigos.</p>
+      <p class="text-gray-500 italic">No hay actividad reciente.</p>
     </ng-template>
   </section>
 
- <section class="section-card">
+  <!-- RECOMENDACIONES -->
+  <section class="section-card">
     <h2 class="section-title">Recomendaciones de los amigos</h2>
     
     <div *ngIf="friendsRecommendations.length > 0; else noRecommendations" class="space-y-4">
-      
-      <!-- Item de Recomendación -->
-      <div *ngFor="let rec of friendsRecommendations" class="flex items-start gap-4 p-4 border-b border-gray-800 last:border-0">
-
-        <!-- 1. FOTO DEL AMIGO (Izquierda) -->
-        <img [src]="rec.displayAvatar" class="w-10 h-10 rounded-full object-cover border border-gray-700" alt="Avatar" />
+      <div *ngFor="let rec of friendsRecommendations" class="activity-item group/item">
+        <img [src]="rec.displayAvatar" class="avatar-small" alt="Avatar" />
         
-        <!-- 2. CONTENIDO (Derecha) -->
-        <div class="flex flex-col gap-2 w-full">
-          
-          <!-- A. Encabezado: Quién recomienda -->
-          <p class="text-sm text-gray-300">
-            <strong class="text-white">{{ rec.friendUsername }}</strong> te recomienda:
-          </p>
-
-          <!-- B. Tarjeta de la Canción (Clickable) -->
-          <!-- Esto contiene la foto de la canción y el título alineados -->
-          <div 
-            class="flex items-center gap-3 bg-[#1a1a22] p-2 rounded-lg border border-gray-700 cursor-pointer hover:bg-[#252530] transition-colors group"
-            (click)="handleRecommendationClick(rec)"
-            title="Reproducir en YouTube"
-          >
-            <!-- Foto Canción -->
-            <img [src]="rec.songThumbnail" class="w-12 h-12 rounded-md object-cover shadow-sm" alt="Portada" />
-            
-            <!-- Título Canción (Usamos innerHTML para arreglar las comillas raras &quot;) -->
-            <p 
-              class="text-sm font-bold text-white group-hover:text-blue-400 transition-colors leading-tight"
-              [innerHTML]="rec.songTitle">
+        <div class="flex flex-col w-full min-w-0">
+          <div class="flex justify-between items-start w-full gap-2">
+            <p class="text-sm text-gray-300 truncate">
+              <strong class="text-white text-base">{{ rec.friendUsername }}</strong> 
+              <span class="opacity-70"> te recomienda:</span>
             </p>
+            
+            <button (click)="deleteRecommendation(rec._id)" 
+                    class="text-gray-600 hover:text-red-500 transition-colors p-1 flex-shrink-0" 
+                    title="Borrar recomendación">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+
+          <div class="music-card-inner group bg-[#1F212E] hover:bg-[#2A2C3D] border border-gray-700/50 
+                      p-2 rounded-lg mt-2 flex items-center gap-3 cursor-pointer" 
+              (click)="handleRecommendationClick(rec)" title="Escuchar">
+            <img [src]="rec.songThumbnail" class="music-thumbnail" alt="Portada" />
+            <p class="music-title line-clamp-2" [innerHTML]="rec.songTitle"></p>
           </div>
           
-          <!-- C. Comentario del Amigo -->
-          <p class="text-xs text-gray-400 italic pl-1">
-            "{{ rec.artistName }}"
-          </p>
-
-          <!-- D. Fecha -->
-          <span class="text-[10px] text-gray-600 font-mono">{{ rec.timestamp }}</span>
+          <div class="flex justify-between items-end mt-2">
+            <p class="activity-comment truncate pr-4">"{{ rec.artistName }}"</p>
+            <span class="activity-date flex-shrink-0">{{ rec.timestamp }}</span>
+          </div>
         </div>
       </div>
     </div>
 
     <ng-template #noRecommendations>
-      <p class="text-gray-500 italic py-4">No tienes recomendaciones pendientes.</p>
+      <p class="text-gray-500 italic">No tienes recomendaciones pendientes.</p>
     </ng-template>
   </section>
 
-  
 </div>
 
-<div class="overlay" 
-     [class.active]="overlayVisible" 
-     [ngClass]="overlayType">
-     
-  <div class="overlay-box">
-    {{ overlayMessage }}
-  </div>
-
+<!-- Overlay -->
+<div class="overlay" [class.active]="overlayVisible" [ngClass]="overlayType">
+  <div class="overlay-box">{{ overlayMessage }}</div>
 </div>

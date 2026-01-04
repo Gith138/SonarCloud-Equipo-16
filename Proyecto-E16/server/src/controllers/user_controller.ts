@@ -67,17 +67,6 @@ export const getUsers = async (_req: Request, res: Response) => {
   }
 };
 
-
-/* export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const user = await User.findById(req.params.id).populate("friends_", "username_ email_ profilePictureUrl_").populate("likedSongs_", "title_ artist_ youtubeURL_ thumbnailURL_");
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ message: "Error al obtener usuario", error: err })
-  }
-}; */
-
 export const getUserById = async (req: Request, res: Response) => {
 
   const { id } = req.params;
@@ -148,6 +137,47 @@ export const searchUser = async (req: Request, res: Response) => {
   }
 };
 
+
+export const searchUserFriends = async (req: Request, res: Response) => {
+  try {
+    const { query } = req.query; // El texto que escribes en el input
+    const myId = req.user?.id;
+
+    const currentUser = await User.findById(myId).select("friends_");
+    if (!currentUser) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Si no tienes amigos, devolvemos array vacío directamente para ahorrar recursos
+    if (!currentUser.friends_ || currentUser.friends_.length === 0) {
+      return res.json({ users: [] });
+    }
+
+    let searchFilters: any = {
+      _id: { $in: currentUser.friends_ } 
+    };
+
+    if (query) {
+      const q = makePartialRegex(query.toString());
+      searchFilters.$or = [
+        { email_: { $regex: q, $options: "i" } },
+        { username_: { $regex: q, $options: "i" } }
+      ];
+    }
+    console.log("Buscando en amigos con filtros:", searchFilters);
+
+    const users = await User.find(searchFilters)
+      .collation({ locale: "es", strength: 1 }) 
+      .select("_id username_ email_ profilePictureUrl_"); 
+
+    return res.json({ users });
+
+  } catch (error) {
+    console.error("Error al buscar entre amigos:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
 // -----------------------------------------------------------------
 // Funciones para el usuario autenticado
 // -----------------------------------------------------------------
@@ -166,36 +196,35 @@ export const getMe = async (req: Request, res: Response) => {
   }
 };
 
-
 // Obtener foto de perfil del usuario autenticado
 export const getFotoPerfil = async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
-
     const user = await User.findById(userId).select("profilePictureUrl_");
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-    
+    const defaultAvatar = path.join(process.cwd(), 'assets', 'perfil.png');
+
+    if (!user || !user.profilePictureUrl_) {
+      return res.sendFile(defaultAvatar);
+    }
+
     let relativePath = user.profilePictureUrl_;
-    console.log("Ruta guardada en BD:", relativePath);
-
-    // Quitar el "/" inicial si existe
     if (relativePath.startsWith("/")) relativePath = relativePath.slice(1);
-    console.log("Ruta relativa corregida:", relativePath);
 
-    // Construimos la ruta absoluta correcta (dist/controllers → dist → raíz)
-    const filePath = path.resolve(__dirname, "..", "..", relativePath);
-    console.log("Ruta absoluta del archivo:", filePath);
+    const filePath = path.resolve(process.cwd(), relativePath);
+
+    // Comprobar si existe antes de enviar
+    try {
+      await fs.access(filePath);
+      return res.sendFile(filePath);
+    } catch {
+      return res.sendFile(defaultAvatar);
+    }
     
-    // Enviar el archivo
-    return res.sendFile(filePath);
   } catch (error) {
-    res.status(500).json({
-      message: "Error al obtener foto de perfil",
-      error,
-    });
+    const defaultAvatar = path.join(process.cwd(), 'assets', 'perfil.png');
+    res.sendFile(defaultAvatar);
   }
 };
-
 
 // Actualizar settings de usuario (perfil)
 export const actualizar_settings = async (req: AuthenticatedMulterRequest, res: Response) => { 
@@ -470,14 +499,13 @@ export const getHistory = async (req: Request, res: Response) => {
 
     const user = await User.findById(userId).populate({
       path: "history_.songId",
-      select: "title_ artist_ thumbnailURL_ durationInSeconds_"
+      select: "title_ artist_ createdAt_ durationInSeconds_ thumbnailURL_ youtubeURL_"
     });
 
     if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
     // Ordenar historial por fecha descendente y formatear fechas dia/mes/año hora minuto
     const sortedHistory = user.history_.slice().sort((a, b) => b.listenedAt.getTime() - a.listenedAt.getTime()).map(entry => ({
       song: entry.songId,
-      rating: entry.rating,
       listenedAt: {
         iso: entry.listenedAt, // fecha en formato ISO (para backend o cálculo)
         formatted: entry.listenedAt.toLocaleString("es-ES", {
@@ -503,7 +531,6 @@ export const addToHistory = async (req: Request, res: Response) => {
   try {
     const {
       songId,
-      rating,
       youtubeURL_,
       title_,
       artist_,
@@ -517,11 +544,6 @@ export const addToHistory = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-
-    let finalRating = Number(rating);
-    if (!finalRating || isNaN(finalRating)) finalRating = 3;
-    if (finalRating < 1) finalRating = 1;
-    if (finalRating > 5) finalRating = 5;
 
     let finalSongId = songId as mongoose.Types.ObjectId | undefined;
 
@@ -552,7 +574,6 @@ export const addToHistory = async (req: Request, res: Response) => {
 
     user.history_.push({
       songId: finalSongId,
-      rating: finalRating,
       listenedAt: new Date(),
     });
     await user.save();
@@ -581,35 +602,47 @@ export const clearHistory = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getProfilePictureById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  // --- ESCUDO OBLIGATORIO ---
-  // Si llega "me", bloqueamos para que NO intente consultar la BD
+  // 1. Validación de seguridad del ID
   if (id === 'me' || !isValidObjectId(id)) {
-      return res.status(400).json({ message: "ID de imagen inválido. Usa /me/image para tu propio perfil." });
+    return res.status(400).json({ message: "ID de imagen inválido. Usa /me/image para tu propio perfil." });
   }
-  // --------------------------
-  const user = await User.findById(id).select('profilePictureUrl_');
-  if (!user || !user.profilePictureUrl_) return res.status(404).send("El usuario no tiene foto de perfil");
-
-  const filePath = path.join(process.cwd(), user.profilePictureUrl_);
 
   try {
-    const user = await User.findById(id).select("profilePictureUrl_");
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-
-      await fs.access(filePath); 
-      // Si llega aquí, el archivo existe y es accesible
-      return res.sendFile(filePath);
+    const user = await User.findById(id).select('profilePictureUrl_');
     
+    // Definimos la ruta de la imagen por defecto
+    // 'process.cwd()' nos sitúa en la raíz del proyecto (donde está la carpeta assets)
+    const defaultAvatar = path.join(process.cwd(), 'assets', 'perfil.png');
+
+    // Si el usuario no existe o no tiene URL guardada, enviamos la imagen por defecto directamente
+    if (!user || !user.profilePictureUrl_) {
+      return res.sendFile(defaultAvatar);
+    }
+
+    // Construimos la ruta absoluta del archivo del usuario
+    const filePath = path.join(process.cwd(), user.profilePictureUrl_);
+
+    // 2. COMPROBACIÓN FÍSICA: Intentamos acceder al archivo
+    try {
+      await fs.access(filePath);
+      // Si el archivo existe, lo enviamos
+      return res.sendFile(filePath);
+    } catch (accessError) {
+      // Si el archivo NO existe en el disco (ENOENT), enviamos la imagen por defecto
+      // console.warn(`[Imagen faltante] El archivo no existe en: ${filePath}. Enviando default.`);
+      return res.sendFile(defaultAvatar);
+    }
+
   } catch (error) {
-    console.log("Error al servir la imagen:", error); // <--- Este es el log que veíamos
-    res.status(500).json({ message: "Error al obtener foto de perfil", error });
+    console.error("Error crítico al procesar imagen:", error);
+    // En caso de cualquier otro error de base de datos, enviamos la default para no romper la web
+    const fallbackPath = path.join(process.cwd(), 'assets', 'perfil.png');
+    res.sendFile(fallbackPath);
   }
 };
-
 // -----------------------------------------------------------------
 // Amigos
 // -----------------------------------------------------------------
@@ -659,7 +692,7 @@ export const addFriend = async (req: Request, res: Response) => {
     friend.friendRequests_.push(user._id as mongoose.Types.ObjectId);
     await friend.save();
 
-    // 4. 🔥 CREAR NOTIFICACIÓN DE SOLICITUD (Para él)
+    // 4. CREAR NOTIFICACIÓN DE SOLICITUD (Para él)
     await Notification.create({
       senderId_: userId,
       receiverId_: friendId,
@@ -752,7 +785,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     await user.save();
     await requester.save();
 
-    // 3. 🔥 NOTIFICACIÓN DE ACEPTACIÓN (Para él)
+    // 3. NOTIFICACIÓN DE ACEPTACIÓN (Para él)
     // Así él sabrá que ya le aceptaste
     await Notification.create({
       senderId_: userId,
@@ -792,9 +825,6 @@ export const rejectFriendRequest = async (req: Request, res: Response) => {
     await user.save();
 
     // 2. Borrar la notificación visual de "X quiere ser tu amigo"
-    // Buscamos la notificación que ME enviaron (receiver = userId)
-    // desde ESA persona (sender = requesterId)
-    // y que sea de tipo solicitud.
     await Notification.findOneAndDelete({
         receiverId_: userId,
         senderId_: requesterId,
@@ -829,7 +859,6 @@ export const getFriendsLastSong = async (req: Request, res: Response) => {
     const userId = req.user!.id;
 
     // 1. Buscamos al usuario y sus amigos
-    // Importante: Asegurarnos de traer 'preferences_' de los amigos
     const user = await User.findById(userId).populate({
       path: "friends_",
       select: "username_ profilePictureUrl_ history_ preferences_", 
@@ -841,10 +870,8 @@ export const getFriendsLastSong = async (req: Request, res: Response) => {
 
     if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
-    // ---------------------------------------------------------------
-    //  Mi configuración (showFriendActivity)
-    // ---------------------------------------------------------------
-    // Si yo he desactivado "Ver actividad de amigos", devolvemos array vacío.
+
+    //  ver showFriendActivity si es false
     if (user.preferences_ && user.preferences_.showFriendActivity === false) {
       return res.json([]); 
     }
@@ -857,11 +884,7 @@ export const getFriendsLastSong = async (req: Request, res: Response) => {
         lastSong: null // Por defecto null
       };
 
-      // ---------------------------------------------------------------
-      //  La privacidad del amigo (privateSession)
-      // ---------------------------------------------------------------
-      // Si el amigo tiene sesión privada activada, devolvemos lastSong: null
-      // y terminamos aquí para este amigo.
+      // Si tiene sesión privada activada, devolvemos null
       if (friend.preferences_ && friend.preferences_.privateSession === true) {
         return baseResponse;
       }
@@ -878,7 +901,7 @@ export const getFriendsLastSong = async (req: Request, res: Response) => {
 
       // Si la canción fue borrada o hay error de datos
       if (!lastEntry || !lastEntry.songId) {
-          return baseResponse;
+        return baseResponse;
       }
 
       return {
@@ -889,15 +912,10 @@ export const getFriendsLastSong = async (req: Request, res: Response) => {
           title: lastEntry.songId.title_,
           artist: lastEntry.songId.artist_,
           thumbnail: lastEntry.songId.thumbnailURL_,
-          listenedAt: lastEntry.listenedAt,
-          rating: lastEntry.rating
+          listenedAt: lastEntry.listenedAt
         }
       };
     });
-
-    // Opcional: Si quieres enviar solo los que están escuchando algo, descomenta esto:
-    // const activeFriends = result.filter((r: any) => r.lastSong !== null);
-    // res.json(activeFriends);
 
     res.json(result);
 
@@ -907,38 +925,126 @@ export const getFriendsLastSong = async (req: Request, res: Response) => {
   }
 };
 
-export const updateHistoryRating = async (req: Request, res: Response) => {
+// -----------------------------------------------------------------
+// Recomendaciones de canciones 
+// -----------------------------------------------------------------
+
+// 1. Enviar recomendación a un amigo
+export const sendSongRecommendation = async (req: Request, res: Response) => {
   try {
-   const userId = req.user!.id;
-      const { songId, rating } = req.body;
+    const senderId = req.user!.id;
+    const { friendId, songData, message } = req.body; // songData trae title, youtubeURL, thumbnail...
 
-      if (!songId) return res.status(400).json({ message: "songId es obligatorio" });
-      
-      let finalRating = Number(rating);
-      if (!finalRating || isNaN(finalRating)) finalRating = 3;
-      if (finalRating < 1) finalRating = 1;
-      if (finalRating > 5) finalRating = 5;
+    // Buscar o Crear la Canción en la BD
+    let song = await Song.findOne({ youtubeURL_: songData.youtubeUrl });
+    
+    if (!song) {
+      // --- LÓGICA DE FILTRADO Y SPLIT ---
+      let finalArtist = songData.artist || 'Desconocido';
+      let finalTitle = songData.title;
 
-      const user = await User.findById(userId);
-      if (!user)  return res.status(404).json({ message: "Usuario no encontrado" });
-      if (!user.history_ || user.history_.length === 0) return res.status(404).json({ message: "No hay historial para actualizar" });
-      
-      let updated = false;
+      const separator = " - ";
+      if (finalTitle.includes(separator)) {
+        const parts = finalTitle.split(separator);
+        finalArtist = parts[0].trim();
+        // Unimos el resto por si el título tiene más guiones
+        finalTitle = parts.slice(1).join(separator).trim(); 
+      }
+      // ----------------------------------
 
-      // Actualizamos la valoración de todas las entradas de esa canción
-      user.history_.forEach((entry: any) => {
-        if (entry.songId.toString() === songId) {
-          entry.rating = finalRating;
-          updated = true;
+      song = await Song.create({
+        title_: finalTitle,
+        artist_: finalArtist,
+        youtubeURL_: songData.youtubeUrl,
+        thumbnailURL_: songData.thumbnail,
+        genre_: "Recomendado",
+        durationInSeconds_: 0,
+        uploadedAt_: new Date(),
+        addedByUserId_: senderId
+      });
+    }
+
+    // Guardar en el perfil del amigo la recomendación recibida
+    await User.findByIdAndUpdate(friendId, {
+      $push: {
+        recommendations_: {
+          fromUserId_: senderId,
+          songId_: song._id,
+          message_: message,
+          receivedAt_: new Date()
         }
+      }
+    });
+
+    //  Crear Notificación 
+    await Notification.create({
+      senderId_: senderId,
+      receiverId_: friendId,
+      type_: 'song_recommendation',
+      message_: message || 'te recomienda una canción',
+      data_: { // Guardamos copia simple para la notif visual rápida
+        title: song.title_,
+        thumbnail: song.thumbnailURL_,
+        youtubeUrl: song.youtubeURL_
+      }
+    });
+
+    res.json({ message: "Recomendación enviada y guardada" });
+
+  } catch (error) {
+    console.error("Error al recomendar:", error);
+    res.status(500).json({ message: "Error interno" });
+  }
+};
+
+// OBTENER MIS RECOMENDACIONES
+export const getMyRecommendations = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    const user = await User.findById(userId)
+      .populate({
+        path: 'recommendations_.fromUserId_',
+        select: 'username_ profilePictureUrl_'
+      })
+      .populate({
+        path: 'recommendations_.songId_',
+        model: 'Song'
       });
 
-      if (!updated) return res.status(404).json({ message: "La canción no está en tu historial" });
-      await user.save();
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
-      return res.json({ message: "Valoración actualizada", songId, rating: finalRating });
-    } catch (error) {
-      console.error("Error al actualizar rating:", error);
-      return res.status(500).json({ message: "Error al actualizar valoración", error });
-    }
-  };
+   
+    const validRecs = (user.recommendations_ || []).filter(
+      rec => rec.fromUserId_ !== null && rec.songId_ !== null
+    );
+
+    const sortedRecs = validRecs.sort((a: any, b: any) => 
+      new Date(b.receivedAt_).getTime() - new Date(a.receivedAt_).getTime()
+    );
+
+    res.json(sortedRecs);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener recomendaciones" });
+  }
+};
+
+// BORRAR UNA RECOMENDACIÓN (Ya la escuché y no la quiero ver más)
+export const deleteRecommendation = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { recId } = req.params;
+
+    await User.findByIdAndUpdate(userId, {
+      $pull: { recommendations_: { _id: recId } }
+    });
+
+    res.json({ message: "Recomendación eliminada" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar" });
+  }
+};
+
+

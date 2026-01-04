@@ -1,3 +1,9 @@
+/**
+ * @file home.component.ts
+ * @brief Componente principal de la página de inicio.
+ * @description Centraliza las funcionalidades de búsqueda en YouTube, gestión de favoritos,
+ * visualización de recomendaciones y el envío de canciones a amigos.
+ */
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,9 +12,12 @@ import { MusicService } from '../../services/music.service';
 import { SafeUrl } from '@angular/platform-browser';
 
 import { UserService } from '../../services/user.service';
-import { NotificationService } from '../../services/notification.service';
+import { ToastService } from '../../services/toast.service';
 
-// Interfaz local para tipar amigos en el Home
+/**
+ * @interface FriendInHome
+ * @description Representación simplificada de un amigo para el listado del Home.
+ */
 interface FriendInHome {
   _id: string;
   username_: string;
@@ -16,7 +25,10 @@ interface FriendInHome {
   displayAvatar?: SafeUrl | string; // Propiedad para la imagen visual
 }
 
-
+/**
+ * @class HomeComponent
+ * @description Gestiona la experiencia de usuario principal, incluyendo reproductores, modales de recomendación y playlists.
+ */
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -24,32 +36,53 @@ interface FriendInHome {
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
+
 export class HomeComponent {
+// --- Propiedades de Búsqueda ---
   searchQuery = '';
   results: any[] = [];
+  showSearchModal = false;
+
+  // --- Propiedades de Contenido Musical ---
   recommendedSongs: any[] = [];
   recommendedPlaylists: any[] = [];
   externalPlaylist: any = null;
-  token: string | null = sessionStorage.getItem('token');
   openedPlaylist: any | null = null;
-  showSearchModal = false; 
+
+  // --- Gestión de Playlists Propias ---
   userPlaylists: any[] = [];
   selectedPlaylist: any = null;
   showAddToPlaylistModal = false;
   songToAdd: any = null;
 
- // Variables para Recomendación
+  // --- Lógica de Recomendación a Amigos ---
   showRecommendModal = false;
   songToRecommend: any = null;
-  myFriends: FriendInHome[] = []; // Lista de amigos con avatar
+  myFriends: FriendInHome[] = [];
   selectedFriendId: string = '';
   recommendMessage: string = '';
 
+  // --- Estado de Autenticación y Favoritos ---
+  token: string | null = sessionStorage.getItem('token');
   private likedSongsList: any[] = [];
   private likedKeys = new Set<string>();
 
-  constructor(private musicService: MusicService, private userService: UserService, private notificationService: NotificationService) {}
+  /**
+   * @constructor
+   * @param {MusicService} musicService - Servicio para datos musicales y YouTube.
+   * @param {UserService} userService - Servicio para datos de usuario y amigos.
+   * @param {ToastService} toast - Servicio para mensajes emergentes de feedback.
+   */
+  constructor(
+    private musicService: MusicService, 
+    private userService: UserService, 
+    private toast: ToastService
+  ) {}
 
+  /**
+   * @method ngOnInit
+   * @description Carga inicial de datos: favoritos, recomendaciones, playlists y lista de amigos.
+   */
   ngOnInit(): void {
     this.loadLikedSongs();
     this.loadRecommendations();
@@ -57,6 +90,11 @@ export class HomeComponent {
     this.loadFriends();
   }
 
+  // GESTIÓN DE AMIGOS Y AVATARES
+  /**
+   * @method loadFriends
+   * @description Recupera la lista de amigos y dispara la carga individual de sus avatares.
+   */
    loadFriends() {
     this.userService.getFriendsList().subscribe({
       next: (res: any[]) => {
@@ -70,7 +108,11 @@ export class HomeComponent {
       error: (err) => console.error('Error cargando amigos', err)
     });
   }
-    // Helper para cargar imagen individual (Usa la caché del servicio)
+  /**
+   * @private @method loadFriendAvatar
+   * @description Asigna un placeholder y luego intenta recuperar el avatar real desde el UserService.
+   * @param {FriendInHome} friend - El objeto amigo al que se le actualizará la propiedad displayAvatar.
+   */
   private loadFriendAvatar(friend: FriendInHome) {
     // 1. Ponemos placeholder inicial
     friend.displayAvatar = 'assets/perfil.png'; 
@@ -83,10 +125,12 @@ export class HomeComponent {
       error: () => { /* Se queda con el placeholder */ }
     });
   }
-  
-  // -----------------------------
+
   // PLAYLISTS Y RECOMENDACIONES
-  // -----------------------------
+  /**
+   * @method loadUserPlaylists
+   * @description Carga las playlists del usuario y selecciona la primera si no hay ninguna seleccionada.
+   */
   loadUserPlaylists(): void {
     if (!this.token) return;
 
@@ -101,20 +145,42 @@ export class HomeComponent {
     });
   }
 
+  // LÓGICA DE FAVORITOS (LIKES)
+  /**
+   * @private @method buildSongKey
+   * @description Genera un identificador único para una canción (URL o ID) para normalizar comparaciones.
+   * @param {any} song - El objeto canción.
+   * @returns {string} Clave única de la canción.
+   */
   private buildSongKey(song: any): string {
     return (song.youtubeURL_ || song.youtubeURL || song._id || song.id || song.title_ || song.title ||  '').toString();
   }
 
+  /**
+   * @method isLiked
+   * @description Comprueba si una canción específica está en la lista de favoritos del usuario.
+   * @param {any} song - Canción a verificar.
+   * @returns {boolean}
+   */
   isLiked(song: any): boolean {
     const key = this.buildSongKey(song);
     return this.likedKeys.has(key);
   }
 
+  /**
+   * @method toggleLike
+   * @description Añade o elimina una canción de favoritos según su estado actual.
+   * @param {any} song - Canción sobre la que se actúa.
+   */
   toggleLike(song: any): void {
     if (this.isLiked(song)) this.unlikeSong(song);
     else this.likeSong(song);
   }
-
+  // CARGA DE RECOMENDACIONES
+  /**
+   * @method loadRecommendations
+   * @description Recupera las recomendaciones de canciones y playlists basadas en el historial del usuario.
+   */
   loadRecommendations(): void {
     if (!this.token) {
       console.warn('No hay token, no se pueden cargar recomendaciones');
@@ -134,6 +200,11 @@ export class HomeComponent {
     });
   }
 
+  // BÚSQUEDA Y REPRODUCCIÓN
+  /**
+   * @method searchYouTube
+   * @description Realiza una búsqueda de canciones en YouTube a través del MusicService.
+   */
   searchYouTube() {
     const query = this.searchQuery.trim();
     if (!query) {
@@ -141,9 +212,7 @@ export class HomeComponent {
       this.showSearchModal = false;
       return;
     }
-
     console.log("Buscando en YouTube:", this.searchQuery);
-
     this.musicService.searchYouTube(this.searchQuery).subscribe({
       next: (data) => {
         console.log("Resultados obtenidos:", data);
@@ -162,25 +231,22 @@ export class HomeComponent {
     this.showSearchModal = false;
   }
 
-  addSongToDatabase(song: any) {
-    this.musicService.addSong(song).subscribe({
-      next: () => alert(`"${song.title_}" añadida a la base de datos`),
-      error: (err) => console.error('Error al guardar canción', err),
-    });
-  }
-
+  /**
+   * @method addSongToPlaylist
+   * @description Prepara la canción para ser añadida a una playlist y abre el modal correspondiente.
+   * @param {any} song - Canción a añadir.
+   */
   addSongToPlaylist(song: any): void {
     this.songToAdd = song;
     
     const abrirModal = () => {
       if (!this.userPlaylists.length) {
-        alert('No tienes playlists aún. Crea una primero en la sección "Playlists".');
+        this.toast.error('No tienes playlists aún. Crea una primero en la sección "Playlists".');
         return;
       }
       if (!this.selectedPlaylist) this.selectedPlaylist = this.userPlaylists[0];
       this.showAddToPlaylistModal = true;
     };
-
     if (this.userPlaylists.length === 0) {
       this.musicService.getPlaylists().subscribe({
         next: (playlists) => {
@@ -194,22 +260,23 @@ export class HomeComponent {
     } else abrirModal();
   }
 
+  /**
+   * @method confirmAddToPlaylist
+   * @description Confirma la adición de una canción a la playlist seleccionada.
+   */
   confirmAddToPlaylist(): void {
     if (!this.selectedPlaylist || !this.songToAdd) return;
-
     const song = this.songToAdd;
     const playlistId = this.selectedPlaylist._id;
     const playlistName = this.selectedPlaylist.name_ || this.selectedPlaylist.name || 'tu playlist';
-
     const songData = {
       song_title: song.title_,
       youtube_url: song.youtubeURL_,
       genre: song.genre_ || "Desconocido",
     };
-
     this.musicService.addSongToPlaylist(playlistId, songData).subscribe({
       next: () => {
-        alert(`"${song.title_}" añadida a "${playlistName}"`);
+        this.toast.success(`"${song.title_}" añadida a "${playlistName}"`);
         this.showAddToPlaylistModal = false;
         this.songToAdd = null;
         this.selectedPlaylist = null;
@@ -217,11 +284,15 @@ export class HomeComponent {
       error: (err) => console.error("Error al añadir canción:", err),
     });
   }
-
   openAddToPlaylist(song: any): void {
     this.addSongToPlaylist(song);
   }
 
+  /**
+   * @method openVideo
+   * @description Abre la canción en YouTube en una nueva pestaña y registra la acción en el historial.
+   * @param {any} song - Canción que se desea reproducir.
+   */
   openVideo(song: any): void {
     if (!song?.youtubeURL_) return;
 
@@ -257,7 +328,7 @@ export class HomeComponent {
 
   likeSong(song: any): void {
     if (!this.token) {
-      alert('Debes iniciar sesión para usar favoritos');
+      this.toast.error('Debes iniciar sesión para usar favoritos');
       return;
     }
 
@@ -265,7 +336,7 @@ export class HomeComponent {
 
     this.musicService.addLikedSong(song).subscribe({
       next: () => {
-        alert(`❤️ "${song.title_}" añadida a tus favoritos`);
+        this.toast.success(`"${song.title_}" añadida a tus favoritos`);
         this.likedKeys.add(key);
         this.loadLikedSongs();
       },
@@ -278,7 +349,7 @@ export class HomeComponent {
 
   unlikeSong(song: any): void {
     if (!this.token) {
-      alert('Debes iniciar sesión para usar favoritos');
+      this.toast.error('Debes iniciar sesión para usar favoritos');
       return;
     }
 
@@ -286,13 +357,13 @@ export class HomeComponent {
     const songId = song._id || this.findLikedSongIdByKey(key);
 
     if (!songId) {
-      alert('No se puede quitar de favoritos porque esta canción no está en tu lista de favoritos.');
+      this.toast.error('No se puede quitar de favoritos porque esta canción no está en tu lista de favoritos.');
       return;
     }
 
     this.musicService.removeLikedSong(songId).subscribe({
       next: () => {
-        alert(`💔 "${song.title_}" eliminada de tus favoritos`);
+        this.toast.success(`"${song.title_}" eliminada de tus favoritos`);
         this.likedKeys.delete(key);
         this.likedSongsList = this.likedSongsList.filter(s => s._id !== songId);
       },
@@ -332,16 +403,17 @@ export class HomeComponent {
   }
 
 
-  // -----------------------------
   // RECOMENDACIONES
-  // -----------------------------
-  // ==========================================
   // LÓGICA DEL MODAL DE RECOMENDACIÓN
-  // ==========================================
-  
+
+  /**
+   * @method openRecommendModal
+   * @description Abre el modal para recomendar una canción a un amigo.
+   * @param {any} song - Canción que se desea recomendar.
+   */
   openRecommendModal(song: any) {
     this.songToRecommend = song;
-    this.selectedFriendId = ''; // Resetear selección
+    this.selectedFriendId = ''; 
     this.recommendMessage = '';
     this.showRecommendModal = true;
   }
@@ -354,25 +426,28 @@ export class HomeComponent {
   selectFriend(friendId: string) {
     this.selectedFriendId = friendId;
   }
-
+  /**
+   * @method sendRecommendation
+   * @description Envía la recomendación al amigo seleccionado a través del backend.
+   */
   sendRecommendation() {
     if (!this.selectedFriendId) {
-      alert('Por favor, selecciona un amigo.');
+      this.toast.error('Por favor, selecciona un amigo.');
       return;
     }
 
-    this.notificationService.recommendSongToFriend(
+    this.musicService.recommendSongToFriend(
       this.selectedFriendId,
       this.songToRecommend,
       this.recommendMessage
     ).subscribe({
       next: () => {
-        alert('Recomendación enviada correctamente.');
+        this.toast.success('Recomendación enviada correctamente.');
         this.closeRecommendModal();
       },
       error: (err) => {
         console.error(err);
-        alert('Error al enviar la recomendación.');
+        this.toast.error('Error al enviar la recomendación.');
       }
     });
   }

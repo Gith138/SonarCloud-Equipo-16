@@ -1,6 +1,4 @@
-/* home.component.css */
-
-/* 1. ANIMACIÓN DE ENTRADA (Lo que tenías) */
+/* 1. ANIMACIÓN DE ENTRADA */
 :host {
   display: block;
   animation: fadeIn 0.5s ease-in-out;
@@ -17,14 +15,14 @@
   }
 }
 
-/* 2. ESTILOS TAILWIND (Lo que hicimos antes) */
+/* 2. ESTILOS TAILWIND */
 
-/* 🏠 Estructura Principal */
+/* Estructura Principal */
 .home-container {
   @apply min-h-screen p-8 pb-20 font-sans text-white;
 }
 
-/* 🔹 Header y Búsqueda */
+/* Header y Búsqueda */
 .header-section {
   @apply flex flex-col md:flex-row justify-between items-center mb-12 gap-4;
 }
@@ -34,26 +32,26 @@
 }
 
 .search-wrapper {
-  @apply relative w-80; /* ajusta el ancho si quieres */
+  @apply relative w-80; 
 }
 
 .search-input {
   @apply bg-gray-800 text-gray-200 py-2 rounded-full outline-none border border-gray-700
         focus:ring-2 focus:ring-indigo-500 w-full;
-  @apply pl-10 pr-4; /* padding extra a la izquierda para la lupa */
+  @apply pl-10 pr-4; 
 }
 
 .search-icon {
   @apply absolute left-3 top-1/2 -translate-y-1/2 text-gray-400;
-  pointer-events: none; /* para que no bloquee el click al input */
+  pointer-events: none; 
 }
 
-/* 🔹 Títulos de Sección */
+/* Títulos de Sección */
 .section-title {
   @apply text-2xl font-semibold mb-6 text-gray-100;
 }
 
-/* 🔹 Grids */
+/* Grids */
 .grid-cards {
   @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
 }
@@ -62,7 +60,7 @@
   @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
 }
 
-/* 🟦 Tarjetas de Playlist */
+/* Tarjetas de Playlist */
 .playlist-card {
   @apply bg-gradient-to-b from-gray-800/40 to-gray-900/40 p-4 rounded-2xl;
   @apply border border-gray-700/30 shadow-lg cursor-pointer;
@@ -82,7 +80,7 @@
   @apply text-gray-400 text-sm mt-1 truncate;
 }
 
-/* 🎵 Tarjetas de Canción */
+/* Tarjetas de Canción */
 .song-card {
   @apply bg-gradient-to-b from-gray-800/40 to-gray-900/40 p-4 rounded-2xl;
   @apply border border-gray-700/30 shadow-lg flex flex-col justify-between;
@@ -103,7 +101,7 @@
   @apply text-gray-400 text-sm truncate;
 }
 
-/* 🔘 Botones de Acción */
+/* Botones de Acción */
 .song-actions {
   @apply flex flex-col gap-2 mt-auto;
 }
@@ -125,7 +123,7 @@
   @apply bg-green-600 text-white hover:bg-green-500 hover:shadow-lg hover:shadow-green-900/20;
 }
 
-/* 🪟 Modales */
+/* Modales */
 .modal-overlay {
   @apply fixed inset-0 bg-black/80 z-50 overflow-y-auto;
   @apply backdrop-blur-sm transition-opacity;
@@ -173,7 +171,7 @@
   gap: 0.5rem;
 }
 
-/* Texto del título+artista, para que el corazón no rompa el layout */
+/* Texto del título+artista */
 .song-text {
   flex: 1;
   min-width: 0;
@@ -186,7 +184,7 @@
   border-radius: 9999px;
   border: none;
   background: transparent;
-  color: #9ca3af;              /* gris */
+  color: #9ca3af;         /* gris claro por defecto */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -210,7 +208,7 @@
   background: rgba(239, 68, 68, 0.15);
 }
 
-/* Opcional: rellena el corazón cuando está liked */
+
 .like-icon-btn.liked svg path {
   fill: currentColor;
 }
@@ -228,11 +226,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;           /* un pelín más grandes */
+  width: 44px;          
   height: 44px;
   border-radius: 9999px;
   border: 1px solid rgba(75, 85, 99, 0.7);
-  background-color: #1a1a22;   /* mismo tono que las tarjetas, menos negro */
+  background-color: #1a1a22;   
   color: #e5e7eb;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
   cursor: pointer;
@@ -242,9 +240,9 @@
               color 0.15s ease;
 }
 
-/* tamaño de los iconos dentro del círculo */
+
 .icon-circle svg {
-  width: 22px;   /* antes 14–16px → ahora más grandes */
+  width: 22px;   
   height: 22px;
 }
 
@@ -254,7 +252,7 @@
 
 /* Específico: añadir a playlist */
 .icon-add {
-  border-color: rgba(168, 85, 247, 0.7);   /* morado */
+  border-color: rgba(168, 85, 247, 0.7);  
   color: #c4b5fd;
 }
 
@@ -293,23 +291,18 @@
 }
 
 .icon-share {
-  /* Si usas Tailwind, esto ya debería verse bien si hereda de icon-circle */
-  /* Si necesitas específico: */
   @apply hover:text-blue-400 hover:bg-blue-400/10;
 }
 
-/* =========================================
-   LISTA DE AMIGOS (SCROLLABLE)
-   ========================================= */
+/*LISTA DE AMIGOS (SCROLLABLE)*/
 
 
 /* Contenedor de la lista */
 .friend-list-container {
   @apply bg-[#0b0b12] border border-gray-700 rounded-xl overflow-hidden;
   
-  /* 🔥 CLAVE PARA EL SCROLL: Altura máxima */
-  max-height: 240px; /* Ajusta este valor si quieres que sea más alto o bajo */
-  overflow-y: auto;  /* Activa la barra si se pasa de altura */
+  max-height: 240px; 
+  overflow-y: auto;  
 }
 
 .friend-list-container::-webkit-scrollbar {
@@ -321,11 +314,11 @@
 }
 
 .friend-list-container::-webkit-scrollbar-thumb {
-  @apply bg-gray-700 rounded-full; /* Color gris oscuro y redondo */
+  @apply bg-gray-700 rounded-full; 
 }
 
 .friend-list-container::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-600; /* Un poco más claro al pasar el mouse */
+  @apply bg-gray-600; 
 }
 
 /* Item individual */

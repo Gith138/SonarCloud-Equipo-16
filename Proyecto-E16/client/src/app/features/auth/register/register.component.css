@@ -1,14 +1,11 @@
-
 /* Contenedor Principal */
 .register-container {
   @apply relative flex justify-center items-center min-h-screen text-white font-sans;
-  /* El fondo base ya viene global, aquí solo centramos */
 }
 
 /* Fondo con Imagen */
 .bg-overlay {
   @apply absolute inset-0 bg-cover bg-center blur-sm brightness-50;
-  /* Imagen de fondo específica para el registro */
   background-image: url('https://images.unsplash.com/photo-1468164016595-6108e4c60c8b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170');
 }
 

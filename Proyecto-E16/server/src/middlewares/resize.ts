@@ -10,19 +10,13 @@ interface MulterRequest extends Request {
 export const resizeProfileImage = async (req: MulterRequest, res: Response, next: NextFunction) => {
   // Si no subieron foto, pasamos al controlador directamente
   if (!req.file) return next();
-
   const userId =  req.user!.id;
-    
-  // 1. DEFINIR LA RUTA FÍSICA: 'Raíz del Proyecto / assets / profiles'
-  // process.cwd() apunta a la carpeta raíz donde está el package.json
   const uploadPath = path.join(process.cwd(), 'assets', 'profiles');
-
-  // 2. Crear carpetas si no existen
+  // Crear carpetas si no existen
   if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });
   }
-
-  // 3. Definir el nombre del archivo
+  // Definir el nombre del archivo
   // Agregamos Date.now() para evitar problemas de caché si el usuario sube otra foto luego
   const filename = `${userId}-${Date.now()}.png`;
   const fullPath = path.join(uploadPath, filename);
@@ -30,21 +24,53 @@ export const resizeProfileImage = async (req: MulterRequest, res: Response, next
   try {
     // 4. Procesar y Guardar con Sharp
     await sharp(req.file.buffer)
-          .resize(500, 500, {
-          fit: 'cover',
-          position: 'center'
-          })
-          .toFormat('png')
-          .png({ quality: 80 })
-          .toFile(fullPath); // <--- AQUÍ SE GUARDA EL ARCHIVO FÍSICO
-
-    // 5. INYECTAR EL NOMBRE EN LA REQUEST
-    // Esto es vital para que tu controlador sepa cómo se llamó el archivo
+        .resize(500, 500, {
+        fit: 'cover',
+        position: 'center'
+        })
+        .toFormat('png')
+        .png({ quality: 80 })
+        .toFile(fullPath); // Guardar en disco
     req.file.filename = filename;
         
     next();
   } catch (error) {
     console.error('Error al procesar imagen:', error);
     return res.status(500).json({ message: 'Error al procesar la imagen' });
+  }
+};
+
+
+export const resizePlaylistCover = async (req: MulterRequest, res: Response, next: NextFunction) => {
+  // Si no hay archivo, pasamos
+  if (!req.file) return next();
+
+  try {
+    const playlistId = req.params.id; 
+    // Usamos process.cwd() para ir a la raíz del SERVIDOR (donde está package.json)
+    // Apuntamos a la carpeta 'uploads' (que ya hicimos pública en app.ts)
+    const uploadDir = path.join(process.cwd(), 'uploads');
+
+    // Crear la carpeta si no existe
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    // Nombre del archivo
+    const filename = `playlist-${playlistId}-${Date.now()}.png`;
+    const fullPath = path.join(uploadDir, filename);
+
+    // Guardar con Sharp
+    await sharp(req.file.buffer)
+      .resize(800, 800, { fit: 'cover' })
+      .toFormat('png')
+      .png({ quality: 80 })
+      .toFile(fullPath);
+    // Le decimos al controlador cómo se llama el archivo
+    req.file.filename = filename;
+
+    next();
+  } catch (error) {
+    console.error('Error al procesar portada de playlist:', error);
+    return res.status(500).json({ message: 'Error al procesar la portada de la playlist' });
   }
 };

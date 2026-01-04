@@ -19,10 +19,10 @@
       <a routerLink="/friends" routerLinkActive="nav-link-active" class="nav-link">Amigos</a>
     </div>
 
-    <!-- 🔔 Componente de Notificaciones (Widget) -->
+    <!-- Componente de Notificaciones  -->
     <app-notifications></app-notifications>
     
-    <!-- 👤 Avatar + Menú Desplegable -->
+    <!-- Avatar + Menú Desplegable -->
     <div class="profile-wrapper">
       <button class="profile-btn" (click)="toggleProfileMenu($event)">
         <!-- Si hay avatar, mostramos imagen segura -->
@@ -32,8 +32,8 @@
         
         <!-- Si no, mostramos placeholder -->
         <ng-template #defaultAvatar>
-          <div class="avatar-nav avatar-placeholder">
-            <span>U</span>
+          <div class="avatar-placeholder">
+             <span>{{ userInitial }}</span>
           </div>
         </ng-template>
       </button>
@@ -58,4 +58,5 @@
 
 <div class="main-content">
   <router-outlet></router-outlet>
+  <app-toast></app-toast>
 </div>

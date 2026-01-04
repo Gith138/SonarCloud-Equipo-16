@@ -1,6 +1,3 @@
-// tests/auth.controller.test.ts
-import request from "supertest";
-import app from "../../src/app"; // tu archivo donde creas el express
 import User from "../../src/models/user_model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -11,8 +8,7 @@ import * as authController from "../../src/controllers/auth_controller";
 jest.mock("../../src/models/user_model");
 jest.mock("bcryptjs");
 jest.mock("jsonwebtoken");
-// tests/controllers/auth.controller.test.ts
-// tests/controllers/auth.controller.test.ts (追加部分)
+
 describe("Auth Controller - unit tests", () => {
   const mockedUser = User as unknown as jest.Mock;
   const mockedFindOne = jest.fn();

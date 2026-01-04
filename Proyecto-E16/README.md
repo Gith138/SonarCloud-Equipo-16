@@ -1,227 +1,167 @@
-# API de sistema de recomendación de música
+# 🎵 Tempo (Sistema de Recomendación Musical)
 
-## 1. Objetivo 
-El proyecto tiene como objetivo el desarrollo de una aplicación web de recomendaciones musicales en la que los usuarios podrán descubrir, escuchar y compartir música. En lugar de almacenar archivos de audio en el servidor, la
-aplicación utilizará enlaces a videos de YouTube. Cada canción estará asociada a un enlace de YouTube y tendrá una imagen de miniatura proporcionada por YouTube.
-La aplicación proporcionará una experiencia de usuario interactiva, donde los usuarios podrán:
-- Buscar y reproducir música directamente desde YouTube.
-- Recibir recomendaciones basadas en sus preferencias de escucha.
-- Interactuar con amigos, compartir canciones y seguir sus gustos musicales.
+**Tempo** es una aplicación web full-stack diseñada para descubrir, escuchar y compartir música de forma social. La plataforma utiliza la API de **YouTube** para la reproducción de contenido y ofrece una experiencia enriquecida mediante la gestión de perfiles, playlists personalizadas y funcionalidades sociales.
 
-La aplicación estará desarrollada con *Angular* en el frontend y Node.js con Express en el backend, conectados a una base de datos MongoDB para almacenar usuarios, canciones y relaciones sociales. La autenticación se gestionará mediante JWT (JSON Web Tokens) para garantizar la seguridad.
+---
 
-El *sistema de recomendaciones* podrá mejorarse usando algoritmos de filtrado colaborativo, ofreciendo una experiencia musical cada vez más centrada en los gustos del usuario.
+## 📖 Descripción
 
-## 2. Utilidad y Público Objetivo
+Este proyecto soluciona la necesidad de centralizar la música de YouTube en un entorno organizado y social. Permite a los usuarios crear su propia biblioteca musical, personalizar visualmente sus listas y conectar con amigos.
 
+La arquitectura se ha refactorizado para garantizar un manejo eficiente de archivos multimedia y seguridad robusta. El backend gestiona la carga y optimización de imágenes en tiempo real, mientras que el sistema de autenticación incluye recuperación de cuentas segura.
 
-### Público Objetivo:
-- *Usuarios generales*: Personas que buscan una forma sencilla de descubrir nueva música y compartirla con sus amigos.
-- *Amigos y seguidores*: Aquellos interesados en seguir lo que sus amigos están escuchando y ver las recomendaciones que tienen.
-- *Usuarios recurrentes*: Usuarios que desean una experiencia personalizada, basada en sus hábitos de escucha y las recomendaciones de la comunidad.
+---
 
+## ✨ Funcionalidades Implementadas
 
-# IMPORTANTE 
-PARA PODER EJECUTAR EL SERVER HAY QUE INSTALAR LAS DEPENDENCIAS YA QUE .gitignore SE A HA DESABILITADA LA SUBIDA DE server/node_modules POR LO QUE HAY QUE REINTALARLA ESAS DEPENDENDENCIAS PARA QUE FUNCIONE. ESTAS DEPENDENCIAS SON LAS SIGUIENTES.
+### 🎧 Experiencia Musical
+* **Reproducción Streaming:** Integración directa con YouTube sin almacenamiento local de audio.
+* **Gestión de Canciones:** Búsqueda, añadido y organización de temas en playlists.
 
-Server
+### 🖼️ Gestión Multimedia Avanzada (Nuevo)
+* **Subida de Imágenes:** Los usuarios pueden subir avatares y portadas de playlists.
+* **Procesamiento con Sharp:** Las imágenes se redimensionan y optimizan automáticamente en el servidor antes de guardarse.
+* **Sistema de Fallback Inteligente:**
+    * 1️⃣ Imagen personalizada subida por el usuario.
+    * 2️⃣ Imágenes de alta calidad por defecto (API Unsplash) si no hay subida.
+    * 3️⃣ Placeholders visuales para estados vacíos.
+* **Limpieza Automática:** El sistema elimina archivos físicos del servidor cuando se borra o cambia una portada.
+
+### 🔐 Seguridad y Autenticación
+* **JWT (JSON Web Tokens):** Autenticación segura stateless.
+* **Recuperación de Contraseña:** Sistema completo de "Olvidé mi contraseña" mediante envío de emails con tokens temporales de un solo uso.
+* **Protección de Rutas:** Guards en Angular y Middleware en Express para proteger endpoints sensibles.
+
+### 🤝 Aspecto Social
+* **Sistema de Amigos:** Seguir usuarios y ver su actividad.
+* **Playlists Compartidas:** Listas colaborativas o públicas.
+* **Notificaciones:** Alertas en tiempo real sobre interacciones.
+
+---
+
+## 🛠️ Stack Tecnológico
+
+### Frontend
+* **Framework:** Angular (v17+)
+* **Estilos:** Tailwind CSS (Diseño responsive y moderno)
+* **Lenguaje:** TypeScript
+
+### Backend
+* **Runtime:** Node.js + Express.js
+* **Base de Datos:** MongoDB (Mongoose ODM)
+* **Multimedia & Archivos:**
+    * `multer`: Gestión de subida de archivos `multipart/form-data`.
+    * `sharp`: Procesamiento y optimización de imágenes de alto rendimiento.
+* **Emails:** `nodemailer` (Configurado con Gmail SMTP + App Passwords).
+* **Seguridad:** `bcryptjs`, `jsonwebtoken`.
+* **Streaming:** `ytdl-core`, `fluent-ffmpeg`.
+
+### Testing & QA
+* **Unitario:** Jest, Supertest.
+* **E2E:** Selenium WebDriver.
+* **CI/CD:** Scripts de automatización de pruebas.
+
+---
+
+## 🚀 Instalación y Configuración
+
+### 1. Requisitos Previos
+* Node.js v20.19.0 (usando `nvm`).
+* Instancia de MongoDB corriendo.
+* Cuenta de Google con **Verificación en 2 pasos** y **Contraseña de Aplicación** generada (para el envío de correos).
+
+### 2. Configuración del Backend
+
+Debido a que `node_modules` no se sube al repositorio, instala las dependencias incluyendo las nuevas herramientas de imagen y correo:
+
+```bash
+cd server
+
+# Instalación completa (Incluye multer, sharp, nodemailer, etc.)
+npm install cors dotenv express mongodb jsonwebtoken multer sharp ytdl-core fluent-ffmpeg axios nodemailer bcryptjs
+
+# Instalación de tipos para TypeScript
+npm install --save-dev typescript @types/cors @types/express @types/node ts-node @types/multer @types/fluent-ffmpeg @types/axios @types/nodemailer @types/supertest @types/bcryptjs jest ts-jest @types/jest
 ```
-npm install cors dotenv express mongodb
-npm install --save-dev typescript @types/cors @types/express @types/node ts-node
-npm install jsonwebtoken
+
+#### ⚙️ Variables de Entorno (.env)
+
+Crea un archivo `.env` en la carpeta `server` con la siguiente estructura:
+
+```env
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/music_db
+JWT_SECRET=tu_secreto_super_seguro
+API_URL=http://localhost:3000
+
+# Configuración de Correo (Gmail)
+MAIL_USER=tu_email@gmail.com
+MAIL_PASS=xxxx xxxx xxxx xxxx  <-- Tu Contraseña de Aplicación de 16 caracteres
 ```
 
-Arrancar el server con el comando en la carpetra server:
-```
+Para arrancar el **servidor**:
+```bash
 npx ts-node src/app.ts
 ```
+###### Nota: El servidor creará automáticamente una carpeta /uploads en la raíz para almacenar las imágenes.
 
-usar la version correcta para el correcto funcionamiento de angular en este caso 
-```
-nvm install 20.19.0
+### 3. Configuración del Frontend
+```bash
+cd client
+
+# Asegurar versión de Node
 nvm use 20.19.0
 
-``` 
-Intalar angular para visualizar en tu terminal no hace falta que sea en la carpeta
-```
-npm install -g @angular/cli
-```
-Para inicializar angular cliente:
-```
+# Instalar dependencias
+npm install
+npm install tailwindcss postcss autoprefixer
+
+# Arrancar Angular
 ng serve -o
 ```
-
-
-
-Como se debe de tener la carpeta de client
-```
-client/
-├── src/
-│   ├── app/
-│   │   ├── core/                       # 🔹 Servicios y configuración global
-│   │   │   ├── guards/                 # Rutas protegidas (auth guard, etc.)
-│   │   │   ├── interceptors/           # Interceptores HTTP (JWT, errores)
-│   │   │   ├── services/
-│   │   │   │   ├── auth.service.ts
-│   │   │   │   ├── user.service.ts
-│   │   │   │   ├── song.service.ts
-│   │   │   │   └── playlist.service.ts
-│   │   │   └── models/                 # Interfaces / tipos globales
-│   │   │       ├── user.model.ts
-│   │   │       ├── song.model.ts
-│   │   │       └── playlist.model.ts
-│   │   │
-│   │   ├── shared/                     # 🔹 Componentes reutilizables
-│   │   │   ├── navbar/
-│   │   │   ├── sidebar/
-│   │   │   ├── player/
-│   │   │   ├── song-card/
-│   │   │   └── playlist-card/
-│   │   │
-│   │   ├── features/                   # 🔹 Páginas principales (lazy loaded)
-│   │   │   ├── home/
-│   │   │   ├── search/
-│   │   │   ├── profile/
-│   │   │   ├── settings/
-│   │   │   ├── playlist-detail/
-│   │   │   └── auth/                   # Login / registro
-│   │   │
-│   │   ├── app-routing.module.ts       # Rutas principales
-│   │   ├── app.component.ts            # Raíz de la app
-│   │   └── app.module.ts
+#### 📂 Estructura de Carpetas Clave
+El proyecto sigue una arquitectura clara separando código fuente de archivos estáticos generados por el usuario.
+```Plaintext
+MusicRecSys/
+├── client/                 # Frontend Angular
+├── server/
+│   ├── src/
+│   │   ├── controllers/    # Lógica de negocio (Playlist, Auth, User)
+│   │   ├── models/         # Esquemas Mongoose
+│   │   ├── routes/         # Definición de endpoints API
+│   │   ├── config/         # Configuración (Mailer, DB)
+│   │   └── middlewares/    # Auth, Upload (Multer), Resize (Sharp)
 │   │
-│   ├── assets/                         # Imágenes, íconos, estilos globales
-│   ├── environments/                   # URLs del backend, config por entorno
-│   │   ├── environment.ts
-│   │   └── environment.prod.ts
-│   └── index.html
-│
-├── angular.json
-├── package.json
-└── tsconfig.json
+│   └── uploads/            # CARPETA GENERADA AUTOMÁTICAMENTE
+│       ├── playlist-xxx.png
+│       └── user-xxx.png    # Aquí se guardan las imágenes físicas
+└── ...
 ```
-
-
-## Estructuras JSONs:
-
-### Estructura de cancion --> song
-```
-{
-  "title_": " Never Gonna Give You Up",
-  "artist_": "Rick Astley",
-  "youtubeURL_": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  "thumbnailURL_": "https://img.youtube.com/vi/fJ9rUzIMcZQ/0.jpg",
-  "genre_": "Rock",
-  "durationInSeconds_": 333
-}
-```
-
-### Estructura de playlist --> playlist
-```
-POST http://localhost:3000/api/playlists
-{
-  "name_": "Playlist de estudio",
-  "description_": "Música para concentrarme",
-  "cover_": "https://i.imgur.com/cover123.jpg",
-  "owner_": "672f0c43debe99dbf7b8c1b3",
-  "songs_": ["672eff9a7a0f8bb3c6a3e3d2"],
-  "isPublic_": false,
-  "duration_": 1800
-}
-```
-
-### Estructura de registro de un usuario --> user
-```
-GET http://localhost:3000/api/users/register
-Json:
-{
-  "_id": "67300d39bdf50e94e0d0a7e8",
-  "username_": "gifty138",
-  "email_": "usuario@ejemplo.com",
-  "profilePictureUrl_": "",
-  "createdAt_": "2025-10-31T23:21:00.000Z",
-  "friends_": []
-}
-```
-
-### Estructura para iniciar sesion
-```
-POST http://localhost:3000/api/auth/login
-Json:
-{
-  "email_": "usuario@ejemplo.com",
-  "password_": "123456"
-}
-```
-
-
-Se modificó los atributos de playlist para incluir los playlist con amigos.
-
-Instalar mas paquetes en el backend
-```
-npm install ytdl-core fluent-ffmpeg
-npm install --save-dev @types/fluent-ffmpeg
-npm install axios
-npm install --save-dev @types/axios
-```
-
-Instalara paquetes en el frontend
-```
-npm install 
-npm install tailwindcss postcss autoprefixer
-```
-
-Instalar paquetes para usar el Selenium
-Si usan el WSL, Ubuntu o linux ejecuten estos comandos
-```
-npm install selenium-webdriver
-npm install chromedriver
-npm install --save-dev @types/selenium-webdriver
-sudo apt update
-sudo apt install -y chromium-browser libnss3 libxi6 libxss1 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxrender1 libxtst6 libglib2.0-0 wget unzip
-```
-
-Para visualizar como funciona los tests se debe descargar X Serve **(VcXsrv o Xming)**
-https://sourceforge.net/projects/vcxsrv/
-
-Y para ejecutar los tests:
-```
-npx ts-node --project tsconfig.tests.json test/login.test.ts
-```
-
-Para usar el selenium-side:
-```
-npm install -g selenium-side-runner
-npm install -g chromedriver
-```
-Ejecutar los test:
-```
-selenium-side-runner
-```
-
-Para hacer los unit testing
-```
-npm install --save-dev jest ts-jest @types/jest
-npm install --save-dev supertest @types/supertest
-```
-Para ejecutar el test:
-```
+#### 🧪 Ejecución de Tests
+* **Tests Unitarios (Jest)** Pruebas de controladores y lógica de negocio.
+```bash
+cd server
 npm run test
 ```
 
-Instalar el Multer:
-```
-npm install multer
-npm install --save-dev @types/multer
-```
+* **Tests End-to-End (Selenium)** Automatización de flujo de usuario en navegador real. Requisito para Linux/WSL: Tener X Server (VcXsrv) ejecutándose.
 
-Instalar el sharp:
-```
-npm install sharp
-```
+```Bash
 
+# Instalar Selenium WebDriver
+cd client
+npm install --save-dev mocha selenium-webdriver chromedriver chai
+ng add @angular/pwa
 
-Instalar SuperTest:
+# Ejecutar test de login
+npx mocha tests/selenium-suite.spec.js
 ```
-npm install --save-dev supertest @types/supertest
-```
+---
+
+## 👥 Equipo de Desarrollo
+Proyecto desarrollado de forma colaborativa por el equipo E16 – SyTW 2025/2026.
+* Ángela Izquierdo Padrón
+* Godgith John
+* Alexander Valencia Hernández
+
+###### © 2025 Tempo - Proyecto Académico.

@@ -1,5 +1,6 @@
 import User from "../models/user_model";
 import Song from "../models/song_model";
+import mongoose from "mongoose";
 import { fetchYouTubeSongs, fetchYouTubeSongsByArtist } from "../recommendation/youtube_recommendation";
 
 export async function recommendFromLikes(user: any) {
@@ -155,6 +156,9 @@ export function buildInternalPlaylists(songs: any[]) {
   const BAD_ARTISTS = ["Artista desconocido"];
   const BAD_GENRES = ["Desconocido", "Otro"];
 
+  const MIN_SONGS_PER_ARTIST_PLAYLIST = 3;
+  const MIN_SONGS_PER_GENRE_PLAYLIST = 4;
+
   for (const s of songs) {
     const artist = s.artist_ || "Artista desconocido";
     const genre = s.genre_ || "Desconocido";
@@ -167,19 +171,19 @@ export function buildInternalPlaylists(songs: any[]) {
   }
 
   const artistPlaylists = Array.from(byArtist.entries())
-    .filter(([artist]) => !BAD_ARTISTS.includes(artist))
+    .filter(([artist, list]) => !BAD_ARTISTS.includes(artist) && list.length >= MIN_SONGS_PER_ARTIST_PLAYLIST)
     .sort((a, b) => b[1].length - a[1].length) // más canciones primero
     .slice(0, 3)
     .map(([artist, list]) => ({
       name_: `Basado en ${artist}`,
-      description_: `${list.length} canciones similares a tus me gusta`,
+      description_: `${list.length} canciones recomendadas para ti`,
       cover_: list[0]?.thumbnailURL_ || "",
       songs: list,
       artist,
     }));
 
   const genrePlaylists = Array.from(byGenre.entries())
-    .filter(([genre]) => !BAD_GENRES.includes(genre))
+    .filter(([genre, list]) => !BAD_GENRES.includes(genre) && list.length >= MIN_SONGS_PER_GENRE_PLAYLIST)
     .sort((a, b) => b[1].length - a[1].length)
     .slice(0, 2)
     .map(([genre, list]) => ({
@@ -189,106 +193,69 @@ export function buildInternalPlaylists(songs: any[]) {
       songs: list,
       genre,
     }));
+  
+  if (artistPlaylists.length === 0 && genrePlaylists.length === 0) {
+    const fallbackArtist = Array.from(byArtist.entries())
+      .filter(([artist]) => !BAD_ARTISTS.includes(artist))
+      .sort((a, b) => b[1].length - a[1].length)
+      .slice(0, 1)
+      .map(([artist, list]) => ({
+         name_: `Basado en ${artist}`,
+        description_: `${list.length} canciones recomendadas para ti`,
+        cover_: list[0]?.thumbnailURL_ || "",
+        songs: list,
+        artist,
+      }));
+    return fallbackArtist;
+  }
 
   return [...artistPlaylists, ...genrePlaylists];
 }
 
-/*export async function buildUtilityMatrix() {
-  const songs = await Song.find();
+export async function getFriendsBasedRecommendations(userId: string, limit: number = 20) {
+  const me = await User.findById(userId).populate("likedSongs_").populate("friends_");
 
-  if (!songs.length) return { users: [], songs, matrix: [] as number[][] };
+  if (!me) return [];
 
-  const users = await User.find().populate("history_.songId").populate("likedSongs_");
+  const myLikedIds = new Set((me.likedSongs_ as any[]).map((s) => s._id.toString()));
+  const friendIds = me.friends_ as mongoose.Types.ObjectId[];
+  if (!friendIds) return [];
 
-  const songIndex: Record<string, number> = {};
-  songs.forEach((song: any, index) => (songIndex[song._id.toString()] = index));
+  const friends = await User.find({ _id: { $in: friendIds } }).populate("likedSongs_").exec();
 
-  const matrix: number[][] = Array(users.length).fill(0).map(() => Array(songs.length).fill(0));
+  const map = new Map<string, {song: any, count: number}>();
 
-  users.forEach((user, user_index) => {
-    user.history_.forEach((song: any) => {
-      const id = song.songId?._id?.toString() ?? song.songId?.toString();
-      const song_index = songIndex[id];
-
-      if (song_index !== undefined)  {
-        let r = Number(song.rating);
-        if (!r || isNaN(r)) r = 3;
-        if (r < 1) r = 1;
-        if (r > 5) r = 5;
-
-        matrix[user_index][song_index] = r;
-      }
-    });
-
-    user.likedSongs_.forEach((liked: any) => {
-      const id = liked._id?.toString() ?? liked.toString();
-      const song_index = songIndex[id];
-
-      if (song_index !== undefined && matrix[user_index][song_index] === 0) matrix[user_index][song_index] = 5;
-    });
-  });
-
-  return { users, songs, matrix };
-}
-
-export function cosineSimilarity(vector: number[], other_vector: number[]): number {
-  const dot = vector.reduce((sum, a, i) => sum + a * other_vector[i], 0);
-  const normalized_vector = Math.sqrt(vector.reduce((sum, v) => sum + v * v, 0));
-  const normalized_other_vector = Math.sqrt(other_vector.reduce((sum, v) => sum + v * v, 0));
-
-  return normalized_vector && normalized_other_vector ? dot / (normalized_vector * normalized_other_vector) : 0;
-}
-
-export function computeItemSimilarities(matrix: number[][]): number[][] {
-  const n = matrix[0].length;
-  const similarities: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
-
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
-      const sim = cosineSimilarity(matrix.map(row => row[i]), matrix.map(row => row[j]));
-      similarities[i][j] = similarities[j][i] = sim;
+  for (const friend of friends) {
+    const liked = friend.likedSongs_ || [];
+    for (const song of liked) {
+      const id = song._id.toString();
+      if (myLikedIds.has(id)) continue;
+      const existing = map.get(id);
+      if (existing) existing.count += 1;
+      else map.set(id, {song, count: 1});
     }
   }
-  return similarities;
+  const ordered = [...map.values()].sort((a, b) => b.count - a.count)
+  .slice(0, limit)
+  .map((entry) => entry.song);
+
+  return ordered;
 }
 
-export function recommendedForUser(user_index: number, matrix: number[][], similarities: number[][], songs: any[], maxValue = 5) {
-  const user_ratings = matrix[user_index];
-  const scores: { song: any, score: number }[]= [];
+export function mergeUniqueWithLimit<T extends { _id?: any }>(limit: number, ...arrays: T[][]): T[] {
+  const seen = new Set<string>();
+  const result: T[] = [];
 
-  for (let i = 0; i < user_ratings.length; i++) {
-    if (user_ratings[i] === 0) {
-      let num = 0, den = 0;
-      for (let j = 0; j < user_ratings.length; j++) {
-        if (user_ratings[j] > 0) {
-          num += similarities[i][j] * user_ratings[j];
-          den += Math.abs(similarities[i][j]);
-        }
-      }
-      const score = den > 0 ? num / den : 0;
-      scores.push({ song: songs[i], score });
+  for (const array of arrays) {
+    for (const item of array) {
+      if (!item) continue;
+
+      const id = item._id ? item._id.toString() : JSON.stringify(item);
+      if (seen.has(id)) continue;
+      seen.add(id);
+      result.push(item);
+      if (result.length >= limit) return result;
     }
   }
-  return scores.sort((a, b) => b.score - a.score).slice(0, maxValue);
+  return result;
 }
-
-
-export function buildInternalPlaylistsFromRecommendations(songs: any[]) {
-  if (!songs.length) return [];
-
-  const byArtist = new Map<string, any[]>(); // Agrupar por artista
-
-  songs.forEach((song) => {
-    const artist = song.artist_ || "Varios artistas";
-    if (!byArtist.has(artist)) byArtist.set(artist, []);
-    byArtist.get(artist)!.push(song);
-  });
-
-  const entries = Array.from(byArtist.entries()).slice(0, 4);
-
-  return entries.map(([artist, artistSongs], index) => ({
-    name_: `Basado en ${artist}`,
-    description_: `${artistSongs.length} canciones similares a tus me gusta`,
-    cover_: artistSongs[0]?.thumbnailURL_ || "",
-  }));
-}*/

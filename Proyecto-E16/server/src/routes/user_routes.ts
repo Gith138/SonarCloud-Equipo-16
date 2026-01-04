@@ -3,9 +3,10 @@ import { resizeProfileImage } from "../middlewares/resize";
 import { upload } from "../config/multer";
 import { registerUser, getUsers, getProfilePictureById, getMe, deleteUser, actualizar_settings, getFotoPerfil,
   getPreferences, actualizarPreferences,
-  getUserById, searchUser, addLikedSong, removeLikedSong, getLikedSongs,addToHistory, getHistory, clearHistory, 
-  updateHistoryRating, getFriendsList, getFriendsLastSong, addFriend, removeFriend, getFriendRequests, 
-  acceptFriendRequest, rejectFriendRequest } from "../controllers/user_controller";
+  getUserById, searchUser, searchUserFriends, addLikedSong, removeLikedSong, getLikedSongs,
+  addToHistory, getHistory, clearHistory, 
+  getFriendsList, getFriendsLastSong, addFriend, removeFriend, getFriendRequests, acceptFriendRequest, rejectFriendRequest,
+  sendSongRecommendation, getMyRecommendations, deleteRecommendation  } from "../controllers/user_controller";
 
 
 const router = express.Router();
@@ -13,6 +14,7 @@ const router = express.Router();
 router.post("/", registerUser);
 router.get("/", getUsers);
 
+// ----- Gestión del perfil del usuario -----
 router.get("/me", getMe);
 router.delete("/me", deleteUser);
 router.get("/me/image",  getFotoPerfil);
@@ -22,6 +24,7 @@ router.get("/me/image",  getFotoPerfil);
 router.put("/me/settings", upload.single("profilePicture"), resizeProfileImage, actualizar_settings);
 // ----- Búsqueda de usuarios ----- 
 router.get("/search/user", searchUser);
+router.get("/search/user/friends", searchUserFriends); 
 
 // ------ Gestión de preferencias de canciones ------
 router.get("/me/settings/preferences", getPreferences); // Obtener preferencias del usuario
@@ -36,7 +39,6 @@ router.delete("/me/likes/:songId", removeLikedSong);
 router.get("/me/history", getHistory); // Obtener historial de reproducción
 router.post("/me/history", addToHistory);
 router.delete("/me/history/clear", clearHistory);
-router.put("/me/history/rating", updateHistoryRating);
 
 // ----- Gestion de amigos -----
 router.get("/friends/list", getFriendsList);           // Obtener lista de amigos del usuario
@@ -49,6 +51,11 @@ router.delete("/friends/remove", removeFriend);          // Eliminar amigo (reci
 router.get("/friends/requests", getFriendRequests);
 router.put("/friends/requests/accept", acceptFriendRequest);
 router.put("/friends/requests/reject", rejectFriendRequest);
+
+// ----- Recomendaciones de canciones -----
+router.post("/friends/recommend", sendSongRecommendation); // Enviar
+router.get("/me/recommendations", getMyRecommendations);   // Ver
+router.delete("/me/recommendations/:recId", deleteRecommendation); // Borrar
 
 // Rutas “por ID” (para otros usuarios)
 router.get("/:id", getUserById);

@@ -15,10 +15,8 @@
   }
 }
 
-
 /* Contenedor Principal */
 .playlists-page {
-  /* El fondo global ya viene de styles.css, aquí ajustamos padding */
   @apply min-h-screen p-8 text-gray-100 font-sans;
 }
 
@@ -51,7 +49,7 @@
   hover:bg-red-500 hover:text-white hover:border-transparent;
 }
 
-/* 🔹 Grid y Tarjetas */
+/* Grid y Tarjetas */
 .playlists-grid {
   @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
 }
@@ -95,7 +93,7 @@
   @apply bg-red-600 hover:bg-red-500 text-white font-semibold py-1 px-4 rounded-full text-sm transition shadow-sm;
 }
 
-/* 🔹 Estado Vacío */
+/* Estado Vacío */
 .empty-state {
   @apply text-center mt-20 flex flex-col items-center;
 }
@@ -104,7 +102,7 @@
   @apply text-gray-400 mb-6 text-lg;
 }
 
-/* 🟦 Modal de Creación */
+/* Modal de Creación */
 .modal-overlay {
   @apply fixed inset-0 bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm transition-opacity;
 }
@@ -117,7 +115,7 @@
   @apply text-2xl font-semibold mb-6 text-white;
 }
 
-/* Inputs del Modal (Consistentes con el resto de la app) */
+/* Inputs del Modal */
 .input-label {
   @apply block mb-4 text-sm text-gray-300 font-medium;
 }
@@ -148,7 +146,6 @@
 .btn-pill {
   @apply px-4 py-1.5 rounded-full text-[0.85rem] font-semibold transition-all duration-200 flex items-center gap-1;
 }
-
 
 .btn-remove {
   @apply bg-red-600/10 text-red-400 border border-red-600/30;

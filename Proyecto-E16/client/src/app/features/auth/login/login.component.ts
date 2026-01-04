@@ -1,52 +1,72 @@
+/**
+ * @file login.component.ts
+ * @brief Componente encargado de la autenticación de usuarios.
+ * @description Maneja el formulario de inicio de sesión, se comunica con el servicio de autenticación
+ * y gestiona el almacenamiento seguro del token de sesión.
+ */
+
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router'; // Quitamos HttpClient de aquí
+import { Router, RouterModule, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-// Asegúrate de que la ruta a tu servicio sea correcta. 
-// Si el archivo se llama 'auth.service.ts', cambia 'login.service' por 'auth.service'.
 import { AuthService } from '../../../services/auth.service'; 
 
+/**
+ * @class LoginComponent
+ * @description Componente standalone que implementa la lógica de acceso a la aplicación.
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
+
+/** 
+ * @property {string} email_ - Almacena el correo electrónico del usuario (vinculado al backend). 
+ * @property {string} password_ - Almacena la contraseña del usuario. 
+ * @property {string} errorMessage - Almacena el mensaje de error descriptivo para mostrar en la interfaz. 
+ * @constructor
+ * @param {AuthService} authService - Servicio encargado de las peticiones de autenticación.
+ * @param {Router} router - Servicio de Angular para la navegación entre rutas.
+ * @method login
+ * @description Procesa el intento de inicio de sesión.
+ * @details
+ * 1. Reinicia el estado de errores.
+ * 2. Envía las credenciales al `AuthService`.
+ * 3. Si la respuesta es exitosa:
+ *   - Almacena el token en `sessionStorage`.
+ *   - Limpia rastros previos en `localStorage`.
+ *   - Redirige al usuario a la ruta `/home`.
+ * 4. Si ocurre un error, mapea el código de estado HTTP (400, 401, etc.) a un mensaje amigable.
+ */
 export class LoginComponent {
   email_ = '';
   password_ = '';
   errorMessage = '';
 
-  // Inyectamos SOLO el AuthService y el Router
   constructor(private authService: AuthService, private router: Router) {}
 
   login() {
-    // 1. Limpiamos errores previos
     this.errorMessage = '';
-
-    // 2. Llamamos al servicio
     this.authService.login({ email_: this.email_, password_: this.password_ })
       .subscribe({
         next: (response: any) => {
           console.log('Login exitoso');
-
-          // NOTA: Si pusiste el "tap" en el servicio como te enseñé, el token ya se guardó solo.
-          // Si NO pusiste el "tap" en el servicio, descomenta estas dos líneas de abajo:
-          
           sessionStorage.setItem('token', response.token);
-          localStorage.removeItem('token'); // Limpieza por seguridad
-
-          // 3. Redirigimos a la Home (cambiarlo en la presentación es necesario)
-          this.router.navigate(['/playlists']);
+          localStorage.removeItem('token'); 
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Error al iniciar sesión:', err);
-          // Manejo de errores visuales para el usuario
-          if (err.status === 400) this.errorMessage = 'Usuario no encontrado';
-          else if (err.status === 401) this.errorMessage = 'Contraseña incorrecta';
-          else this.errorMessage = 'Error al conectar con el servidor';
+          if (err.status === 400) {
+            this.errorMessage = 'Usuario no encontrado';
+          } else if (err.status === 401) {
+            this.errorMessage = 'Contraseña incorrecta';
+          } else {
+            this.errorMessage = 'Error al conectar con el servidor';
+          }
         },
       });
   }

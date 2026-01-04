@@ -1,6 +1,4 @@
-/* ===========================================
-   NAVBAR CONTAINER
-   =========================================== */
+/* NAVBAR CONTAINER */
 .navbar-container {
   @apply flex items-center justify-between px-6 py-3;
   @apply bg-[#0b0b12] text-gray-200 border-b border-[#1f1f2a];
@@ -8,9 +6,7 @@
   box-shadow: 0 10px 25px rgba(10, 14, 58, 0.5);
 }
 
-/* ===========================================
-   LOGO
-   =========================================== */
+/* LOGO*/
 .logo-section {
   @apply flex items-center gap-3 select-none cursor-pointer;
 }
@@ -24,9 +20,7 @@
   @apply text-2xl font-bold text-blue-400 tracking-wide;
 }
 
-/* ===========================================
-   SECCIÓN DERECHA (Links + Iconos)
-   =========================================== */
+/* SECCIÓN DERECHA (Links + Iconos) */
 .right-section {
   @apply flex items-center gap-6;
 }
@@ -42,14 +36,12 @@
   @apply hover:text-white hover:bg-white/5;
 }
 
-/* Link Activo (Estilo pastilla azul) */
+/* Link Activo  */
 .nav-link-active {
   @apply bg-blue-600 text-white shadow-lg shadow-blue-500/30;
 }
 
-/* ===========================================
-   PERFIL (Avatar + Dropdown)
-   =========================================== */
+/* PERFIL (Avatar + Dropdown) */
 .profile-wrapper {
   @apply relative;
 }
@@ -87,9 +79,7 @@
   @apply text-red-400 hover:bg-red-500/10 hover:text-red-300 border-t border-gray-700 mt-1;
 }
 
-/* ===========================================
-   LAYOUT PRINCIPAL
-   =========================================== */
+/* LAYOUT PRINCIPAL */
 .main-content {
   @apply min-h-screen w-full bg-[#0B0C15];
 }

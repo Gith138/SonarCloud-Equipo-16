@@ -1,6 +1,4 @@
-/* =========================================
-   1. LAYOUT & FONDO GENERAL
-   ========================================= */
+/* 1. LAYOUT & FONDO GENERAL*/
 :host {
   display: block;
   /* Fondo oscuro profundo global */
@@ -25,9 +23,7 @@
   @apply text-gray-400 text-base;
 }
 
-/* =========================================
-   2. BOTONES DE NAVEGACIÓN (TABS)
-   ========================================= */
+/* 2. BOTONES DE NAVEGACIÓN (TABS) */
 .btn-pill {
   @apply px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 border;
   @apply cursor-pointer select-none active:scale-95;
@@ -38,14 +34,12 @@
   @apply bg-blue-600 text-white border-transparent shadow-lg shadow-blue-600/20;
 }
 
-/* Tab Inactiva (Estilo "btn-secondary") */
+/* Busca este bloque en la sección 2 de tu CSS */
 .btn-secondary {
-  @apply bg-transparent text-gray-400 border-gray-800 hover:bg-[#1F2130] hover:text-white hover:border-gray-600;
+  @apply bg-transparent text-gray-400 border-gray-800 hover:bg-[#1F2130] hover:text-white hover:border-blue-600;
 }
 
-/* =========================================
-   3. TARJETAS (CARDS)
-   ========================================= */
+/* 3. TARJETAS (CARDS) */
 .card {
   /* Fondo tarjeta oscuro, bordes redondeados grandes */
   @apply bg-[#141422] border border-gray-800 rounded-[1.25rem] p-6 md:p-8 mb-8 shadow-xl;
@@ -60,9 +54,7 @@
   @apply text-gray-400 text-sm mb-6;
 }
 
-/* =========================================
-   4. FORMULARIOS & INPUTS
-   ========================================= */
+/* 4. FORMULARIOS & INPUTS */
 .form-group {
   @apply mb-5;
 }
@@ -86,9 +78,7 @@
   @apply border-blue-500 ring-1 ring-blue-500/40 bg-[#0f0f1a];
 }
 
-/* =========================================
-   5. BOTONES DE ACCIÓN
-   ========================================= */
+/* 5. BOTONES DE ACCIÓN */
 .buttons {
   @apply mt-8 flex justify-end gap-3;
 }
@@ -117,9 +107,7 @@
   @apply bg-transparent border border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white;
 }
 
-/* =========================================
-   6. AVATAR Y CÁMARA
-   ========================================= */
+/* 6. AVATAR Y CÁMARA */
 .avatar-xl {
   @apply w-32 h-32 rounded-full object-cover;
 }
@@ -135,16 +123,19 @@
   @apply bg-gray-600 scale-90;
 }
 
-/* =========================================
-   7. LISTAS (HISTORIAL Y LIKES)
-   ========================================= */
+/* 7. LISTAS (HISTORIAL Y LIKES) */
 .history-list {
   @apply space-y-3;
 }
 
+/* Busca este bloque en la sección 7 de tu CSS */
 .history-item {
   @apply flex items-center justify-between p-4 rounded-xl;
-  @apply bg-[#0b0b12] border border-gray-800 hover:border-gray-600 transition-colors;
+  @apply bg-[#0b0b12] border border-gray-800 hover:border-blue-600 transition-colors;
+}
+
+.history-item:hover {
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.2); /* Sutil brillo azul */
 }
 
 .song-info .title {
@@ -155,6 +146,9 @@
   @apply text-sm text-gray-400;
 }
 
+.song-info .fecha {
+  @apply text-xs text-gray-500;
+}
 .thumbnail {
   @apply w-12 h-12 rounded-lg object-cover border border-gray-700;
 }
@@ -178,9 +172,7 @@
   @apply text-yellow-400; /* Amarillo Spotify/Estrella */
 }
 
-/* =========================================
-   8. EXTRAS (CACHÉ Y OVERLAY)
-   ========================================= */
+/* 8. EXTRAS (CACHÉ Y OVERLAY) */
 .cache-display {
   @apply flex flex-col items-center justify-center py-8 bg-[#0b0b12] rounded-2xl border border-gray-800 mb-6;
 }
@@ -193,24 +185,6 @@
   @apply text-gray-500 text-sm;
 }
 
-/* Overlay / Toast Notification */
-.overlay {
-  @apply fixed inset-0 flex justify-center items-end pb-12 pointer-events-none z-50;
-  @apply transition-opacity duration-300 opacity-0;
-}
-
-/* Lógica para mostrar overlay (se asume que Angular añade clase o controla ngIf) 
-   Si usas *ngIf, la animación de entrada debe manejarse con :enter en Angular o CSS keyframes 
-*/
-.overlay:not(:empty) {
-  @apply opacity-100;
-}
-
-.overlay-box {
-  @apply bg-[#1F2937] border border-blue-500 text-white px-6 py-3 rounded-xl shadow-2xl;
-  @apply backdrop-blur-md mb-4;
-  animation: slideUp 0.3s ease-out forwards;
-}
 
 @keyframes slideUp {
   from { transform: translateY(20px); opacity: 0; }
@@ -222,10 +196,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* =========================================
-   9. TOGGLES (INTERRUPTORES)
-   ========================================= */
-
+/* 9. TOGGLES (INTERRUPTORES) */
 .toggle-wrapper {
   @apply relative inline-block w-12 mr-2 align-middle select-none;
 }
@@ -247,7 +218,6 @@
 }
 
 /* --- ESTADOS ACTIVOS --- */
-
 /* 1. Mover el círculo a la derecha */
 .toggle-checkbox.active {
   @apply border-blue-600;
